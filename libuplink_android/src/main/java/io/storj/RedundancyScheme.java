@@ -3,6 +3,10 @@ package io.storj;
 public class RedundancyScheme {
 	
 	private io.storj.libuplink.mobile.RedundancyScheme scheme;
+
+	RedundancyScheme(io.storj.libuplink.mobile.RedundancyScheme scheme) {
+		this.scheme = scheme;
+	}
 	
 	public RedundancyAlgorithm getAlgorithm() {
 		return RedundancyAlgorithm.fromValue(scheme.getAlgorithm());

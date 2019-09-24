@@ -11,4 +11,24 @@ public class BucketInfo {
 	public String getName() {
 		return info.getName();
 	}
+
+	public long getCreated() {
+		return info.getCreated();
+	}
+
+	public CipherSuite getPathCipher() {
+		return CipherSuite.fromValue(info.getPathCipher());
+	}
+
+	public long getSegmentsSize() {
+		return info.getSegmentsSize();
+	}
+
+	public RedundancyScheme getRedundancyScheme() {
+		return new RedundancyScheme(info.getRedundancyScheme());
+	}
+
+	public EncryptionParameters getEncryptionParameters() {
+		return new EncryptionParameters(info.getEncryptionParameters());
+	}
 }
