@@ -39,19 +39,19 @@ public class Project implements Closeable {
 		}
 	}
 
-	public Iterator<BucketInfo> listBuckets() throws StorjException {
+	public Iterable<BucketInfo> listBuckets() throws StorjException {
 		return listBuckets(null, 0);
 	}
 
-	public Iterator<BucketInfo> listBuckets(String cursor) throws StorjException {
+	public Iterable<BucketInfo> listBuckets(String cursor) throws StorjException {
 		return listBuckets(cursor, 0);
 	}
 
-	public Iterator<BucketInfo> listBuckets(int pageSize) throws StorjException {
+	public Iterable<BucketInfo> listBuckets(int pageSize) throws StorjException {
 		return listBuckets(null, pageSize);
 	}
 	
-	public Iterator<BucketInfo> listBuckets(String cursor, final int pageSize) throws StorjException {
+	public Iterable<BucketInfo> listBuckets(String cursor, final int pageSize) throws StorjException {
 		return new BucketIterator(this.project, cursor, pageSize);
 	}
 	
