@@ -1,5 +1,7 @@
 package io.storj;
 
+import android.support.annotation.Nullable;
+
 public class RedundancyScheme {
 	
 	private io.storj.libuplink.mobile.RedundancyScheme scheme;
@@ -30,6 +32,20 @@ public class RedundancyScheme {
 	
 	public int getShareSize() {
 		return scheme.getShareSize();
+	}
+
+	@Override
+	public boolean equals(@Nullable Object obj) {
+		if (!(obj instanceof RedundancyScheme)) {
+			return false;
+		}
+		RedundancyScheme that = (RedundancyScheme) obj;
+		return scheme.equals(that.scheme);
+	}
+
+	@Override
+	public int hashCode() {
+		return scheme.hashCode();
 	}
 
 	io.storj.libuplink.mobile.RedundancyScheme internal() {

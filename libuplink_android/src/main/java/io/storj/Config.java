@@ -1,5 +1,7 @@
 package io.storj;
 
+import android.support.annotation.Nullable;
+
 public class Config {
 	
 	private io.storj.libuplink.mobile.Config config;
@@ -15,6 +17,20 @@ public class Config {
 
 	public String getTempDir() {
 		return tempDir;
+	}
+
+	@Override
+	public boolean equals(@Nullable Object obj) {
+		if (!(obj instanceof Config)) {
+			return false;
+		}
+		Config that = (Config) obj;
+		return config.equals(that.config);
+	}
+
+	@Override
+	public int hashCode() {
+		return config.hashCode();
 	}
 
 	io.storj.libuplink.mobile.Config internal() {
