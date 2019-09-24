@@ -2,6 +2,7 @@ package io.storj;
 
 import java.io.Closeable;
 import java.io.IOException;
+import java.util.Iterator;
 
 public class Project implements Closeable {
 	
@@ -37,14 +38,21 @@ public class Project implements Closeable {
 			throw ExceptionUtil.toStorjException(e);
 		}
 	}
+
+	public Iterator<BucketInfo> listBuckets() throws StorjException {
+		return listBuckets(null, 0);
+	}
+
+	public Iterator<BucketInfo> listBuckets(String cursor) throws StorjException {
+		return listBuckets(cursor, 0);
+	}
+
+	public Iterator<BucketInfo> listBuckets(int pageSize) throws StorjException {
+		return listBuckets(null, pageSize);
+	}
 	
-	public BucketList listBuckets(String cursor, int limit) throws StorjException {
-		try {
-			io.storj.libuplink.mobile.BucketList list = this.project.listBuckets(cursor, limit);
-			return new BucketList(list);
-		} catch (Exception e) {
-			throw ExceptionUtil.toStorjException(e);
-		}
+	public Iterator<BucketInfo> listBuckets(String cursor, final int pageSize) throws StorjException {
+		return new BucketIterator(this.project, cursor, pageSize);
 	}
 	
 	public void deleteBucket(String bucketName) throws StorjException {
