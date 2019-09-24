@@ -1,11 +1,13 @@
 package io.storj;
 
+import android.support.annotation.NonNull;
+
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 import io.storj.libuplink.mobile.Project;
 
-class BucketIterator implements Iterator<BucketInfo> {
+class BucketIterator implements Iterator<BucketInfo>, Iterable<BucketInfo> {
 
     private io.storj.libuplink.mobile.Project project;
     private String cursor;
@@ -76,5 +78,11 @@ class BucketIterator implements Iterator<BucketInfo> {
         if (pageIndex > pageLength) {
             throw new IllegalStateException(String.format("page index (%d) is greater than page length (%d)", pageIndex, pageLength));
         }
+    }
+
+    @NonNull
+    @Override
+    public Iterator<BucketInfo> iterator() {
+        return this;
     }
 }
