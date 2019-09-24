@@ -3,9 +3,7 @@
   <component name="ChangeListManager">
     <list default="true" id="61df3874-601d-454e-9bb7-e4f0fe523b8d" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/build.gradle" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/libuplink_android/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/libuplink_android/build.gradle" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/libuplink_android/libuplink_android.iml" beforeDir="false" afterPath="$PROJECT_DIR$/libuplink_android/libuplink_android.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libuplink_android/src/androidTest/java/io/storj/LibuplinkInstrumentedTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/libuplink_android/src/androidTest/java/io/storj/LibuplinkInstrumentedTest.java" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -23,71 +21,20 @@
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="600">
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/libuplink_android/src/main/java/io/storj/EncryptionAccess.java">
+        <entry file="file://$PROJECT_DIR$/libuplink_android/src/androidTest/java/io/storj/LibuplinkInstrumentedTest.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="58">
-              <caret line="2" column="13" selection-start-line="2" selection-start-column="13" selection-end-line="2" selection-end-column="13" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/libuplink_android/src/main/java/io/storj/RedundancyAlgorithm.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="58">
-              <caret line="2" column="12" selection-start-line="2" selection-start-column="12" selection-end-line="2" selection-end-column="12" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/libuplink_android/src/main/java/io/storj/Uplink.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="319">
-              <caret line="17" column="13" selection-start-line="17" selection-start-column="13" selection-end-line="17" selection-end-column="13" />
-              <folding>
-                <element signature="imports" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/libuplink_android/src/main/java/io/storj/BucketInfo.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="261">
-              <caret line="11" column="30" selection-start-line="11" selection-start-column="30" selection-end-line="11" selection-end-column="30" />
-              <folding>
-                <element signature="e#205#206#0" expanded="true" />
-                <element signature="e#232#233#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/libuplink_android/build.gradle">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-921">
-              <caret column="35" selection-start-column="35" selection-end-column="35" />
+            <state relative-caret-position="696">
+              <caret line="86" column="56" selection-start-line="86" selection-start-column="56" selection-end-line="86" selection-end-column="56" />
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/build.gradle">
+        <entry file="file://$PROJECT_DIR$/libuplink_android/src/androidTest/AndroidManifest.xml">
+          <provider editor-type-id="android-manifest" />
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="348">
-              <caret line="12" column="1" selection-start-line="12" selection-start-column="1" selection-end-line="12" selection-end-column="1" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/eccd9633b65dc60f8dadc6bb5ae5d36f/jars/classes.jar!/io/storj/libuplink/mobile/Uplink.class">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="231">
-              <caret line="33" column="26" selection-start-line="33" selection-start-column="26" selection-end-line="33" selection-end-column="26" />
+            <state relative-caret-position="145">
+              <caret line="5" column="4" selection-start-line="5" selection-start-column="4" selection-end-line="5" selection-end-column="4" />
             </state>
           </provider>
         </entry>
@@ -104,6 +51,8 @@
         <option value="$PROJECT_DIR$/libuplink_android/src/main/java/io/storj/BucketInfo.java" />
         <option value="$PROJECT_DIR$/libuplink_android/build.gradle" />
         <option value="$PROJECT_DIR$/build.gradle" />
+        <option value="$PROJECT_DIR$/libuplink_android/src/androidTest/java/io/storj/LibuplinkInstrumentedTest.java" />
+        <option value="$PROJECT_DIR$/libuplink_android/src/androidTest/AndroidManifest.xml" />
       </list>
     </option>
   </component>
@@ -117,14 +66,20 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scope" />
       <pane id="ProjectPane" />
+      <pane id="PackagesPane" />
+      <pane id="Scope" />
       <pane id="AndroidView">
         <subPane>
           <expand>
             <path>
               <item name="android-libuplink" type="1abcf292:AndroidViewProjectNode" />
-              <item name="libuplink_android" type="e9137016:NonAndroidModuleNode" />
+              <item name="libuplink_android" type="feadf853:AndroidModuleNode" />
+            </path>
+            <path>
+              <item name="android-libuplink" type="1abcf292:AndroidViewProjectNode" />
+              <item name="libuplink_android" type="feadf853:AndroidModuleNode" />
+              <item name="manifests" type="f94875db:AndroidManifestsGroupNode" />
             </path>
             <path>
               <item name="android-libuplink" type="1abcf292:AndroidViewProjectNode" />
@@ -134,7 +89,6 @@
           <select />
         </subPane>
       </pane>
-      <pane id="PackagesPane" />
     </panes>
   </component>
   <component name="RunDashboard">
@@ -229,8 +183,8 @@
     <editor active="true" />
     <layout>
       <window_info id="Captures" order="0" sideWeight="0.5013369" side_tool="true" weight="0.3299595" />
-      <window_info content_ui="combo" id="Project" order="1" sideWeight="0.49725577" visible="true" weight="0.25182188" />
-      <window_info id="Structure" order="2" sideWeight="0.50274426" side_tool="true" visible="true" weight="0.25182188" />
+      <window_info active="true" content_ui="combo" id="Project" order="1" sideWeight="0.49615806" visible="true" weight="0.25182188" />
+      <window_info id="Structure" order="2" sideWeight="0.50384194" side_tool="true" visible="true" weight="0.25182188" />
       <window_info id="Favorites" order="3" side_tool="true" />
       <window_info id="Build Variants" order="4" side_tool="true" />
       <window_info id="Image Layers" order="5" />
@@ -242,7 +196,7 @@
       <window_info anchor="bottom" id="TODO" order="2" />
       <window_info anchor="bottom" id="Terminal" order="3" />
       <window_info anchor="bottom" id="Event Log" order="4" side_tool="true" />
-      <window_info active="true" anchor="bottom" id="Build" order="5" visible="true" weight="0.18442257" />
+      <window_info anchor="bottom" id="Build" order="5" visible="true" weight="0.18442257" />
       <window_info anchor="bottom" id="Android Profiler" order="6" show_stripe_button="false" />
       <window_info anchor="right" id="Device File Explorer" order="0" side_tool="true" />
       <window_info anchor="right" id="Capture Analysis" order="1" />
@@ -311,8 +265,23 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/build.gradle">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="348">
-          <caret line="12" column="1" selection-start-line="12" selection-start-column="1" selection-end-line="12" selection-end-column="1" />
+        <state relative-caret-position="406">
+          <caret line="14" column="1" selection-start-line="14" selection-start-column="1" selection-end-line="14" selection-end-column="1" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/libuplink_android/src/androidTest/java/io/storj/LibuplinkInstrumentedTest.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="696">
+          <caret line="86" column="56" selection-start-line="86" selection-start-column="56" selection-end-line="86" selection-end-column="56" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/libuplink_android/src/androidTest/AndroidManifest.xml">
+      <provider editor-type-id="android-manifest" />
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="145">
+          <caret line="5" column="4" selection-start-line="5" selection-start-column="4" selection-end-line="5" selection-end-column="4" />
         </state>
       </provider>
     </entry>

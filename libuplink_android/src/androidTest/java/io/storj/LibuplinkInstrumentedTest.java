@@ -1,4 +1,4 @@
-package io.storj.mobile.libuplink;
+package io.storj;
 
 import android.support.test.InstrumentationRegistry;
 import android.support.test.runner.AndroidJUnit4;
@@ -14,9 +14,13 @@ import java.util.Random;
 import java.util.Set;
 
 import io.storj.ApiKey;
+import io.storj.BucketConfig;
+import io.storj.BucketList;
 import io.storj.CipherSuite;
+import io.storj.Config;
 import io.storj.RedundancyAlgorithm;
 import io.storj.StorjException;
+import io.storj.Uplink;
 //import io.storj.libuplink.mobile.*;
 
 import static org.junit.Assert.*;
@@ -89,18 +93,15 @@ public class LibuplinkInstrumentedTest {
 //    @Test
 //    public void testListBuckets() throws Exception {
 //        Config config = new Config();
+//        config.tempDir = filesDir;
 //
-//        Uplink uplink = new Uplink(config, filesDir);
-//        try {
-//            Project project = uplink.openProject(VALID_SATELLITE_ADDRESS, VALID_API_KEY);
-//            try {
-//                BucketConfig bucketConfig = new BucketConfig();
-//                RedundancyScheme scheme = new RedundancyScheme();
-//                scheme.setRequiredShares((short) 4);
-//                scheme.setRepairShares((short) 6);
-//                scheme.setOptimalShares((short) 8);
-//                scheme.setTotalShares((short) 10);
-//                bucketConfig.setRedundancyScheme(scheme);
+//        try (Uplink uplink = new Uplink(config)){
+//            ApiKey apiKey = new ApiKey(VALID_API_KEY);
+//
+//            try (io.storj.Project project = uplink.openProject(VALID_SATELLITE_ADDRESS, apiKey)){
+//                io.storj.RedundancyScheme rs = new io.storj.RedundancyScheme(RedundancyAlgorithm.REEDSOLOMON, (short)4,(short)6,(short)8,(short) 10,256);
+//                io.storj.EncryptionParameters ep = new io.storj.EncryptionParameters(CipherSuite.AESGCM, 1024);
+//                io.storj.BucketConfig bucketConfig = new io.storj.BucketConfig(CipherSuite.AESGCM, ep, rs, 67108864);
 //
 //                Set<String> expectedBuckets = new HashSet<>();
 //                for (int i = 0; i < 10; i++) {
@@ -110,28 +111,25 @@ public class LibuplinkInstrumentedTest {
 //                }
 //
 //                BucketList bucketList = project.listBuckets("", 100);
-//                assertEquals(false, bucketList.more());
+//                assertEquals(false, bucketList.hasMore());
 //                String aa = "";
-//                for (int i = 0; i < bucketList.length(); i++) {
-//                    aa += bucketList.item(i).getName() + "|";
+//                for (int i = 0; i < bucketList.getLength(); i++) {
+//                    aa += bucketList.getItem(i).getName() + "|";
 //                }
 //
-//                assertEquals(aa, expectedBuckets.size(), bucketList.length());
+//                assertEquals(aa, expectedBuckets.size(), bucketList.getLength());
 //
 //                for (String bucket : expectedBuckets) {
 //                    project.deleteBucket(bucket);
 //                }
 //
 //                bucketList = project.listBuckets("", 1);
-//                assertEquals(false, bucketList.more());
-//                assertEquals(0, bucketList.length());
-//            } finally {
-//                project.close();
+//                assertEquals(false, bucketList.hasMore());
+//                assertEquals(0, bucketList.getLength());
 //            }
-//        } finally {
-//            uplink.close();
 //        }
 //    }
+
 //
 //    @Test
 //    public void testUploadDownloadInline() throws Exception {
