@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="61df3874-601d-454e-9bb7-e4f0fe523b8d" name="Default Changelist" comment="" />
+    <list default="true" id="61df3874-601d-454e-9bb7-e4f0fe523b8d" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/libuplink_android/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/libuplink_android/build.gradle" afterDir="false" />
+    </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -47,7 +49,7 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/libuplink_android/src/main/java/io/storj/BucketInfo.java">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="261">
@@ -56,6 +58,15 @@
                 <element signature="e#205#206#0" expanded="true" />
                 <element signature="e#232#233#0" expanded="true" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/libuplink_android/build.gradle">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="413">
+              <caret line="32" column="58" lean-forward="true" selection-start-line="32" selection-start-column="58" selection-end-line="32" selection-end-column="58" />
             </state>
           </provider>
         </entry>
@@ -79,6 +90,7 @@
       <list>
         <option value="$PROJECT_DIR$/libuplink_android/src/main/java/io/storj/Uplink.java" />
         <option value="$PROJECT_DIR$/libuplink_android/src/main/java/io/storj/BucketInfo.java" />
+        <option value="$PROJECT_DIR$/libuplink_android/build.gradle" />
       </list>
     </option>
   </component>
@@ -108,9 +120,7 @@
             </path>
             <path>
               <item name="android-libuplink" type="1abcf292:AndroidViewProjectNode" />
-              <item name="libuplink_android" type="feadf853:AndroidModuleNode" />
-              <item name="java" type="edd41e36:AndroidSourceTypeNode" />
-              <item name="storj" type="cbb59c9e:AndroidPsiDirectoryNode" />
+              <item name="Gradle Scripts" type="ae0cef3a:AndroidBuildScriptsGroupNode" />
             </path>
           </expand>
           <select />
@@ -281,6 +291,13 @@
             <element signature="e#205#206#0" expanded="true" />
             <element signature="e#232#233#0" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/libuplink_android/build.gradle">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="413">
+          <caret line="32" column="58" lean-forward="true" selection-start-line="32" selection-start-column="58" selection-end-line="32" selection-end-column="58" />
         </state>
       </provider>
     </entry>
