@@ -8,15 +8,12 @@ public class Uplink implements Closeable {
 	private io.storj.libuplink.mobile.Uplink uplink;
 	
 	public Uplink(Config config) throws StorjException {
-		io.storj.libuplink.mobile.Config cfg = new io.storj.libuplink.mobile.Config();
-		cfg.setMaxInlineSize(config.maxInlineSize);
-		cfg.setMaxMemory(config.maxMemory);
-		this.uplink = new io.storj.libuplink.mobile.Uplink(cfg, config.tempDir);
+		this.uplink = new io.storj.libuplink.mobile.Uplink(config.internal(), config.getTempDir());
 	}
 	
 	public Project openProject(String satelliteAddress, ApiKey apiKey) throws StorjException {
 		try {
-			io.storj.libuplink.mobile.Project proj = this.uplink.openProject(satelliteAddress, apiKey.serialize());
+			io.storj.libuplink.mobile.Project proj = uplink.openProject(satelliteAddress, apiKey.serialize());
 			return new Project(proj);
 		} catch (Exception e) {
 			throw ExceptionUtil.toStorjException(e);
@@ -25,7 +22,7 @@ public class Uplink implements Closeable {
 	
 	public void close() throws IOException {
 		try {
-			this.uplink.close();
+			uplink.close();
 		} catch (Exception e) {
 			throw new IOException(e);
 		}
