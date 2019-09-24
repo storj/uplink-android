@@ -5,15 +5,15 @@ public class BucketConfig {
 	private io.storj.libuplink.mobile.BucketConfig config;
 
 	public CipherSuite getPathCipher() {
-		return CipherSuite.fromValue(this.config.getPathCipher());
+		return CipherSuite.fromValue(config.getPathCipher());
 	}
 
 	public EncryptionParameters getEncryptionParameters() {
-		return new EncryptionParameters(this.config.getEncryptionParameters());
+		return new EncryptionParameters(config.getEncryptionParameters());
 	}
 	
 	io.storj.libuplink.mobile.BucketConfig internal() {
-		return this.config;
+		return config;
 	}
 
 	private BucketConfig(Builder builder) {

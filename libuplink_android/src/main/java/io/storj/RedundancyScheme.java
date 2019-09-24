@@ -5,27 +5,27 @@ public class RedundancyScheme {
 	private io.storj.libuplink.mobile.RedundancyScheme scheme;
 	
 	public RedundancyAlgorithm getAlgorithm() {
-		return RedundancyAlgorithm.fromValue(this.scheme.getAlgorithm());
+		return RedundancyAlgorithm.fromValue(scheme.getAlgorithm());
 	}
 
 	public short getRequiredShares() {
-		return this.scheme.getRequiredShares();
+		return scheme.getRequiredShares();
 	}
 	
 	public short getRepairShares() {
-		return this.scheme.getRepairShares();
+		return scheme.getRepairShares();
 	}
 	
 	public short getSuccessShares() {
-		return this.scheme.getOptimalShares();
+		return scheme.getOptimalShares();
 	}
 	
 	public short getTotalShares() {
-		return this.scheme.getTotalShares();
+		return scheme.getTotalShares();
 	}
 	
 	public int getShareSize() {
-		return this.scheme.getShareSize();
+		return scheme.getShareSize();
 	}
 
 	io.storj.libuplink.mobile.RedundancyScheme internal() {

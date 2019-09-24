@@ -12,13 +12,13 @@ public class Bucket implements Closeable {
 	}
 	
 	public String getName() {
-		return this.bucket.getName();
+		return bucket.getName();
 	}
 
 	@Override
 	public void close() throws IOException {
 		try {
-			this.bucket.close();
+			bucket.close();
 		} catch (Exception e) {
 			throw new IOException(e);
 		}

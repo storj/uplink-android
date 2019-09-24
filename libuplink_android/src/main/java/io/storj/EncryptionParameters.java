@@ -9,15 +9,15 @@ public class EncryptionParameters {
 	}
 	
 	public CipherSuite getCipher() {
-		return CipherSuite.fromValue(this.params.getCipherSuite());
+		return CipherSuite.fromValue(params.getCipherSuite());
 	}
 	
 	public int getBlockSize() {
-		return this.params.getBlockSize();
+		return params.getBlockSize();
 	}
 	
 	io.storj.libuplink.mobile.EncryptionParameters internal() {
-		return this.params;
+		return params;
 	}
 
 	private EncryptionParameters(Builder builder) {
