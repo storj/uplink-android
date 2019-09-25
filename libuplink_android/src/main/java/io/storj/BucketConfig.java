@@ -54,7 +54,7 @@ public class BucketConfig {
 		private long segmentsSize;
 
 		public Builder setPathCipher(CipherSuite cipher) {
-			this.pathCipher = pathCipher;
+			this.pathCipher = cipher;
 			return this;
 		}
 
