@@ -58,15 +58,28 @@ class ObjectIterator implements Iterator<ObjectInfo>, Iterable<ObjectInfo> {
 
     private void nextPage() throws StorjException {
         try {
+            ListDirection direction = options.getDirection();
             if (currentPage != null) {
                 cursor = currentPage.item(currentPage.length() - 1).getPath();
+                switch (options.getDirection()) {
+                    case BEFORE:
+                    case BACKWARD:
+                        direction = ListDirection.BEFORE;
+                        break;
+                    case FORWARD:
+                    case AFTER:
+                        direction = ListDirection.AFTER;
+                        break;
+                    default:
+                        throw new IllegalStateException(String.format("invalid direction: %d", options.getDirection()));
+                }
             }
             currentPage = bucket.listObjects(new ListOptions.Builder().
                     setPrefix(options.getPrefix()).
                     setCursor(cursor).
                     setDelimiter(options.getDelimiter()).
                     setRecursive(options.isRecursive()).
-                    setDirection(ListDirection.AFTER).
+                    setDirection(direction).
                     setPageSize(options.getPageSize()).
                     build().internal());
             pageIndex = 0;
