@@ -1,7 +1,5 @@
 package io.storj;
 
-import android.support.annotation.Nullable;
-
 import java.util.Date;
 
 class ObjectInfo {
@@ -49,7 +47,7 @@ class ObjectInfo {
     }
 
     @Override
-    public boolean equals(@Nullable Object obj) {
+    public boolean equals(Object obj) {
         if (!(obj instanceof ObjectInfo)) {
             return false;
         }

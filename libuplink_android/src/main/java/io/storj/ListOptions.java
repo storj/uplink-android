@@ -1,9 +1,5 @@
 package io.storj;
 
-import android.support.annotation.Nullable;
-
-import java.util.List;
-
 public class ListOptions {
 
 	private io.storj.libuplink.mobile.ListOptions options;
@@ -33,7 +29,7 @@ public class ListOptions {
 	}
 
 	@Override
-	public boolean equals(@Nullable Object obj) {
+	public boolean equals(Object obj) {
 		if (!(obj instanceof ListOptions)) {
 			return false;
 		}

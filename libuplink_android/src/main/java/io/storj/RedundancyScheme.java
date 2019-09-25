@@ -1,7 +1,5 @@
 package io.storj;
 
-import android.support.annotation.Nullable;
-
 public class RedundancyScheme {
 	
 	private io.storj.libuplink.mobile.RedundancyScheme scheme;
@@ -35,7 +33,7 @@ public class RedundancyScheme {
 	}
 
 	@Override
-	public boolean equals(@Nullable Object obj) {
+	public boolean equals(Object obj) {
 		if (!(obj instanceof RedundancyScheme)) {
 			return false;
 		}

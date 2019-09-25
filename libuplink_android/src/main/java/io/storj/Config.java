@@ -1,7 +1,5 @@
 package io.storj;
 
-import android.support.annotation.Nullable;
-
 public class Config {
 	
 	private io.storj.libuplink.mobile.Config config;
@@ -20,7 +18,7 @@ public class Config {
 	}
 
 	@Override
-	public boolean equals(@Nullable Object obj) {
+	public boolean equals(Object obj) {
 		if (!(obj instanceof Config)) {
 			return false;
 		}

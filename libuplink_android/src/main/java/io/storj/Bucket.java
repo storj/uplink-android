@@ -1,9 +1,6 @@
 package io.storj;
 
-import java.io.Closeable;
-import java.io.IOException;
-
-public class Bucket implements Closeable {
+public class Bucket implements AutoCloseable {
 	
 	private io.storj.libuplink.mobile.Bucket bucket;
 
@@ -23,16 +20,16 @@ public class Bucket implements Closeable {
 		try {
 			bucket.deleteObject(objectPath);
 		} catch (Exception e) {
-			ExceptionUtil.toStorjException(e);
+			throw ExceptionUtil.toStorjException(e);
 		}
 	}
 
 	@Override
-	public void close() throws IOException {
+	public void close() throws StorjException {
 		try {
 			bucket.close();
 		} catch (Exception e) {
-			throw new IOException(e);
+			throw ExceptionUtil.toStorjException(e);
 		}
 	}
 

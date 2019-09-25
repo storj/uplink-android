@@ -1,7 +1,5 @@
 package io.storj;
 
-import android.support.annotation.NonNull;
-
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
@@ -76,7 +74,6 @@ class BucketIterator implements Iterator<BucketInfo>, Iterable<BucketInfo> {
         }
     }
 
-    @NonNull
     @Override
     public Iterator<BucketInfo> iterator() {
         return this;
