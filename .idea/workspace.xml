@@ -2,12 +2,13 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="61df3874-601d-454e-9bb7-e4f0fe523b8d" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/libuplink_android/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/libuplink_android/build.gradle" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/libuplink_android/libuplink_android.iml" beforeDir="false" afterPath="$PROJECT_DIR$/libuplink_android/libuplink_android.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/libuplink_android/src/androidTest/java/io/storj/LibuplinkInstrumentedTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/libuplink_android/src/androidTest/java/io/storj/LibuplinkInstrumentedTest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/libuplink_android/src/main/java/io/storj/ListDirection.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/libuplink_android/src/main/java/io/storj/ListOptions.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/libuplink_android/src/main/java/io/storj/ObjectInfo.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/libuplink_android/src/main/java/io/storj/ObjectIterator.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/libuplink_android/src/main/java/io/storj/Bucket.java" beforeDir="false" afterPath="$PROJECT_DIR$/libuplink_android/src/main/java/io/storj/Bucket.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/libuplink_android/src/main/java/io/storj/EncryptionAccess.java" beforeDir="false" afterPath="$PROJECT_DIR$/libuplink_android/src/main/java/io/storj/EncryptionAccess.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libuplink_android/src/main/java/io/storj/BucketConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/libuplink_android/src/main/java/io/storj/BucketConfig.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libuplink_android/src/main/java/io/storj/BucketInfo.java" beforeDir="false" afterPath="$PROJECT_DIR$/libuplink_android/src/main/java/io/storj/BucketInfo.java" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -27,9 +28,10 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/libuplink_android/src/main/java/io/storj/Bucket.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="269">
-              <caret line="28" column="45" selection-start-line="28" selection-start-column="45" selection-end-line="28" selection-end-column="45" />
+            <state relative-caret-position="754">
+              <caret line="40" column="45" selection-start-line="40" selection-start-column="45" selection-end-line="40" selection-end-column="45" />
               <folding>
+                <element signature="imports" expanded="true" />
                 <element signature="e#275#276#0" expanded="true" />
                 <element signature="e#305#306#0" expanded="true" />
               </folding>
@@ -49,7 +51,7 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/libuplink_android/src/main/java/io/storj/WriterOptions.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="58">
+            <state relative-caret-position="-812">
               <caret line="2" column="13" selection-start-line="2" selection-start-column="13" selection-end-line="2" selection-end-column="13" />
               <folding>
                 <element signature="e#748#749#0" expanded="true" />
@@ -58,7 +60,7 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/libuplink_android/src/main/java/io/storj/Writer.java">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="638">
@@ -85,8 +87,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/libuplink_android/src/main/java/io/storj/Reader.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-149">
-              <caret line="1" lean-forward="true" selection-start-line="1" selection-end-line="1" />
+            <state relative-caret-position="145">
+              <caret line="5" column="6" selection-start-line="5" selection-start-column="6" selection-end-line="5" selection-end-column="6" />
               <folding>
                 <element signature="imports" expanded="true" />
                 <element signature="e#194#195#0" expanded="true" />
@@ -100,7 +102,7 @@
         <entry file="file://$USER_HOME$/Android/Sdk/sources/android-28/java/io/BufferedInputStream.java">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="633">
-              <caret line="270" column="43" lean-forward="true" selection-start-line="270" selection-start-column="37" selection-end-line="270" selection-end-column="43" />
+              <caret line="270" column="43" selection-start-line="270" selection-start-column="37" selection-end-line="270" selection-end-column="43" />
               <folding>
                 <element signature="e#7030#7031#0" expanded="true" />
                 <element signature="e#7075#7076#0" expanded="true" />
@@ -109,10 +111,10 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/libuplink_android/src/androidTest/java/io/storj/LibuplinkInstrumentedTest.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1213">
+            <state relative-caret-position="2291">
               <caret line="190" column="30" selection-start-line="190" selection-start-column="30" selection-end-line="190" selection-end-column="30" />
               <folding>
                 <element signature="imports" expanded="true" />
@@ -487,49 +489,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/libuplink_android/src/main/java/io/storj/WriterOptions.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="58">
-          <caret line="2" column="13" selection-start-line="2" selection-start-column="13" selection-end-line="2" selection-end-column="13" />
-          <folding>
-            <element signature="e#748#749#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/libuplink_android/src/main/java/io/storj/ReaderOptions.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="174">
-          <caret line="6" column="25" selection-start-line="6" selection-start-column="25" selection-end-line="6" selection-end-column="25" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/libuplink_android/src/main/java/io/storj/Bucket.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="269">
-          <caret line="28" column="45" selection-start-line="28" selection-start-column="45" selection-end-line="28" selection-end-column="45" />
-          <folding>
-            <element signature="e#275#276#0" expanded="true" />
-            <element signature="e#305#306#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$USER_HOME$/Android/Sdk/sources/android-28/java/io/InputStream.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="269">
           <caret line="64" column="24" selection-start-line="64" selection-start-column="24" selection-end-line="64" selection-end-column="24" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/libuplink_android/src/main/java/io/storj/EncryptionAccess.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="609">
-          <caret line="21" column="31" selection-start-line="21" selection-start-column="31" selection-end-line="21" selection-end-column="31" />
-          <folding>
-            <element signature="e#125#126#0" expanded="true" />
-            <element signature="e#194#195#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -546,7 +509,7 @@
     <entry file="file://$USER_HOME$/Android/Sdk/sources/android-28/java/io/BufferedInputStream.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="633">
-          <caret line="270" column="43" lean-forward="true" selection-start-line="270" selection-start-column="37" selection-end-line="270" selection-end-column="43" />
+          <caret line="270" column="43" selection-start-line="270" selection-start-column="37" selection-end-line="270" selection-end-column="43" />
           <folding>
             <element signature="e#7030#7031#0" expanded="true" />
             <element signature="e#7075#7076#0" expanded="true" />
@@ -554,24 +517,12 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/libuplink_android/src/main/java/io/storj/Reader.java">
+    <entry file="file://$PROJECT_DIR$/libuplink_android/src/main/java/io/storj/WriterOptions.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-149">
-          <caret line="1" lean-forward="true" selection-start-line="1" selection-end-line="1" />
+        <state relative-caret-position="-812">
+          <caret line="2" column="13" selection-start-line="2" selection-start-column="13" selection-end-line="2" selection-end-column="13" />
           <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="e#194#195#0" expanded="true" />
-            <element signature="e#220#221#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/libuplink_android/src/androidTest/java/io/storj/LibuplinkInstrumentedTest.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1213">
-          <caret line="190" column="30" selection-start-line="190" selection-start-column="30" selection-end-line="190" selection-end-column="30" />
-          <folding>
-            <element signature="imports" expanded="true" />
+            <element signature="e#748#749#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -580,6 +531,58 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="638">
           <caret line="22" column="59" selection-start-line="22" selection-start-column="59" selection-end-line="22" selection-end-column="59" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/libuplink_android/src/main/java/io/storj/ReaderOptions.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="174">
+          <caret line="6" column="25" selection-start-line="6" selection-start-column="25" selection-end-line="6" selection-end-column="25" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/libuplink_android/src/main/java/io/storj/Reader.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="145">
+          <caret line="5" column="6" selection-start-line="5" selection-start-column="6" selection-end-line="5" selection-end-column="6" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#194#195#0" expanded="true" />
+            <element signature="e#220#221#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/libuplink_android/src/main/java/io/storj/EncryptionAccess.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="609">
+          <caret line="21" column="31" selection-start-line="21" selection-start-column="31" selection-end-line="21" selection-end-column="31" />
+          <folding>
+            <element signature="e#125#126#0" expanded="true" />
+            <element signature="e#194#195#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/libuplink_android/src/main/java/io/storj/Bucket.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="754">
+          <caret line="40" column="45" selection-start-line="40" selection-start-column="45" selection-end-line="40" selection-end-column="45" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#275#276#0" expanded="true" />
+            <element signature="e#305#306#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/libuplink_android/src/androidTest/java/io/storj/LibuplinkInstrumentedTest.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="2291">
+          <caret line="190" column="30" selection-start-line="190" selection-start-column="30" selection-end-line="190" selection-end-column="30" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>
