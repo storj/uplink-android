@@ -3,8 +3,9 @@ package io.storj;
 import java.io.IOException;
 import java.io.OutputStream;
 
-class Writer extends OutputStream {
+class ObjectOutputStream extends OutputStream {
 
+    private Bucket bucket;
     private io.storj.libuplink.mobile.Writer writer;
 
     /**
@@ -16,7 +17,7 @@ class Writer extends OutputStream {
      * This is the internal byte array used for buffering output before
      * writing it.
      */
-    private byte[] buf;
+    private byte[] buf = new byte[DEFAULT_BUFFER_SIZE];
 
     /**
      * This is the number of bytes that are currently in the buffer and
@@ -25,9 +26,13 @@ class Writer extends OutputStream {
      */
     private int count;
 
-    Writer(io.storj.libuplink.mobile.Writer writer) {
-        this.writer = writer;
-        this.buf = new byte[DEFAULT_BUFFER_SIZE];
+    public ObjectOutputStream(Bucket bucket, String objectPath, UploadOptions options) throws StorjException {
+        this.bucket = bucket;
+        try {
+            this.writer = this.bucket.internal().newWriter(objectPath, options.internal());
+        } catch (Exception e) {
+            throw ExceptionUtil.toStorjException(e);
+        }
     }
 
     @Override

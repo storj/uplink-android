@@ -1,10 +1,10 @@
 package io.storj;
 
-public class WriterOptions {
+public class UploadOptions {
 
     private io.storj.libuplink.mobile.WriterOptions options;
 
-    private WriterOptions(Builder builder){
+    private UploadOptions(Builder builder){
         this.options = new io.storj.libuplink.mobile.WriterOptions();
         if (builder.contentType != null) {
             this.options.setContentType(builder.contentType);
@@ -48,8 +48,8 @@ public class WriterOptions {
             return this;
         }
 
-        public WriterOptions build() {
-            return new WriterOptions(this);
+        public UploadOptions build() {
+            return new UploadOptions(this);
         }
     }
 }

@@ -2,8 +2,6 @@ package io.storj;
 
 import java.io.Closeable;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 
 public class Bucket implements Closeable {
 	
@@ -29,24 +27,6 @@ public class Bucket implements Closeable {
 		}
 	}
 
-	public OutputStream newWriter(String objectName, WriterOptions options) throws StorjException {
-		try {
-			io.storj.libuplink.mobile.Writer writer  = this.bucket.newWriter(objectName, options.internal());
-			return new Writer(writer);
-		} catch (Exception e) {
-			throw ExceptionUtil.toStorjException(e);
-		}
-	}
-
-	public InputStream newReader(String objectName, ReaderOptions options) throws StorjException {
-		try {
-			io.storj.libuplink.mobile.Reader reader  = this.bucket.newReader(objectName, options.internal());
-			return new Reader(reader);
-		} catch (Exception e) {
-			throw ExceptionUtil.toStorjException(e);
-		}
-	}
-
 	@Override
 	public void close() throws IOException {
 		try {
@@ -54,6 +34,10 @@ public class Bucket implements Closeable {
 		} catch (Exception e) {
 			throw new IOException(e);
 		}
+	}
+
+	io.storj.libuplink.mobile.Bucket internal() {
+		return bucket;
 	}
 
 }

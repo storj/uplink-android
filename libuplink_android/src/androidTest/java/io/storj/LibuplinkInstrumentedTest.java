@@ -164,7 +164,7 @@ public class LibuplinkInstrumentedTest {
 
                     String objectPath = "object/path";
                     {
-                        WriterOptions options = new WriterOptions.Builder().build();
+                        UploadOptions options = new UploadOptions.Builder().build();
                         try (OutputStream writer = bucket.newWriter(objectPath, options)) {
                             writer.write(expectedData);
                             writer.flush();
@@ -222,7 +222,7 @@ public class LibuplinkInstrumentedTest {
 //                Random random = new Random();
 //                random.nextBytes(expectedData);
 //                {
-//                    Writer writer = bucket.newWriter("object/path", new WriterOptions());
+//                    ObjectOutputStream writer = bucket.newWriter("object/path", new UploadOptions());
 //                    try {
 //                        writer.write(expectedData, 0, expectedData.length);
 //                    } finally {
@@ -231,7 +231,7 @@ public class LibuplinkInstrumentedTest {
 //                }
 //
 //                {
-//                    Reader reader = bucket.newReader("object/path", new ReaderOptions());
+//                    ObjectInputStream reader = bucket.newReader("object/path", new ReaderOptions());
 //                    try {
 //                        ByteArrayOutputStream writer = new ByteArrayOutputStream();
 //                        byte[] buf = new byte[4096];
@@ -292,7 +292,7 @@ public class LibuplinkInstrumentedTest {
 //                long before = System.currentTimeMillis();
 //
 //                for (int i = 0; i < 13; i++) {
-//                    Writer writer = bucket.newWriter("path" + i, new WriterOptions());
+//                    ObjectOutputStream writer = bucket.newWriter("path" + i, new UploadOptions());
 //                    try {
 //                        byte[] buf = new byte[0];
 //                        writer.write(buf, 0, buf.length);

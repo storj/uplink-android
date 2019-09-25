@@ -3,24 +3,28 @@ package io.storj;
 import java.io.IOException;
 import java.io.InputStream;
 
-class Reader extends InputStream {
+class ObjectInputStream extends InputStream {
 
     private io.storj.libuplink.mobile.Reader reader;
+    private byte[] buf = new byte[1];
 
-    Reader(io.storj.libuplink.mobile.Reader reader) {
-        this.reader=reader;
+    public ObjectInputStream(Bucket bucket, String objectPath) throws StorjException {
+        try {
+            this.reader = bucket.internal().newReader(objectPath, new io.storj.libuplink.mobile.ReaderOptions());
+        } catch (Exception e) {
+            throw ExceptionUtil.toStorjException(e);
+        }
     }
 
     @Override
     public int read() throws IOException {
-        byte[] buf = new byte[1];
         try {
             int n = reader.read(buf);
             if (n == -1) {
                 return n;
             }
             if (n == 1) {
-                return buf[0]& 0xff;
+                return buf[0] & 0xff;
             }
             throw new IOException("invalid state");
         } catch (Exception e) {
