@@ -2,6 +2,8 @@ package io.storj;
 
 import android.support.annotation.Nullable;
 
+import java.util.Date;
+
 public class BucketInfo {
 
 	private io.storj.libuplink.mobile.BucketInfo info;
@@ -14,8 +16,8 @@ public class BucketInfo {
 		return info.getName();
 	}
 
-	public long getCreated() {
-		return info.getCreated();
+	public Date getCreated() {
+		return new Date(info.getCreated());
 	}
 
 	public CipherSuite getPathCipher() {
