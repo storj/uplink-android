@@ -166,16 +166,14 @@ public class LibuplinkInstrumentedTest {
                     String objectPath = "object/path";
                     {
                         UploadOptions options = new UploadOptions.Builder().build();
-                        try (OutputStream writer = bucket.newWriter(objectPath, options)) {
-                            writer.write(expectedData);
-                            writer.flush();
-
+                        try (OutputStream oos = new ObjectOutputStream(bucket, objectPath, options)) {
+                            oos.write(expectedData);
+                            oos.flush();
                         }
                     }
 
                     {
-                        ReaderOptions options = new ReaderOptions.Builder().build();
-                        try (InputStream is = bucket.newReader(objectPath, options)) {
+                        try (InputStream is = new ObjectInputStream(bucket, objectPath)) {
                             BufferedInputStream bis = new BufferedInputStream(is);
 
                             ByteArrayOutputStream writer = new ByteArrayOutputStream();
@@ -228,17 +226,15 @@ public class LibuplinkInstrumentedTest {
 
                     String objectPath = "object/path";
                     {
-                        WriterOptions options = new WriterOptions.Builder().build();
-                        try (OutputStream writer = bucket.newWriter(objectPath, options)) {
-                            writer.write(expectedData);
-                            writer.flush();
-
+                        UploadOptions options = new UploadOptions.Builder().build();
+                        try (OutputStream oos = new ObjectOutputStream(bucket, objectPath, options)) {
+                            oos.write(expectedData);
+                            oos.flush();
                         }
                     }
 
                     {
-                        ReaderOptions options = new ReaderOptions.Builder().build();
-                        try (InputStream is = bucket.newReader(objectPath, options)) {
+                        try (InputStream is = new ObjectInputStream(bucket, objectPath)) {
                             BufferedInputStream bis = new BufferedInputStream(is);
 
                             ByteArrayOutputStream writer = new ByteArrayOutputStream();
