@@ -17,10 +17,6 @@ class BucketIterator implements Iterator<BucketInfo>, Iterable<BucketInfo> {
     private int pageIndex = 0;
 
     BucketIterator(Project project, String cursor, int pageSize) throws StorjException {
-        if (cursor == null) {
-            cursor = "";
-        }
-
         this.project = project;
         this.cursor = cursor;
         this.pageSize = pageSize;

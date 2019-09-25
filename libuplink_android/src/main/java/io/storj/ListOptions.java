@@ -72,17 +72,11 @@ public class ListOptions {
 		private int pageSize;
 
 		public Builder setPrefix(String prefix) {
-			if (prefix == null) {
-				prefix = "";
-			}
 			this.prefix = prefix;
 			return this;
 		}
 
 		public Builder setCursor(String cursor) {
-			if (cursor == null) {
-				cursor = "";
-			}
 			this.cursor = cursor;
 			return this;
 		}
