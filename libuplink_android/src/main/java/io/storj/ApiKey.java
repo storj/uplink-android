@@ -17,7 +17,7 @@ public class ApiKey implements Serializable {
 	}
 	
 	public String serialize() {
-		return this.apiKey.serialize();
+		return apiKey.serialize();
 	}
 
 }

@@ -1,31 +1,51 @@
 package io.storj;
 
+import android.support.annotation.Nullable;
+
 public class RedundancyScheme {
 	
 	private io.storj.libuplink.mobile.RedundancyScheme scheme;
+
+	RedundancyScheme(io.storj.libuplink.mobile.RedundancyScheme scheme) {
+		this.scheme = scheme;
+	}
 	
 	public RedundancyAlgorithm getAlgorithm() {
-		return RedundancyAlgorithm.fromValue(this.scheme.getAlgorithm());
+		return RedundancyAlgorithm.fromValue(scheme.getAlgorithm());
 	}
 
 	public short getRequiredShares() {
-		return this.scheme.getRequiredShares();
+		return scheme.getRequiredShares();
 	}
 	
 	public short getRepairShares() {
-		return this.scheme.getRepairShares();
+		return scheme.getRepairShares();
 	}
 	
 	public short getSuccessShares() {
-		return this.scheme.getOptimalShares();
+		return scheme.getOptimalShares();
 	}
 	
 	public short getTotalShares() {
-		return this.scheme.getTotalShares();
+		return scheme.getTotalShares();
 	}
 	
 	public int getShareSize() {
-		return this.scheme.getShareSize();
+		return scheme.getShareSize();
+	}
+
+	@Override
+	public boolean equals(@Nullable Object obj) {
+		if (!(obj instanceof RedundancyScheme)) {
+			return false;
+		}
+		RedundancyScheme that = (RedundancyScheme) obj;
+		return scheme.equals(that.scheme);
+	}
+
+	@Override
+	public int hashCode() {
+		return scheme.hashCode();
 	}
 
 	io.storj.libuplink.mobile.RedundancyScheme internal() {

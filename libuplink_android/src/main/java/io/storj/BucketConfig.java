@@ -1,19 +1,35 @@
 package io.storj;
 
+import android.support.annotation.Nullable;
+
 public class BucketConfig {
 	
 	private io.storj.libuplink.mobile.BucketConfig config;
 
 	public CipherSuite getPathCipher() {
-		return CipherSuite.fromValue(this.config.getPathCipher());
+		return CipherSuite.fromValue(config.getPathCipher());
 	}
 
 	public EncryptionParameters getEncryptionParameters() {
-		return new EncryptionParameters(this.config.getEncryptionParameters());
+		return new EncryptionParameters(config.getEncryptionParameters());
+	}
+
+	@Override
+	public boolean equals(@Nullable Object obj) {
+		if (!(obj instanceof BucketConfig)) {
+			return false;
+		}
+		BucketConfig that = (BucketConfig) obj;
+		return config.equals(that.config);
+	}
+
+	@Override
+	public int hashCode() {
+		return config.hashCode();
 	}
 	
 	io.storj.libuplink.mobile.BucketConfig internal() {
-		return this.config;
+		return config;
 	}
 
 	private BucketConfig(Builder builder) {
@@ -61,5 +77,4 @@ public class BucketConfig {
 			return new BucketConfig(this);
 		}
 	}
-
 }

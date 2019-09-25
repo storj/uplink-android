@@ -1,5 +1,7 @@
 package io.storj;
 
+import android.support.annotation.Nullable;
+
 public class EncryptionParameters {
 
 	private io.storj.libuplink.mobile.EncryptionParameters params;
@@ -9,15 +11,29 @@ public class EncryptionParameters {
 	}
 	
 	public CipherSuite getCipher() {
-		return CipherSuite.fromValue(this.params.getCipherSuite());
+		return CipherSuite.fromValue(params.getCipherSuite());
 	}
 	
 	public int getBlockSize() {
-		return this.params.getBlockSize();
+		return params.getBlockSize();
 	}
-	
+
+	@Override
+	public boolean equals(@Nullable Object obj) {
+		if (!(obj instanceof EncryptionParameters)) {
+			return false;
+		}
+		EncryptionParameters that = (EncryptionParameters) obj;
+		return params.equals(that.params);
+	}
+
+	@Override
+	public int hashCode() {
+		return params.hashCode();
+	}
+
 	io.storj.libuplink.mobile.EncryptionParameters internal() {
-		return this.params;
+		return params;
 	}
 
 	private EncryptionParameters(Builder builder) {

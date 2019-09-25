@@ -14,7 +14,7 @@ public class Project implements Closeable {
 	
 	public BucketInfo createBucket(String bucketName, BucketConfig config) throws StorjException {
 		try {
-			io.storj.libuplink.mobile.BucketInfo info = this.project.createBucket(bucketName, config.internal());
+			io.storj.libuplink.mobile.BucketInfo info = project.createBucket(bucketName, config.internal());
 			return new BucketInfo(info);
 		} catch (Exception e) {
 			throw ExceptionUtil.toStorjException(e);
@@ -23,7 +23,7 @@ public class Project implements Closeable {
 	
 	public Bucket openBucket(String bucketName, EncryptionAccess access) throws StorjException {
 		try {
-			io.storj.libuplink.mobile.Bucket bucket = this.project.openBucket(bucketName, access.access);
+			io.storj.libuplink.mobile.Bucket bucket = project.openBucket(bucketName, access.access);
 			return new Bucket(bucket);
 		} catch (Exception e) {
 			throw ExceptionUtil.toStorjException(e);
@@ -32,7 +32,7 @@ public class Project implements Closeable {
 	
 	public BucketInfo getBucketInfo(String bucketName) throws StorjException {
 		try {
-			io.storj.libuplink.mobile.BucketInfo info = this.project.getBucketInfo(bucketName);
+			io.storj.libuplink.mobile.BucketInfo info = project.getBucketInfo(bucketName);
 			return new BucketInfo(info);
 		} catch (Exception e) {
 			throw ExceptionUtil.toStorjException(e);
@@ -52,12 +52,12 @@ public class Project implements Closeable {
 	}
 	
 	public Iterable<BucketInfo> listBuckets(String cursor, final int pageSize) throws StorjException {
-		return new BucketIterator(this.project, cursor, pageSize);
+		return new BucketIterator(project, cursor, pageSize);
 	}
 	
 	public void deleteBucket(String bucketName) throws StorjException {
 		try {
-			this.project.deleteBucket(bucketName);
+			project.deleteBucket(bucketName);
 		} catch (Exception e) {
 			throw ExceptionUtil.toStorjException(e);
 		}
@@ -66,7 +66,7 @@ public class Project implements Closeable {
 	@Override
 	public void close() throws IOException {
 		try {
-			this.project.close();
+			project.close();
 		} catch (Exception e) {
 			throw new IOException(e);
 		}
