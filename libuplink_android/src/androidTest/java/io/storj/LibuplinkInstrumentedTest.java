@@ -12,6 +12,7 @@ import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Random;
@@ -39,13 +40,13 @@ public class LibuplinkInstrumentedTest {
         try (io.storj.Uplink uplink = new io.storj.Uplink(config)) {
             io.storj.ApiKey apiKey = new io.storj.ApiKey(VALID_API_KEY);
 
-            try (io.storj.Project project = uplink.openProject(VALID_SATELLITE_ADDRESS, apiKey)){
+            try (io.storj.Project project = uplink.openProject(VALID_SATELLITE_ADDRESS, apiKey)) {
                 String expectedBucket = "test-bucket";
                 io.storj.RedundancyScheme rs = new RedundancyScheme.Builder().
-                        setRequiredShares((short)4).
-                        setRepairShares((short)6).
-                        setSuccessShares((short)8).
-                        setTotalShares((short)10).
+                        setRequiredShares((short) 4).
+                        setRepairShares((short) 6).
+                        setSuccessShares((short) 8).
+                        setTotalShares((short) 10).
                         build();
 
                 io.storj.BucketConfig bucketConfig = new BucketConfig.Builder()
@@ -71,15 +72,15 @@ public class LibuplinkInstrumentedTest {
     public void testListBuckets() throws Exception {
         Config config = new Config.Builder().setTempDir(filesDir).build();
 
-        try (Uplink uplink = new Uplink(config)){
+        try (Uplink uplink = new Uplink(config)) {
             ApiKey apiKey = new ApiKey(VALID_API_KEY);
 
-            try (io.storj.Project project = uplink.openProject(VALID_SATELLITE_ADDRESS, apiKey)){
+            try (io.storj.Project project = uplink.openProject(VALID_SATELLITE_ADDRESS, apiKey)) {
                 io.storj.RedundancyScheme rs = new RedundancyScheme.Builder().
-                        setRequiredShares((short)4).
-                        setRepairShares((short)6).
-                        setSuccessShares((short)8).
-                        setTotalShares((short)10).
+                        setRequiredShares((short) 4).
+                        setRepairShares((short) 6).
+                        setSuccessShares((short) 8).
+                        setTotalShares((short) 10).
                         build();
 
                 io.storj.BucketConfig bucketConfig = new BucketConfig.Builder()
@@ -95,7 +96,7 @@ public class LibuplinkInstrumentedTest {
                 Iterable<BucketInfo> buckets = project.listBuckets("", 2);
                 String allBuckets = "";
                 int numOfBuckets = 0;
-                for (BucketInfo bucket: buckets) {
+                for (BucketInfo bucket : buckets) {
                     allBuckets += bucket.getName() + "|";
                     numOfBuckets++;
                 }
@@ -140,13 +141,13 @@ public class LibuplinkInstrumentedTest {
         try (io.storj.Uplink uplink = new io.storj.Uplink(config)) {
             io.storj.ApiKey apiKey = new io.storj.ApiKey(VALID_API_KEY);
 
-            try (io.storj.Project project = uplink.openProject(VALID_SATELLITE_ADDRESS, apiKey)){
+            try (io.storj.Project project = uplink.openProject(VALID_SATELLITE_ADDRESS, apiKey)) {
                 String expectedBucket = "test-bucket";
                 io.storj.RedundancyScheme rs = new RedundancyScheme.Builder().
-                        setRequiredShares((short)4).
-                        setRepairShares((short)6).
-                        setSuccessShares((short)8).
-                        setTotalShares((short)10).
+                        setRequiredShares((short) 4).
+                        setRepairShares((short) 6).
+                        setSuccessShares((short) 8).
+                        setTotalShares((short) 10).
                         build();
 
                 io.storj.BucketConfig bucketConfig = new BucketConfig.Builder()
@@ -186,146 +187,142 @@ public class LibuplinkInstrumentedTest {
                             assertArrayEquals(expectedData, writer.toByteArray());
                         }
                     }
+
+                    bucket.deleteObject(objectPath);
                 }
 
                 project.deleteBucket(expectedBucket);
             }
         }
     }
-//
-//
-//    @Test
-//    public void testUploadDownloadDeleteRemote() throws Exception {
-//        Config config = new Config();
-//
-//        Uplink uplink = new Uplink(config, filesDir);
-//        try {
-//            Project project = uplink.openProject(VALID_SATELLITE_ADDRESS, VALID_API_KEY);
-//            try {
-//                EncryptionAccess access = new EncryptionAccess();
-//                access.setDefaultKey("TestEncryptionKey".getBytes());
-//
-//                RedundancyScheme scheme = new RedundancyScheme();
-//                scheme.setRequiredShares((short) 4);
-//                scheme.setRepairShares((short) 6);
-//                scheme.setOptimalShares((short) 8);
-//                scheme.setTotalShares((short) 10);
-//
-//                BucketConfig bucketConfig = new BucketConfig();
-//                bucketConfig.setRedundancyScheme(scheme);
-//
-//                project.createBucket("test", bucketConfig);
-//
-//                Bucket bucket = project.openBucket("test", access);
-//
-//                byte[] expectedData = new byte[2 * 1024 * 1024];
-//                Random random = new Random();
-//                random.nextBytes(expectedData);
-//                {
-//                    ObjectOutputStream writer = bucket.newWriter("object/path", new UploadOptions());
-//                    try {
-//                        writer.write(expectedData, 0, expectedData.length);
-//                    } finally {
-//                        writer.close();
-//                    }
-//                }
-//
-//                {
-//                    ObjectInputStream reader = bucket.newReader("object/path", new ReaderOptions());
-//                    try {
-//                        ByteArrayOutputStream writer = new ByteArrayOutputStream();
-//                        byte[] buf = new byte[4096];
-//                        int read = 0;
-//                        while ((read = reader.read(buf)) != -1) {
-//                            writer.write(buf, 0, read);
-//                        }
-//                        assertEquals(expectedData.length, writer.size());
-//                    } finally {
-//                        reader.close();
-//                    }
-//                }
-//
-//                bucket.deleteObject("object/path");
-//
-//                try {
-//                    bucket.deleteObject("object/path");
-//                } catch (Exception e) {
-//                    assertTrue(e.getMessage().startsWith("object not found"));
-//                }
-//
-//                bucket.close();
-//
-//                project.deleteBucket("test");
-//            } finally {
-//                project.close();
-//            }
-//        } finally {
-//            uplink.close();
-//        }
-//    }
-//
+
+
+    @Test
+    public void testUploadDownloadDeleteRemote() throws Exception {
+        Config config = new Config.Builder().setTempDir(filesDir).build();
+
+        try (io.storj.Uplink uplink = new io.storj.Uplink(config)) {
+            io.storj.ApiKey apiKey = new io.storj.ApiKey(VALID_API_KEY);
+
+            try (io.storj.Project project = uplink.openProject(VALID_SATELLITE_ADDRESS, apiKey)) {
+                String expectedBucket = "test-bucket";
+                io.storj.RedundancyScheme rs = new RedundancyScheme.Builder().
+                        setRequiredShares((short) 4).
+                        setRepairShares((short) 6).
+                        setSuccessShares((short) 8).
+                        setTotalShares((short) 10).
+                        build();
+
+                io.storj.BucketConfig bucketConfig = new BucketConfig.Builder()
+                        .setRedundancyScheme(rs).build();
+
+                project.createBucket(expectedBucket, bucketConfig);
+
+                EncryptionAccess access = new EncryptionAccess();
+                access.setDefaultKey("TestEncryptionKey".getBytes());
+
+                try (Bucket bucket = project.openBucket(expectedBucket, access)) {
+                    byte[] expectedData = new byte[2 * 1024 * 1024];
+                    Random random = new Random();
+                    random.nextBytes(expectedData);
+
+                    String objectPath = "object/path";
+                    {
+                        WriterOptions options = new WriterOptions.Builder().build();
+                        try (OutputStream writer = bucket.newWriter(objectPath, options)) {
+                            writer.write(expectedData);
+                            writer.flush();
+
+                        }
+                    }
+
+                    {
+                        ReaderOptions options = new ReaderOptions.Builder().build();
+                        try (InputStream is = bucket.newReader(objectPath, options)) {
+                            BufferedInputStream bis = new BufferedInputStream(is);
+
+                            ByteArrayOutputStream writer = new ByteArrayOutputStream();
+                            byte[] buf = new byte[512];
+                            int read;
+                            while ((read = bis.read(buf)) != -1) {
+                                writer.write(buf, 0, read);
+                            }
+                            assertArrayEquals(expectedData, writer.toByteArray());
+                        }
+                    }
+
+                    bucket.deleteObject(objectPath);
+
+                    try {
+                        bucket.deleteObject(objectPath);
+                    } catch (StorjException e) {
+                        assertTrue(e.getMessage().startsWith("object not found"));
+                    }
+                }
+
+                project.deleteBucket(expectedBucket);
+            }
+        }
+    }
+
 //    @Test
 //    public void testListObjects() throws Exception {
-//        Config config = new Config();
+//        Config config = new Config.Builder().setTempDir(filesDir).build();
 //
-//        Uplink uplink = new Uplink(config, filesDir);
-//        try {
-//            Project project = uplink.openProject(VALID_SATELLITE_ADDRESS, VALID_API_KEY);
+//        try (io.storj.Uplink uplink = new io.storj.Uplink(config)) {
+//            io.storj.ApiKey apiKey = new io.storj.ApiKey(VALID_API_KEY);
 //
-//            try {
+//            try (io.storj.Project project = uplink.openProject(VALID_SATELLITE_ADDRESS, apiKey)) {
+//                String expectedBucket = "test-bucket";
+//                io.storj.RedundancyScheme rs = new RedundancyScheme.Builder().
+//                        setRequiredShares((short) 4).
+//                        setRepairShares((short) 6).
+//                        setSuccessShares((short) 8).
+//                        setTotalShares((short) 10).
+//                        build();
+//
+//                io.storj.BucketConfig bucketConfig = new BucketConfig.Builder()
+//                        .setRedundancyScheme(rs).build();
+//
+//                project.createBucket(expectedBucket, bucketConfig);
+//
 //                EncryptionAccess access = new EncryptionAccess();
 //                access.setDefaultKey("TestEncryptionKey".getBytes());
 //
-//                BucketConfig bucketConfig = new BucketConfig();
-//                RedundancyScheme scheme = new RedundancyScheme();
-//                scheme.setRequiredShares((short) 4);
-//                scheme.setRepairShares((short) 6);
-//                scheme.setOptimalShares((short) 8);
-//                scheme.setTotalShares((short) 10);
-//                bucketConfig.setRedundancyScheme(scheme);
+//                try (Bucket bucket = project.openBucket(expectedBucket, access)) {
+//                    long before = System.currentTimeMillis();
 //
-//                BucketInfo bucketInfo = project.createBucket("test-bucket", bucketConfig);
-//                assertEquals("test-bucket", bucketInfo.getName());
+//                    for (int i = 0; i < 13; i++) {
+//                        WriterOptions options = new WriterOptions.Builder().build();
+//                        try (OutputStream writer = bucket.newWriter("object/path" + i, options)) {
+//                            writer.write(new byte[0]);
+//                            writer.flush();
+//                        }
 //
-//                Bucket bucket = project.openBucket("test-bucket", access);
-//
-//                long before = System.currentTimeMillis();
-//
-//                for (int i = 0; i < 13; i++) {
-//                    ObjectOutputStream writer = bucket.newWriter("path" + i, new UploadOptions());
-//                    try {
-//                        byte[] buf = new byte[0];
-//                        writer.write(buf, 0, buf.length);
-//                    } finally {
-//                        writer.close();
+//                        ReaderOptions roptions = new ReaderOptions.Builder().build();
+//                        try (InputStream is = bucket.newReader("object/path" + i, roptions)) {
+//                        }
 //                    }
+//
+//                    ListOptions listOptions = new ListOptions.Builder().setPrefix("").setCursor("").
+//                            setDirection(ListDirection.AFTER).setPageSize(20).build();
+//
+//
+//                    Iterable<ObjectInfo> list = bucket.listObjects(listOptions);
+//                    int index = 0;
+//                    for (ObjectInfo info : list) {
+//                        assertEquals(expectedBucket, info.getBucket());
+//                        assertTrue(info.getCreated().getTime() >= before);
+//
+//                        // cleanup
+//                        bucket.deleteObject("object/path" + index);
+//                        index++;
+//                    }
+//                    assertEquals(13, index);
+//
+//                    project.deleteBucket(expectedBucket);
 //                }
-//
-//                ListOptions listOptions = new ListOptions();
-//                listOptions.setCursor("");
-//                listOptions.setDirection(Mobile.DirectionForward);
-//                listOptions.setLimit(20);
-//
-//                ObjectList list = bucket.listObjects(listOptions);
-//                assertEquals(13, list.length());
-//
-//                for (int i = 0; i < list.length(); i++) {
-//                    ObjectInfo info = list.item(i);
-//                    assertEquals("test-bucket", info.getBucket());
-//                    assertTrue(info.getCreated() >= before);
-//
-//                    // cleanup
-//                    bucket.deleteObject("path" + i);
-//                }
-//
-//                bucket.close();
-//
-//                project.deleteBucket("test-bucket");
-//            } finally {
-//                project.close();
 //            }
-//        } finally {
-//            uplink.close();
 //        }
 //    }
 //

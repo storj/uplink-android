@@ -3,7 +3,7 @@ package io.storj;
 import java.io.Closeable;
 import java.io.IOException;
 
-public class Uplink implements Closeable {
+public class Uplink implements AutoCloseable {
 	
 	private io.storj.libuplink.mobile.Uplink uplink;
 	
@@ -20,11 +20,11 @@ public class Uplink implements Closeable {
 		}
 	}
 	
-	public void close() throws IOException {
+	public void close() throws StorjException {
 		try {
 			uplink.close();
 		} catch (Exception e) {
-			throw new IOException(e);
+			throw ExceptionUtil.toStorjException(e);
 		}
 	}
 
