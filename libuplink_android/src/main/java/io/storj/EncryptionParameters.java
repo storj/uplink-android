@@ -1,7 +1,5 @@
 package io.storj;
 
-import android.support.annotation.Nullable;
-
 public class EncryptionParameters {
 
 	private io.storj.libuplink.mobile.EncryptionParameters params;
@@ -19,7 +17,7 @@ public class EncryptionParameters {
 	}
 
 	@Override
-	public boolean equals(@Nullable Object obj) {
+	public boolean equals(Object obj) {
 		if (!(obj instanceof EncryptionParameters)) {
 			return false;
 		}

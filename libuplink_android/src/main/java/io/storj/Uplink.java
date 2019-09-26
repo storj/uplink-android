@@ -1,8 +1,5 @@
 package io.storj;
 
-import java.io.Closeable;
-import java.io.IOException;
-
 public class Uplink implements AutoCloseable {
 	
 	private io.storj.libuplink.mobile.Uplink uplink;

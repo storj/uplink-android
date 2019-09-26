@@ -1,7 +1,5 @@
 package io.storj;
 
-import io.storj.libuplink.mobile.Mobile;
-
 public enum ListDirection {
 	BEFORE((byte) -2),
 	BACKWARD((byte) -1),

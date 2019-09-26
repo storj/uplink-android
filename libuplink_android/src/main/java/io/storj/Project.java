@@ -1,10 +1,6 @@
 package io.storj;
 
-import java.io.Closeable;
-import java.io.IOException;
-import java.util.Iterator;
-
-public class Project implements Closeable {
+public class Project implements AutoCloseable {
 	
 	private io.storj.libuplink.mobile.Project project;
 	
@@ -64,11 +60,11 @@ public class Project implements Closeable {
 	}
 
 	@Override
-	public void close() throws IOException {
+	public void close() throws StorjException {
 		try {
 			project.close();
 		} catch (Exception e) {
-			throw new IOException(e);
+			throw ExceptionUtil.toStorjException(e);
 		}
 	}
 

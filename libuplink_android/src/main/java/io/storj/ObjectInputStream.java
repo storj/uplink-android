@@ -10,10 +10,15 @@ class ObjectInputStream extends InputStream {
 
     public ObjectInputStream(Bucket bucket, String objectPath) throws StorjException {
         try {
+            // TODO use bucket.internal().download()
             this.reader = bucket.internal().newReader(objectPath, new io.storj.libuplink.mobile.ReaderOptions());
         } catch (Exception e) {
             throw ExceptionUtil.toStorjException(e);
         }
+    }
+
+    public ObjectInputStream(Bucket bucket, String objectPath, int offset, int length) throws StorjException {
+        // TODO use bucket.internal().downloadRange()
     }
 
     @Override

@@ -1,7 +1,5 @@
 package io.storj;
 
-import android.support.annotation.Nullable;
-
 public class BucketConfig {
 	
 	private io.storj.libuplink.mobile.BucketConfig config;
@@ -15,7 +13,7 @@ public class BucketConfig {
 	}
 
 	@Override
-	public boolean equals(@Nullable Object obj) {
+	public boolean equals(Object obj) {
 		if (!(obj instanceof BucketConfig)) {
 			return false;
 		}
