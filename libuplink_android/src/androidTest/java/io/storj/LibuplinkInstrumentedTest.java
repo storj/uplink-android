@@ -2,6 +2,7 @@ package io.storj;
 
 import android.support.test.InstrumentationRegistry;
 import android.support.test.runner.AndroidJUnit4;
+import android.util.Log;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -18,13 +19,14 @@ import java.util.Iterator;
 import java.util.Random;
 import java.util.Set;
 
+
 import static org.junit.Assert.*;
 
 @RunWith(AndroidJUnit4.class)
 public class LibuplinkInstrumentedTest {
 
-    public static final String VALID_SATELLITE_ADDRESS = InstrumentationRegistry.getArguments().getString("storj.sim.host", "192.168.8.134:10000");
-    public static final String VALID_API_KEY = InstrumentationRegistry.getArguments().getString("api.key", "GBK6TEMIPJQUOVVN99C2QO9USKTU26QB6C4VNM0=");
+    public static final String VALID_SATELLITE_ADDRESS = InstrumentationRegistry.getArguments().getString("storj.sim.host", "172.19.48.151:10000");
+    public static final String VALID_API_KEY = InstrumentationRegistry.getArguments().getString("api.key", "13Yqed8J5EKXUkJV8qbaxcoWbkXsqBREXEMv48fFMjZs5GY5gmjynfDsjs9YhwsSBLc9eWfd7riYcsAvimTpLKqp2npGX7NpFUj4wiH");
 
     String filesDir;
 
@@ -126,11 +128,11 @@ public class LibuplinkInstrumentedTest {
                 setMaxMemory(2).setTempDir("temp").build();
         assertEquals(c1, c2);
 
-//        c1 = new Config.Builder().setMaxInlineSize(1).
-//                setMaxMemory(2).setTempDir("temp").build();
-//        c2 = new Config.Builder().setMaxInlineSize(1).
-//                setMaxMemory(3).setTempDir("temp").build();
-//        assertNotEquals(c1, c2);
+        c1 = new Config.Builder().setMaxInlineSize(1).
+                setMaxMemory(2).setTempDir("temp").build();
+        c2 = new Config.Builder().setMaxInlineSize(1).
+                setMaxMemory(2).setTempDir("temp3").build();
+        assertNotEquals(c1, c2);
     }
 
 
@@ -262,65 +264,65 @@ public class LibuplinkInstrumentedTest {
     }
 
 //    @Test
-//    public void testListObjects() throws Exception {
-//        Config config = new Config.Builder().setTempDir(filesDir).build();
-//
-//        try (io.storj.Uplink uplink = new io.storj.Uplink(config)) {
-//            io.storj.ApiKey apiKey = new io.storj.ApiKey(VALID_API_KEY);
-//
-//            try (io.storj.Project project = uplink.openProject(VALID_SATELLITE_ADDRESS, apiKey)) {
-//                String expectedBucket = "test-bucket";
-//                io.storj.RedundancyScheme rs = new RedundancyScheme.Builder().
-//                        setRequiredShares((short) 4).
-//                        setRepairShares((short) 6).
-//                        setSuccessShares((short) 8).
-//                        setTotalShares((short) 10).
-//                        build();
-//
-//                io.storj.BucketConfig bucketConfig = new BucketConfig.Builder()
-//                        .setRedundancyScheme(rs).build();
-//
-//                project.createBucket(expectedBucket, bucketConfig);
-//
-//                EncryptionAccess access = new EncryptionAccess();
-//                access.setDefaultKey("TestEncryptionKey".getBytes());
-//
-//                try (Bucket bucket = project.openBucket(expectedBucket, access)) {
-//                    long before = System.currentTimeMillis();
-//
-//                    for (int i = 0; i < 13; i++) {
-//                        WriterOptions options = new WriterOptions.Builder().build();
-//                        try (OutputStream writer = bucket.newWriter("object/path" + i, options)) {
-//                            writer.write(new byte[0]);
-//                            writer.flush();
-//                        }
-//
-//                        ReaderOptions roptions = new ReaderOptions.Builder().build();
-//                        try (InputStream is = bucket.newReader("object/path" + i, roptions)) {
-//                        }
-//                    }
-//
-//                    ListOptions listOptions = new ListOptions.Builder().setPrefix("").setCursor("").
-//                            setDirection(ListDirection.AFTER).setPageSize(20).build();
-//
-//
-//                    Iterable<ObjectInfo> list = bucket.listObjects(listOptions);
-//                    int index = 0;
-//                    for (ObjectInfo info : list) {
-//                        assertEquals(expectedBucket, info.getBucket());
+    public void testListObjects() throws Exception {
+        Config config = new Config.Builder().setTempDir(filesDir).build();
+
+        try (io.storj.Uplink uplink = new io.storj.Uplink(config)) {
+            io.storj.ApiKey apiKey = new io.storj.ApiKey(VALID_API_KEY);
+
+            try (io.storj.Project project = uplink.openProject(VALID_SATELLITE_ADDRESS, apiKey)) {
+                String expectedBucket = "test-bucket-"+new Date().getTime();
+                io.storj.RedundancyScheme rs = new RedundancyScheme.Builder().
+                        setRequiredShares((short) 4).
+                        setRepairShares((short) 6).
+                        setSuccessShares((short) 8).
+                        setTotalShares((short) 10).
+                        build();
+
+                io.storj.BucketConfig bucketConfig = new BucketConfig.Builder()
+                        .setPathCipher(CipherSuite.NONE)
+                        .setRedundancyScheme(rs).build();
+
+                project.createBucket(expectedBucket, bucketConfig);
+
+                EncryptionAccess access = new EncryptionAccess();
+                access.setDefaultKey("TestEncryptionKey".getBytes());
+
+                try (Bucket bucket = project.openBucket(expectedBucket, access)) {
+                    long before = System.currentTimeMillis();
+
+                    for (int i = 0; i < 13; i++) {
+                        UploadOptions options = new UploadOptions.Builder().build();
+                        String path  = String.format("path%d", i);
+                        try (OutputStream oos = new ObjectOutputStream(bucket, path, options)) {
+                            oos.write(new byte[0]);
+                            oos.flush();
+                        }
+                    }
+
+                    ListOptions listOptions = new ListOptions.Builder().setRecursive(true).
+                            setDirection(ListDirection.AFTER).setPageSize(2).build();
+
+
+                    Iterable<ObjectInfo> list = bucket.listObjects(listOptions);
+                    int index = 0;
+                    for (ObjectInfo info : list) {
+                        assertEquals(expectedBucket, info.getBucket());
 //                        assertTrue(info.getCreated().getTime() >= before);
-//
-//                        // cleanup
-//                        bucket.deleteObject("object/path" + index);
-//                        index++;
-//                    }
-//                    assertEquals(13, index);
-//
-//                    project.deleteBucket(expectedBucket);
-//                }
-//            }
-//        }
-//    }
+                        Log.d("TEST","!!!!! Path: "+ info.getPath());
+//                        System.out.println();
+                        // cleanup
+                        String path  = String.format("path%d", index);
+                        bucket.deleteObject(path);
+                        index++;
+                    }
+                    assertEquals(13, index);
+
+                    project.deleteBucket(expectedBucket);
+                }
+            }
+        }
+    }
 //
 //    @Test
 //    public void testEncryptionAccessFromPassphrase() throws Exception {
@@ -362,30 +364,26 @@ public class LibuplinkInstrumentedTest {
 //        }
 //    }
 //
-//    @Test
-//    public void testApiKey() throws Exception {
-//        String apiKeyData = "13YqeKQiA3ANSuDu4rqX6eGs3YWox9GRi9rEUKy1HidXiNNm6a5SiE49Hk9gomHZVcQhq4eFQh8yhDgfGKg268j6vqWKEhnJjFPLqAP";
-//        APIKey apiKey = Mobile.parseAPIKey(apiKeyData);
-//
-//        String serialized = apiKey.serialize();
-//        assertEquals(serialized, apiKeyData);
-//
-//        Caveat caveat = new Caveat();
-//        caveat.setDisallowDeletes(true);
-//        caveat.setDisallowWrites(true);
-//        caveat.setDisallowReads(true);
-//        caveat.setDisallowLists(true);
-//        caveat.setNotAfter(100);
-//        caveat.setNotBefore(50);
-//
-//        CaveatPath path = new CaveatPath();
-//        path.setBucket("bucket".getBytes());
-//        path.setEncryptedPathPrefix("123456".getBytes());
-//        caveat.addCaveatPath(path);
-//
-//        APIKey newAPIKey = apiKey.restrict(caveat);
-//        assertNotEquals("", newAPIKey.serialize());
-//    }
-//
+    @Test
+    public void testApiKey() throws Exception {
+        String apiKeyData = "13YqeKQiA3ANSuDu4rqX6eGs3YWox9GRi9rEUKy1HidXiNNm6a5SiE49Hk9gomHZVcQhq4eFQh8yhDgfGKg268j6vqWKEhnJjFPLqAP";
+        ApiKey apiKey = new ApiKey(apiKeyData);
+
+        String serialized = apiKey.serialize();
+        assertEquals(serialized, apiKeyData);
+        Caveat caveat = new Caveat.Builder()
+                .disallowDeletes(true)
+                .disallowLists(true)
+                .disallowWrites(true)
+                .disallowReads(false)
+                .notAfter(50)
+                .notBefore(100)
+                .addCaveatPath(new CaveatPath("bucket".getBytes(), "123456".getBytes()))
+                .build();
+
+
+        ApiKey newAPIKey = apiKey.restrict(caveat);
+        assertNotEquals(apiKeyData, newAPIKey.serialize());
+    }
 
 }

@@ -25,6 +25,13 @@ public class Config {
 			return false;
 		}
 		Config that = (Config) obj;
+		if (this.tempDir == null) {
+			if (that.tempDir != null) {
+				return false;
+			}
+		} else if (!this.tempDir.equals(that.tempDir)) {
+			return false;
+		}
 		return config.equals(that.config);
 	}
 
