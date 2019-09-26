@@ -14,7 +14,9 @@ public class UploadOptions {
         if (builder.encryptionParameters != null) {
             this.options.setEncryptionParameters(builder.encryptionParameters.internal());
         }
-        this.options.setExpires(builder.expires.getTime());
+        if (builder.expires != null) {
+            this.options.setExpires(builder.expires.getTime());
+        }
         if (builder.rs != null) {
             this.options.setRedundancyScheme(builder.rs.internal());
         }

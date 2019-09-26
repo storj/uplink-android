@@ -60,6 +60,7 @@ class ObjectOutputStream extends OutputStream {
     @Override
     public void close() throws IOException {
         try {
+            this.flush();
             this.writer.close();
         } catch (Exception e) {
             throw new IOException(e);

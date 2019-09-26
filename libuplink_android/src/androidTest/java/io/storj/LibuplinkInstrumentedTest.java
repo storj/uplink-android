@@ -170,7 +170,6 @@ public class LibuplinkInstrumentedTest {
                         UploadOptions options = new UploadOptions.Builder().build();
                         try (OutputStream oos = new ObjectOutputStream(bucket, objectPath, options)) {
                             oos.write(expectedData);
-                            oos.flush();
                         }
                     }
 
@@ -254,7 +253,7 @@ public class LibuplinkInstrumentedTest {
                     try {
                         bucket.deleteObject(objectPath);
                     } catch (StorjException e) {
-                        assertTrue(e.getMessage().startsWith("object not found"));
+                        assertTrue(e.getMessage(), e.getMessage().contains("not found"));
                     }
                 }
 
