@@ -7,7 +7,7 @@ public class Caveat {
 
     private io.storj.libuplink.mobile.Caveat caveat;
 
-    Caveat(Builder builder){
+    Caveat(Builder builder) {
         this.caveat = new io.storj.libuplink.mobile.Caveat();
         this.caveat.setDisallowReads(builder.disallowReads);
         this.caveat.setDisallowWrites(builder.disallowWrites);
@@ -16,7 +16,7 @@ public class Caveat {
         this.caveat.setNotAfter(builder.notAfter);
         this.caveat.setNotBefore(builder.notBefore);
         this.caveat.setNonce(builder.nonce);
-        for(CaveatPath path: builder.caveatPaths){
+        for (CaveatPath path: builder.caveatPaths) {
             this.caveat.addCaveatPath(path.internal());
         }
     }
@@ -36,43 +36,43 @@ public class Caveat {
         private byte[] nonce;
         private List<CaveatPath> caveatPaths = new ArrayList<>();
 
-        public Builder disallowReads(boolean disallowReads){
+        public Builder disallowReads(boolean disallowReads) {
             this.disallowReads = disallowReads;
             return this;
         }
 
-        public Builder disallowWrites(boolean disallowWrites){
+        public Builder disallowWrites(boolean disallowWrites) {
             this.disallowWrites = disallowWrites;
             return this;
         }
 
 
-        public Builder disallowLists(boolean disallowLists){
+        public Builder disallowLists(boolean disallowLists) {
             this.disallowLists = disallowLists;
             return this;
         }
 
-        public Builder disallowDeletes(boolean disallowDeletes){
+        public Builder disallowDeletes(boolean disallowDeletes) {
             this.disallowDeletes = disallowDeletes;
             return this;
         }
 
-        public Builder notAfter(long notAfter){
+        public Builder notAfter(long notAfter) {
             this.notAfter = notAfter;
             return this;
         }
 
-        public Builder notBefore(long notBefore){
+        public Builder notBefore(long notBefore) {
             this.notBefore = notBefore;
             return this;
         }
 
-        public Builder nonce(byte[] nonce){
+        public Builder nonce(byte[] nonce) {
             this.nonce = nonce;
             return this;
         }
 
-        public Builder addCaveatPath(CaveatPath caveatPath){
+        public Builder addCaveatPath(CaveatPath caveatPath) {
             this.caveatPaths.add(caveatPath);
             return this;
         }
