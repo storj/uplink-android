@@ -9,7 +9,7 @@ public enum CipherSuite {
 	
 	private byte value;
 	
-	private CipherSuite(byte value) {
+	CipherSuite(byte value) {
 		this.value = value;
 	}
 	
