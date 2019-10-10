@@ -1,8 +1,6 @@
 package io.storj;
 
 public enum ListDirection {
-	BEFORE((byte) -2),
-	BACKWARD((byte) -1),
 	FORWARD((byte) 1),
 	AFTER((byte) 2);
 

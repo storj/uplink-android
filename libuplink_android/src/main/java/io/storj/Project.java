@@ -25,15 +25,6 @@ public class Project implements AutoCloseable {
 			throw ExceptionUtil.toStorjException(e);
 		}
 	}
-	
-	public BucketInfo getBucketInfo(String bucketName) throws StorjException {
-		try {
-			io.storj.libuplink.mobile.BucketInfo info = project.getBucketInfo(bucketName);
-			return new BucketInfo(info);
-		} catch (Exception e) {
-			throw ExceptionUtil.toStorjException(e);
-		}
-	}
 
 	public Iterable<BucketInfo> listBuckets() throws StorjException {
 		return listBuckets(null, 0);
