@@ -2,7 +2,6 @@ package io.storj;
 
 import android.support.test.InstrumentationRegistry;
 import android.support.test.runner.AndroidJUnit4;
-import android.util.Log;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -14,7 +13,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.nio.file.Files;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -97,7 +95,8 @@ public class LibuplinkInstrumentedTest {
                     expectedBuckets.add(expectedBucket);
                 }
 
-                Iterable<BucketInfo> buckets = project.listBuckets("", 2);
+                Iterable<BucketInfo> buckets = project.listBuckets(
+                        BucketListOption.cursor(""), BucketListOption.pageSize(2));
                 String allBuckets = "";
                 int numOfBuckets = 0;
                 for (BucketInfo bucket : buckets) {
@@ -111,7 +110,7 @@ public class LibuplinkInstrumentedTest {
                     project.deleteBucket(bucket);
                 }
 
-                buckets = project.listBuckets("", 1);
+                buckets = project.listBuckets(BucketListOption.pageSize(1));
                 Iterator<BucketInfo> iterator = buckets.iterator();
                 assertEquals(false, iterator.hasNext());
             }
@@ -169,8 +168,7 @@ public class LibuplinkInstrumentedTest {
 
                     String objectPath = "object/path";
                     {
-                        UploadOptions options = new UploadOptions.Builder().build();
-                        try (OutputStream oos = new ObjectOutputStream(bucket, objectPath, options)) {
+                        try (OutputStream oos = new ObjectOutputStream(bucket, objectPath)) {
                             oos.write(expectedData);
                         }
                     }
@@ -229,8 +227,7 @@ public class LibuplinkInstrumentedTest {
 
                     String objectPath = "object/path";
                     {
-                        UploadOptions options = new UploadOptions.Builder().build();
-                        try (OutputStream oos = new ObjectOutputStream(bucket, objectPath, options)) {
+                        try (OutputStream oos = new ObjectOutputStream(bucket, objectPath)) {
                             oos.write(expectedData);
                         }
                     }
@@ -295,18 +292,14 @@ public class LibuplinkInstrumentedTest {
                     // TODO should 13 to see listing bug
                     int expectedObjects = 10;
                     for (int i = 0; i < expectedObjects; i++) {
-                        UploadOptions options = new UploadOptions.Builder().build();
                         String path = String.format("path%d", i);
-                        try (OutputStream oos = new ObjectOutputStream(bucket, path, options)) {
+                        try (OutputStream oos = new ObjectOutputStream(bucket, path)) {
                             oos.write(new byte[0]);
                         }
                     }
 
-                    ListOptions listOptions = new ListOptions.Builder().setRecursive(true).
-                            setDirection(ListDirection.AFTER).setPageSize(20).build();
-
-
-                    Iterable<ObjectInfo> list = bucket.listObjects(listOptions);
+                    Iterable<ObjectInfo> list = bucket.listObjects(
+                            ObjectListOption.recursive(true), ObjectListOption.pageSize(20));
                     int index = 0;
                     for (ObjectInfo info : list) {
                         assertEquals(expectedBucket, info.getBucket());
@@ -344,6 +337,15 @@ public class LibuplinkInstrumentedTest {
         try (io.storj.Uplink uplink = new io.storj.Uplink(config)) {
             try (io.storj.Project project = uplink.openProject(VALID_SATELLITE_ADDRESS, apiKey)) {
                 project.createBucket(expectedBucket, bucketConfig);
+
+                EncryptionAccess access = new EncryptionAccess();
+                access.setDefaultKey("TestEncryptionKey".getBytes());
+
+                try (Bucket bucket = project.openBucket(expectedBucket, access)) {
+                    try (OutputStream oos = new ObjectOutputStream(bucket, "first-file")) {
+                        oos.write("First file content".getBytes());
+                    }
+                }
             }
         }
 
@@ -360,12 +362,13 @@ public class LibuplinkInstrumentedTest {
                 access.setDefaultKey("TestEncryptionKey".getBytes());
 
                 try (Bucket bucket = project.openBucket(expectedBucket, access)) {
-                    UploadOptions options = new UploadOptions.Builder().build();
-                    try (OutputStream oos = new ObjectOutputStream(bucket, "third-file", options)) {
+                    String errorMessage = "";
+                    try (OutputStream oos = new ObjectOutputStream(bucket, "third-file")) {
                         oos.write("Third file content".getBytes());
                     }catch (IOException e){
-                        assertTrue(e.getMessage(), e.getMessage().contains("Unauthorized API credentials"));
+                       errorMessage = e.getMessage();
                     }
+                    assertTrue(errorMessage, errorMessage.contains("Unauthorized API credentials"));
                 }
             }
         }
@@ -433,7 +436,7 @@ public class LibuplinkInstrumentedTest {
                 .disallowReads(false)
                 .notAfter(50)
                 .notBefore(100)
-                .addCaveatPath(new CaveatPath("bucket".getBytes(), "123456".getBytes()))
+//                .addCaveatPath(new CaveatPath("bucket".getBytes(), "123456".getBytes()))
                 .build();
 
         ApiKey newAPIKey = apiKey.restrict(caveat);

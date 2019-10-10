@@ -12,7 +12,7 @@ public class Bucket implements AutoCloseable {
 		return bucket.getName();
 	}
 
-	public Iterable<ObjectInfo> listObjects(ListOptions options) throws StorjException {
+	public Iterable<ObjectInfo> listObjects(ObjectListOption... options) throws StorjException {
 		return new ObjectIterator(this.bucket, options);
 	}
 

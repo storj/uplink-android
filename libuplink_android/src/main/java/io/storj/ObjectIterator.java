@@ -4,19 +4,20 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 import io.storj.libuplink.mobile.Bucket;
+import io.storj.libuplink.mobile.ListOptions;
 
 class ObjectIterator implements Iterator<ObjectInfo>, Iterable<ObjectInfo> {
 
     private Bucket bucket;
-    private ListOptions options;
+    private io.storj.libuplink.mobile.ListOptions options;
 
     private io.storj.libuplink.mobile.ObjectList currentPage;
     private int pageIndex = 0;
     private String cursor;
 
-    ObjectIterator(Bucket bucket, ListOptions options) throws StorjException {
+    ObjectIterator(Bucket bucket, ObjectListOption... listOptions) throws StorjException {
         this.bucket = bucket;
-        this.options = options;
+        this.options = ObjectListOption.internal(listOptions);
         this.cursor = options.getCursor();
 
         nextPage();
@@ -58,30 +59,27 @@ class ObjectIterator implements Iterator<ObjectInfo>, Iterable<ObjectInfo> {
 
     private void nextPage() throws StorjException {
         try {
-            ListDirection direction = options.getDirection();
+//            int direction = options.getDirection();
             if (currentPage != null) {
                 cursor = currentPage.item(currentPage.length() - 1).getPath();
-                switch (options.getDirection()) {
-                    case BEFORE:
-                    case BACKWARD:
-                        direction = ListDirection.BEFORE;
-                        break;
-                    case FORWARD:
-                    case AFTER:
-                        direction = ListDirection.AFTER;
-                        break;
-                    default:
-                        throw new IllegalStateException(String.format("invalid direction: %d", options.getDirection()));
-                }
+//                switch (options.getDirection()) {
+//
+//                    case FORWARD:
+//                    case 2:
+//                        direction = ListDirection.AFTER;
+//                        break;
+//                    default:
+//                        throw new IllegalStateException(String.format("invalid direction: %d", options.getDirection()));
+//                }
             }
-            currentPage = bucket.listObjects(new ListOptions.Builder().
-                    setPrefix(options.getPrefix()).
-                    setCursor(cursor).
-                    setDelimiter(options.getDelimiter()).
-                    setRecursive(options.isRecursive()).
-                    setDirection(direction).
-                    setPageSize(options.getPageSize()).
-                    build().internal());
+
+            io.storj.libuplink.mobile.ListOptions options = new ListOptions();
+            options.setPrefix(this.options.getPrefix());
+            options.setCursor(cursor);
+            options.setDelimiter(this.options.getDelimiter());
+            options.setRecursive(this.options.getRecursive());
+            options.setLimit(this.options.getLimit());
+            currentPage = bucket.listObjects(options);
             pageIndex = 0;
         } catch (Exception e) {
             throw ExceptionUtil.toStorjException(e);

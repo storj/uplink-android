@@ -26,20 +26,17 @@ public class Project implements AutoCloseable {
 		}
 	}
 
-	public Iterable<BucketInfo> listBuckets() throws StorjException {
-		return listBuckets(null, 0);
-	}
-
-	public Iterable<BucketInfo> listBuckets(String cursor) throws StorjException {
-		return listBuckets(cursor, 0);
-	}
-
-	public Iterable<BucketInfo> listBuckets(int pageSize) throws StorjException {
-		return listBuckets(null, pageSize);
+	public BucketInfo getBucketInfo(String bucketName) throws StorjException {
+		try {
+			io.storj.libuplink.mobile.BucketInfo bucketInfo = project.getBucketInfo(bucketName);
+			return new BucketInfo(bucketInfo);
+		} catch (Exception e) {
+			throw ExceptionUtil.toStorjException(e);
+		}
 	}
 	
-	public Iterable<BucketInfo> listBuckets(String cursor, final int pageSize) throws StorjException {
-		return new BucketIterator(project, cursor, pageSize);
+	public Iterable<BucketInfo> listBuckets(BucketListOption... options) throws StorjException {
+		return new BucketIterator(project, options);
 	}
 	
 	public void deleteBucket(String bucketName) throws StorjException {

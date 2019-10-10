@@ -8,16 +8,14 @@ import io.storj.libuplink.mobile.Project;
 class BucketIterator implements Iterator<BucketInfo>, Iterable<BucketInfo> {
 
     private io.storj.libuplink.mobile.Project project;
-    private String cursor;
-    private int pageSize;
+    private BucketListOptions options;
 
     private io.storj.libuplink.mobile.BucketList currentPage;
     private int pageIndex = 0;
 
-    BucketIterator(Project project, String cursor, int pageSize) throws StorjException {
+    BucketIterator(Project project, BucketListOption... options) throws StorjException {
         this.project = project;
-        this.cursor = cursor;
-        this.pageSize = pageSize;
+        this.options = BucketListOption.internal(options);
 
         nextPage();
     }
@@ -58,10 +56,11 @@ class BucketIterator implements Iterator<BucketInfo>, Iterable<BucketInfo> {
 
     private void nextPage() throws StorjException {
         try {
+            String cursor = this.options.cursor;
             if (currentPage != null) {
                 cursor = currentPage.item(currentPage.length() - 1).getName();
             }
-            currentPage = project.listBuckets(cursor, pageSize);
+            currentPage = project.listBuckets(cursor, this.options.pageSize);
             pageIndex = 0;
         } catch (Exception e) {
             throw ExceptionUtil.toStorjException(e);
