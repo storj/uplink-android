@@ -362,10 +362,24 @@ public class LibuplinkInstrumentedTest {
                 access.setDefaultKey("TestEncryptionKey".getBytes());
 
                 try (Bucket bucket = project.openBucket(expectedBucket, access)) {
+                    // Try to download first-file - should succeed
+                    try (InputStream is = new ObjectInputStream(bucket, "first-file")) {
+                        BufferedInputStream bis = new BufferedInputStream(is);
+
+                        ByteArrayOutputStream writer = new ByteArrayOutputStream();
+                        byte[] buf = new byte[512];
+                        int read;
+                        while ((read = bis.read(buf)) != -1) {
+                            writer.write(buf, 0, read);
+                        }
+                        assertArrayEquals("First file content".getBytes(), writer.toByteArray());
+                    }
+
+                    // Try to upload new file - should fail
                     String errorMessage = "";
                     try (OutputStream oos = new ObjectOutputStream(bucket, "third-file")) {
                         oos.write("Third file content".getBytes());
-                    }catch (IOException e){
+                    } catch (IOException e) {
                        errorMessage = e.getMessage();
                     }
                     assertTrue(errorMessage, errorMessage.contains("Unauthorized API credentials"));
