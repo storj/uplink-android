@@ -1,7 +1,5 @@
 package io.storj;
 
-import io.storj.libuplink.mobile.ListOptions;
-
 public class BucketListOption {
 
     private enum Key {

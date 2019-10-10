@@ -118,7 +118,7 @@ public class LibuplinkInstrumentedTest {
     }
 
     @Test
-    public void testEquals() throws Exception {
+    public void testEquals() {
         Config c1 = new Config.Builder().build();
         Config c2 = new Config.Builder().build();
         assertEquals(c1, c2);
