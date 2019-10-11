@@ -54,11 +54,8 @@ public class LibuplinkInstrumentedTest {
                         setTotalShares((short) 10).
                         build();
 
-                io.storj.BucketConfig bucketConfig = new BucketConfig.Builder()
-                        .setRedundancyScheme(rs).build();
-
                 try {
-                    project.createBucket(expectedBucket, bucketConfig);
+                    project.createBucket(expectedBucket, BucketOption.redundancyScheme(rs));
 
                     io.storj.BucketInfo bucketInfo = project.getBucketInfo(expectedBucket);
                     Assert.assertEquals(expectedBucket, bucketInfo.getName());
@@ -88,15 +85,12 @@ public class LibuplinkInstrumentedTest {
                         setTotalShares((short) 10).
                         build();
 
-                io.storj.BucketConfig bucketConfig = new BucketConfig.Builder()
-                        .setRedundancyScheme(rs).build();
-
                 Set<String> expectedBuckets = new HashSet<>();
 
                 try {
                     for (int i = 0; i < 10; i++) {
                         String bucket = "test-bucket" + i;
-                        project.createBucket(bucket, bucketConfig);
+                        project.createBucket(bucket, BucketOption.redundancyScheme(rs));
                         expectedBuckets.add(bucket);
                     }
 
@@ -137,10 +131,7 @@ public class LibuplinkInstrumentedTest {
                         setTotalShares((short) 10).
                         build();
 
-                io.storj.BucketConfig bucketConfig = new BucketConfig.Builder()
-                        .setRedundancyScheme(rs).build();
-
-                project.createBucket(expectedBucket, bucketConfig);
+                project.createBucket(expectedBucket, BucketOption.redundancyScheme(rs));
 
                 EncryptionAccess access = new EncryptionAccess();
                 access.setDefaultKey("TestEncryptionKey".getBytes());
@@ -194,10 +185,7 @@ public class LibuplinkInstrumentedTest {
                         setTotalShares((short) 10).
                         build();
 
-                io.storj.BucketConfig bucketConfig = new BucketConfig.Builder()
-                        .setRedundancyScheme(rs).build();
-
-                project.createBucket(expectedBucket, bucketConfig);
+                project.createBucket(expectedBucket, BucketOption.redundancyScheme(rs));
 
                 EncryptionAccess access = new EncryptionAccess();
                 access.setDefaultKey("TestEncryptionKey".getBytes());
@@ -254,11 +242,8 @@ public class LibuplinkInstrumentedTest {
                         setTotalShares((short) 10).
                         build();
 
-                io.storj.BucketConfig bucketConfig = new BucketConfig.Builder()
-                        .setPathCipher(CipherSuite.NONE)
-                        .setRedundancyScheme(rs).build();
-
-                project.createBucket(expectedBucket, bucketConfig);
+                project.createBucket(expectedBucket,
+                        BucketOption.redundancyScheme(rs), BucketOption.pathCipher(CipherSuite.NONE));
 
                 EncryptionAccess access = new EncryptionAccess();
                 access.setDefaultKey("TestEncryptionKey".getBytes());
@@ -269,31 +254,28 @@ public class LibuplinkInstrumentedTest {
                     // TODO should 13 to see listing bug
                     int expectedObjects = 10;
 
-                    try {
-                        for (int i = 0; i < expectedObjects; i++) {
-                            String path = String.format("path%d", i);
-                            try (OutputStream oos = new ObjectOutputStream(bucket, path)) {
-                                oos.write(new byte[0]);
-                            }
+                    for (int i = 0; i < expectedObjects; i++) {
+                        String path = String.format("path%d", i);
+                        try (OutputStream oos = new ObjectOutputStream(bucket, path)) {
+                            oos.write(new byte[0]);
                         }
+                    }
 
-                        Iterable<ObjectInfo> list = bucket.listObjects(
-                                ObjectListOption.recursive(true), ObjectListOption.pageSize(20));
-                        int index = 0;
-                        for (ObjectInfo info : list) {
-                            assertEquals(expectedBucket, info.getBucket());
-                            assertTrue(info.getCreated().getTime() >= before);
+                    Iterable<ObjectInfo> list = bucket.listObjects(
+                            ObjectListOption.recursive(true), ObjectListOption.pageSize(20));
+                    int index = 0;
+                    for (ObjectInfo info : list) {
+                        assertEquals(expectedBucket, info.getBucket());
+                        assertTrue(info.getCreated().getTime() >= before);
 
-                            // cleanup
-                            bucket.deleteObject(String.format("path%d", index));
-                            index++;
-                        }
-                        assertEquals(expectedObjects, index);
-                    } finally {
-                        for (int i = 0; i < expectedObjects; i++) {
-                            String path = String.format("path%d", i);
-                            bucket.deleteObject(path);
-                        }
+                        index++;
+                    }
+                    assertEquals(expectedObjects, index);
+                    
+                    // cleanup
+                    for (int i = 0; i < expectedObjects; i++) {
+                        String path = String.format("path%d", i);
+                        bucket.deleteObject(path);
                     }
                 } finally {
                     project.deleteBucket(expectedBucket);
@@ -315,12 +297,9 @@ public class LibuplinkInstrumentedTest {
                 setTotalShares((short) 10).
                 build();
 
-        io.storj.BucketConfig bucketConfig = new BucketConfig.Builder()
-                .setRedundancyScheme(rs).build();
-
         try (io.storj.Uplink uplink = new io.storj.Uplink(uplinkOptions)) {
             try (io.storj.Project project = uplink.openProject(VALID_SATELLITE_ADDRESS, apiKey)) {
-                project.createBucket(expectedBucket, bucketConfig);
+                project.createBucket(expectedBucket, BucketOption.redundancyScheme(rs));
 
                 EncryptionAccess access = new EncryptionAccess();
                 access.setDefaultKey("TestEncryptionKey".getBytes());
@@ -364,7 +343,7 @@ public class LibuplinkInstrumentedTest {
                     try (OutputStream oos = new ObjectOutputStream(bucket, "third-file")) {
                         oos.write("Third file content".getBytes());
                     } catch (IOException e) {
-                       errorMessage = e.getMessage();
+                        errorMessage = e.getMessage();
                     }
                     assertTrue(errorMessage, errorMessage.contains("Unauthorized API credentials"));
 

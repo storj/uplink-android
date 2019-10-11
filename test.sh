@@ -28,7 +28,7 @@ echo "no" | $ANDROID_HOME/tools/bin/avdmanager create avd --name "${AVD_NAME}" -
 echo "AVD ${AVD_NAME} created."
 
 # -no-accel needs to be added for Jenkins build 
-$ANDROID_HOME/emulator/emulator-headless -avd ${AVD_NAME} -port ${PORT} -no-boot-anim -no-audio -gpu swiftshader_indirect -no-accel  2>&1 &
+$ANDROID_HOME/emulator/emulator-headless -avd ${AVD_NAME} -port ${PORT} -no-boot-anim -no-audio -gpu swiftshader_indirect  2>&1 &
 
 #Ensure Android Emulator has booted successfully before continuing
 # TODO add max number of checks and timeout
