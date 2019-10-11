@@ -16,7 +16,6 @@ import java.io.OutputStream;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Random;
 import java.util.Set;
 
@@ -30,19 +29,20 @@ public class LibuplinkInstrumentedTest {
     public static final String VALID_API_KEY = InstrumentationRegistry.getArguments().getString("api.key", "13Yqed8J5EKXUkJV8qbaxcoWbkXsqBREXEMv48fFMjZs5GY5gmjynfDsjs9YhwsSBLc9eWfd7riYcsAvimTpLKqp2npGX7NpFUj4wiH");
 
     String filesDir;
-    Config config;
+    UplinkOption[] uplinkOptions;
 
     @Before
     public void setUp() {
         filesDir = InstrumentationRegistry.getTargetContext().getFilesDir().getAbsolutePath();
-        config = new Config.Builder()
-                .setSkipPeerCAWhitelist(true)
-                .setTempDir(filesDir).build();
+        uplinkOptions = new UplinkOption[]{
+                UplinkOption.tempDir(filesDir),
+                UplinkOption.skipPeerCAWhitelist(true)
+        };
     }
 
     @Test
     public void testBasicBucket() throws Exception {
-        try (io.storj.Uplink uplink = new io.storj.Uplink(config)) {
+        try (io.storj.Uplink uplink = new io.storj.Uplink(uplinkOptions)) {
             io.storj.ApiKey apiKey = new io.storj.ApiKey(VALID_API_KEY);
 
             try (io.storj.Project project = uplink.openProject(VALID_SATELLITE_ADDRESS, apiKey)) {
@@ -77,7 +77,7 @@ public class LibuplinkInstrumentedTest {
 
     @Test
     public void testListBuckets() throws Exception {
-        try (Uplink uplink = new Uplink(config)) {
+        try (Uplink uplink = new Uplink(uplinkOptions)) {
             ApiKey apiKey = new ApiKey(VALID_API_KEY);
 
             try (io.storj.Project project = uplink.openProject(VALID_SATELLITE_ADDRESS, apiKey)) {
@@ -124,28 +124,8 @@ public class LibuplinkInstrumentedTest {
     }
 
     @Test
-    public void testEquals() {
-        Config c1 = new Config.Builder().build();
-        Config c2 = new Config.Builder().build();
-        assertEquals(c1, c2);
-
-        c1 = new Config.Builder().setMaxInlineSize(1).
-                setMaxMemory(2).setTempDir("temp").build();
-        c2 = new Config.Builder().setMaxInlineSize(1).
-                setMaxMemory(2).setTempDir("temp").build();
-        assertEquals(c1, c2);
-
-        c1 = new Config.Builder().setMaxInlineSize(1).
-                setMaxMemory(2).setTempDir("temp").build();
-        c2 = new Config.Builder().setMaxInlineSize(1).
-                setMaxMemory(2).setTempDir("temp3").build();
-        assertNotEquals(c1, c2);
-    }
-
-
-    @Test
     public void testUploadDownloadInline() throws Exception {
-        try (io.storj.Uplink uplink = new io.storj.Uplink(config)) {
+        try (io.storj.Uplink uplink = new io.storj.Uplink(uplinkOptions)) {
             io.storj.ApiKey apiKey = new io.storj.ApiKey(VALID_API_KEY);
 
             try (io.storj.Project project = uplink.openProject(VALID_SATELLITE_ADDRESS, apiKey)) {
@@ -202,7 +182,7 @@ public class LibuplinkInstrumentedTest {
 
     @Test
     public void testUploadDownloadDeleteRemote() throws Exception {
-        try (io.storj.Uplink uplink = new io.storj.Uplink(config)) {
+        try (io.storj.Uplink uplink = new io.storj.Uplink(uplinkOptions)) {
             io.storj.ApiKey apiKey = new io.storj.ApiKey(VALID_API_KEY);
 
             try (io.storj.Project project = uplink.openProject(VALID_SATELLITE_ADDRESS, apiKey)) {
@@ -262,7 +242,7 @@ public class LibuplinkInstrumentedTest {
 
     @Test
     public void testListObjects() throws Exception {
-        try (io.storj.Uplink uplink = new io.storj.Uplink(config)) {
+        try (io.storj.Uplink uplink = new io.storj.Uplink(uplinkOptions)) {
             io.storj.ApiKey apiKey = new io.storj.ApiKey(VALID_API_KEY);
 
             try (io.storj.Project project = uplink.openProject(VALID_SATELLITE_ADDRESS, apiKey)) {
@@ -338,7 +318,7 @@ public class LibuplinkInstrumentedTest {
         io.storj.BucketConfig bucketConfig = new BucketConfig.Builder()
                 .setRedundancyScheme(rs).build();
 
-        try (io.storj.Uplink uplink = new io.storj.Uplink(config)) {
+        try (io.storj.Uplink uplink = new io.storj.Uplink(uplinkOptions)) {
             try (io.storj.Project project = uplink.openProject(VALID_SATELLITE_ADDRESS, apiKey)) {
                 project.createBucket(expectedBucket, bucketConfig);
 
@@ -359,7 +339,7 @@ public class LibuplinkInstrumentedTest {
 
         ApiKey restrictedKey = apiKey.restrict(caveat);
 
-        try (io.storj.Uplink uplink = new io.storj.Uplink(config)) {
+        try (io.storj.Uplink uplink = new io.storj.Uplink(uplinkOptions)) {
             try (io.storj.Project project = uplink.openProject(VALID_SATELLITE_ADDRESS, restrictedKey)) {
 
                 EncryptionAccess access = new EncryptionAccess();
@@ -400,7 +380,7 @@ public class LibuplinkInstrumentedTest {
             }
         } finally {
             // cleanup
-            try (io.storj.Uplink uplink = new io.storj.Uplink(config)) {
+            try (io.storj.Uplink uplink = new io.storj.Uplink(uplinkOptions)) {
                 try (io.storj.Project project = uplink.openProject(VALID_SATELLITE_ADDRESS, apiKey)) {
                     project.deleteBucket(expectedBucket);
                 }
@@ -411,9 +391,9 @@ public class LibuplinkInstrumentedTest {
     //
 //    @Test
 //    public void testEncryptionAccessFromPassphrase() throws Exception {
-//        Config config = new Config();
+//        UplinkOption uplinkOptions = new UplinkOption();
 //
-//        Uplink uplink = new Uplink(config, filesDir);
+//        Uplink uplink = new Uplink(uplinkOptions, filesDir);
 //        try {
 //            Project project = uplink.openProject(VALID_SATELLITE_ADDRESS, VALID_API_KEY);
 //            try {
@@ -431,9 +411,9 @@ public class LibuplinkInstrumentedTest {
 //
 //    @Test
 //    public void testEncryptionAccessWithRoot() throws Exception {
-//        Config config = new Config();
+//        UplinkOption uplinkOptions = new UplinkOption();
 //
-//        Uplink uplink = new Uplink(config, filesDir);
+//        Uplink uplink = new Uplink(uplinkOptions, filesDir);
 //        try {
 //            Project project = uplink.openProject(VALID_SATELLITE_ADDRESS, VALID_API_KEY);
 //            try {

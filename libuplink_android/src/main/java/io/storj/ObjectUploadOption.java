@@ -4,7 +4,7 @@ import java.util.Date;
 
 import io.storj.libuplink.mobile.WriterOptions;
 
-public class UploadOption {
+public class ObjectUploadOption {
 
     private enum Key {
         CONTENT_TYPE,
@@ -17,30 +17,30 @@ public class UploadOption {
 
     private Object value;
 
-    UploadOption(Key key, Object value) {
+    ObjectUploadOption(Key key, Object value) {
         this.key = key;
         this.value = value;
     }
 
-    public static UploadOption contentType(String contentType) {
-        return new UploadOption(Key.CONTENT_TYPE, contentType);
+    public static ObjectUploadOption contentType(String contentType) {
+        return new ObjectUploadOption(Key.CONTENT_TYPE, contentType);
     }
 
-    public static UploadOption encryptionParameters(EncryptionParameters encryptionParameters) {
-        return new UploadOption(Key.ENCRYPTION_PARAMETERS, encryptionParameters);
+    public static ObjectUploadOption encryptionParameters(EncryptionParameters encryptionParameters) {
+        return new ObjectUploadOption(Key.ENCRYPTION_PARAMETERS, encryptionParameters);
     }
 
-    public static UploadOption expires(Date expires) {
-        return new UploadOption(Key.EXPIRES, expires);
+    public static ObjectUploadOption expires(Date expires) {
+        return new ObjectUploadOption(Key.EXPIRES, expires);
     }
 
-    public static UploadOption redundancyScheme(RedundancyScheme redundancyScheme) {
-        return new UploadOption(Key.REDUNDANCY_SCHEME, redundancyScheme);
+    public static ObjectUploadOption redundancyScheme(RedundancyScheme redundancyScheme) {
+        return new ObjectUploadOption(Key.REDUNDANCY_SCHEME, redundancyScheme);
     }
 
-    static io.storj.libuplink.mobile.WriterOptions internal(UploadOption... options) {
+    static io.storj.libuplink.mobile.WriterOptions internal(ObjectUploadOption... options) {
         io.storj.libuplink.mobile.WriterOptions writerOptions = new WriterOptions();
-        for (UploadOption option : options) {
+        for (ObjectUploadOption option : options) {
             if (option.key == Key.CONTENT_TYPE) {
                 writerOptions.setContentType(option.value.toString());
             } else if (option.key == Key.ENCRYPTION_PARAMETERS) {
