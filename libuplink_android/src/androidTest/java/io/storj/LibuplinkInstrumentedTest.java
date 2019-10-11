@@ -26,7 +26,7 @@ import static org.junit.Assert.*;
 public class LibuplinkInstrumentedTest {
 
     public static final String VALID_SATELLITE_ADDRESS = "192.168.1.228:10000";
-    public static final String VALID_API_KEY = "13YqfujVZwHBpDkytq1SnmxCMTWwqQdoPQPBPCLGdmrjtXiXgTYsjjqT3Wz7ZNJdqu55ALUn6JiJEJs84QrUzEAMYx7xM2mgWe65Hki";
+    public static final String VALID_API_KEY = "13YqdJSpRnyJ9wxKKkUSwscUVTjaYFadiRyzfKSRAaLwj1F8NAWRrK8bNTSEk85RjEt2WmcbaiqMGde5gnU8K4jtewW1fYWhQuH3f5D";
 
     String filesDir;
 
@@ -54,17 +54,19 @@ public class LibuplinkInstrumentedTest {
                 io.storj.BucketConfig bucketConfig = new BucketConfig.Builder()
                         .setRedundancyScheme(rs).build();
 
-                project.createBucket(expectedBucket, bucketConfig);
-
-                io.storj.BucketInfo bucketInfo = project.getBucketInfo(expectedBucket);
-                Assert.assertEquals(expectedBucket, bucketInfo.getName());
-
-                project.deleteBucket(expectedBucket);
-
                 try {
-                    project.getBucketInfo(expectedBucket);
-                } catch (StorjException e) {
-                    Assert.assertTrue(e.getMessage().contains("bucket not found"));
+                    project.createBucket(expectedBucket, bucketConfig);
+
+                    io.storj.BucketInfo bucketInfo = project.getBucketInfo(expectedBucket);
+                    Assert.assertEquals(expectedBucket, bucketInfo.getName());
+                } finally {
+                    project.deleteBucket(expectedBucket);
+
+                    try {
+                        project.getBucketInfo(expectedBucket);
+                    } catch (StorjException e) {
+                        Assert.assertTrue(e.getMessage().contains("bucket not found"));
+                    }
                 }
             }
         }
@@ -89,30 +91,33 @@ public class LibuplinkInstrumentedTest {
                         .setRedundancyScheme(rs).build();
 
                 Set<String> expectedBuckets = new HashSet<>();
-                for (int i = 0; i < 10; i++) {
-                    String expectedBucket = "test-bucket" + i;
-                    project.createBucket(expectedBucket, bucketConfig);
-                    expectedBuckets.add(expectedBucket);
+
+                try {
+                    for (int i = 0; i < 10; i++) {
+                        String bucket = "test-bucket" + i;
+                        project.createBucket(bucket, bucketConfig);
+                        expectedBuckets.add(bucket);
+                    }
+
+                    Iterable<BucketInfo> buckets = project.listBuckets(
+                            BucketListOption.cursor(""), BucketListOption.pageSize(2));
+                    String allBuckets = "";
+                    int numOfBuckets = 0;
+                    for (BucketInfo bucket : buckets) {
+                        allBuckets += bucket.getName() + "|";
+                        numOfBuckets++;
+                    }
+
+                    assertEquals(allBuckets, expectedBuckets.size(), numOfBuckets);
+                } finally {
+                    for (int i = 0; i < 10; i++) {
+                        String bucket = "test-bucket" + i;
+                        project.deleteBucket(bucket);
+                    }
+
+                    Iterable<BucketInfo> buckets = project.listBuckets(BucketListOption.pageSize(1));
+                    assertEquals(false, buckets.iterator().hasNext());
                 }
-
-                Iterable<BucketInfo> buckets = project.listBuckets(
-                        BucketListOption.cursor(""), BucketListOption.pageSize(2));
-                String allBuckets = "";
-                int numOfBuckets = 0;
-                for (BucketInfo bucket : buckets) {
-                    allBuckets += bucket.getName() + "|";
-                    numOfBuckets++;
-                }
-
-                assertEquals(allBuckets, expectedBuckets.size(), numOfBuckets);
-
-                for (String bucket : expectedBuckets) {
-                    project.deleteBucket(bucket);
-                }
-
-                buckets = project.listBuckets(BucketListOption.pageSize(1));
-                Iterator<BucketInfo> iterator = buckets.iterator();
-                assertEquals(false, iterator.hasNext());
             }
         }
     }
@@ -226,13 +231,11 @@ public class LibuplinkInstrumentedTest {
                     random.nextBytes(expectedData);
 
                     String objectPath = "object/path";
-                    {
+                    try {
                         try (OutputStream oos = new ObjectOutputStream(bucket, objectPath)) {
                             oos.write(expectedData);
                         }
-                    }
 
-                    {
                         try (InputStream is = new ObjectInputStream(bucket, objectPath)) {
                             BufferedInputStream bis = new BufferedInputStream(is);
 
@@ -244,18 +247,18 @@ public class LibuplinkInstrumentedTest {
                             }
                             assertArrayEquals(expectedData, writer.toByteArray());
                         }
-                    }
-
-                    bucket.deleteObject(objectPath);
-
-                    try {
+                    } finally {
                         bucket.deleteObject(objectPath);
-                    } catch (StorjException e) {
-                        assertTrue(e.getMessage(), e.getMessage().contains("not found"));
-                    }
-                }
 
-                project.deleteBucket(expectedBucket);
+                        try {
+                            bucket.deleteObject(objectPath);
+                        } catch (StorjException e) {
+                            assertTrue(e.getMessage(), e.getMessage().contains("not found"));
+                        }
+                    }
+                } finally {
+                    project.deleteBucket(expectedBucket);
+                }
             }
         }
     }
@@ -268,7 +271,7 @@ public class LibuplinkInstrumentedTest {
             io.storj.ApiKey apiKey = new io.storj.ApiKey(VALID_API_KEY);
 
             try (io.storj.Project project = uplink.openProject(VALID_SATELLITE_ADDRESS, apiKey)) {
-                String expectedBucket = "test-bucket-" + new Date().getTime();
+                String expectedBucket = "test-bucket";
                 io.storj.RedundancyScheme rs = new RedundancyScheme.Builder().
                         setRequiredShares((short) 4).
                         setRepairShares((short) 6).
@@ -288,29 +291,36 @@ public class LibuplinkInstrumentedTest {
                 try (Bucket bucket = project.openBucket(expectedBucket, access)) {
                     long before = System.currentTimeMillis();
 
-
                     // TODO should 13 to see listing bug
                     int expectedObjects = 10;
-                    for (int i = 0; i < expectedObjects; i++) {
-                        String path = String.format("path%d", i);
-                        try (OutputStream oos = new ObjectOutputStream(bucket, path)) {
-                            oos.write(new byte[0]);
+
+                    try {
+                        for (int i = 0; i < expectedObjects; i++) {
+                            String path = String.format("path%d", i);
+                            try (OutputStream oos = new ObjectOutputStream(bucket, path)) {
+                                oos.write(new byte[0]);
+                            }
+                        }
+
+                        Iterable<ObjectInfo> list = bucket.listObjects(
+                                ObjectListOption.recursive(true), ObjectListOption.pageSize(20));
+                        int index = 0;
+                        for (ObjectInfo info : list) {
+                            assertEquals(expectedBucket, info.getBucket());
+                            assertTrue(info.getCreated().getTime() >= before);
+
+                            // cleanup
+                            bucket.deleteObject(String.format("path%d", index));
+                            index++;
+                        }
+                        assertEquals(expectedObjects, index);
+                    } finally {
+                        for (int i = 0; i < expectedObjects; i++) {
+                            String path = String.format("path%d", i);
+                            bucket.deleteObject(path);
                         }
                     }
-
-                    Iterable<ObjectInfo> list = bucket.listObjects(
-                            ObjectListOption.recursive(true), ObjectListOption.pageSize(20));
-                    int index = 0;
-                    for (ObjectInfo info : list) {
-                        assertEquals(expectedBucket, info.getBucket());
-                        assertTrue(info.getCreated().getTime() >= before);
-
-                        // cleanup
-                        bucket.deleteObject(String.format("path%d", index));
-                        index++;
-                    }
-                    assertEquals(expectedObjects, index);
-
+                } finally {
                     project.deleteBucket(expectedBucket);
                 }
             }
@@ -319,7 +329,7 @@ public class LibuplinkInstrumentedTest {
 
     @Test
     public void testFileSharing() throws Exception {
-        String expectedBucket = "test-bucket-" + new Date().getTime();
+        String expectedBucket = "test-bucket";
 
         Config config = new Config.Builder().setTempDir(filesDir).build();
         io.storj.ApiKey apiKey = new io.storj.ApiKey(VALID_API_KEY);
@@ -394,12 +404,12 @@ public class LibuplinkInstrumentedTest {
                     assertTrue(errorMessage, errorMessage.contains("Unauthorized API credentials"));
                 }
             }
-        }
-
-        // cleanup
-        try (io.storj.Uplink uplink = new io.storj.Uplink(config)) {
-            try (io.storj.Project project = uplink.openProject(VALID_SATELLITE_ADDRESS, apiKey)) {
-                project.deleteBucket(expectedBucket);
+        } finally {
+            // cleanup
+            try (io.storj.Uplink uplink = new io.storj.Uplink(config)) {
+                try (io.storj.Project project = uplink.openProject(VALID_SATELLITE_ADDRESS, apiKey)) {
+                    project.deleteBucket(expectedBucket);
+                }
             }
         }
     }
