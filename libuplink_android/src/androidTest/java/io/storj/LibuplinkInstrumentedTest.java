@@ -56,17 +56,18 @@ public class LibuplinkInstrumentedTest {
                     build();
 
             try {
-                project.createBucket(expectedBucket, BucketOption.redundancyScheme(rs));
+                BucketInfo createBucketInfo = project.createBucket(expectedBucket, BucketOption.redundancyScheme(rs));
 
-                BucketInfo bucketInfo = project.getBucketInfo(expectedBucket);
-                Assert.assertEquals(expectedBucket, bucketInfo.getName());
+                BucketInfo getBucketInfo = project.getBucketInfo(expectedBucket);
+                Assert.assertEquals(expectedBucket, getBucketInfo.getName());
+                Assert.assertEquals(createBucketInfo, getBucketInfo);
             } finally {
                 project.deleteBucket(expectedBucket);
 
                 try {
                     project.getBucketInfo(expectedBucket);
                 } catch (StorjException e) {
-                    Assert.assertTrue(e.getMessage().contains("bucket not found"));
+                    Assert.assertTrue("Unexpected error: "+ e.getMessage(), e.getMessage().contains("bucket not found"));
                 }
             }
         }
