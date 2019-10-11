@@ -8,17 +8,14 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
@@ -140,25 +137,11 @@ public class LibuplinkInstrumentedTest {
                 random.nextBytes(expectedData);
 
                 String objectPath = "object/path";
-                {
-                    try (OutputStream oos = new ObjectOutputStream(bucket, objectPath)) {
-                        oos.write(expectedData);
-                    }
-                }
+                bucket.uploadObject(objectPath, expectedData);
 
-                {
-                    try (InputStream is = new ObjectInputStream(bucket, objectPath)) {
-                        BufferedInputStream bis = new BufferedInputStream(is);
-
-                        ByteArrayOutputStream writer = new ByteArrayOutputStream();
-                        byte[] buf = new byte[256];
-                        int read;
-                        while ((read = bis.read(buf)) != -1) {
-                            writer.write(buf, 0, read);
-                        }
-                        assertArrayEquals(expectedData, writer.toByteArray());
-                    }
-                }
+                ByteArrayOutputStream writer = new ByteArrayOutputStream();
+                bucket.downloadObject(objectPath, writer);
+                assertArrayEquals(expectedData, writer.toByteArray());
 
                 bucket.deleteObject(objectPath);
             }
@@ -193,21 +176,11 @@ public class LibuplinkInstrumentedTest {
 
                 String objectPath = "object/path";
                 try {
-                    try (OutputStream oos = new ObjectOutputStream(bucket, objectPath)) {
-                        oos.write(expectedData);
-                    }
+                    bucket.uploadObject(objectPath, expectedData);
 
-                    try (InputStream is = new ObjectInputStream(bucket, objectPath)) {
-                        BufferedInputStream bis = new BufferedInputStream(is);
-
-                        ByteArrayOutputStream writer = new ByteArrayOutputStream();
-                        byte[] buf = new byte[512];
-                        int read;
-                        while ((read = bis.read(buf)) != -1) {
-                            writer.write(buf, 0, read);
-                        }
-                        assertArrayEquals(expectedData, writer.toByteArray());
-                    }
+                    ByteArrayOutputStream writer = new ByteArrayOutputStream();
+                    bucket.downloadObject(objectPath, writer);
+                    assertArrayEquals(expectedData, writer.toByteArray());
                 } finally {
                     bucket.deleteObject(objectPath);
 
@@ -250,9 +223,7 @@ public class LibuplinkInstrumentedTest {
 
                 for (int i = 0; i < expectedObjects; i++) {
                     String path = String.format("path%d", i);
-                    try (OutputStream oos = new ObjectOutputStream(bucket, path)) {
-                        oos.write(new byte[0]);
-                    }
+                    bucket.uploadObject(path, new byte[0]);
                 }
 
                 Iterable<ObjectInfo> list = bucket.listObjects(
@@ -299,9 +270,7 @@ public class LibuplinkInstrumentedTest {
             access.setDefaultKey(new Key("TestEncryptionKey"));
 
             try (Bucket bucket = project.openBucket(expectedBucket, access)) {
-                try (OutputStream oos = new ObjectOutputStream(bucket, "first-file")) {
-                    oos.write("First file content".getBytes());
-                }
+                bucket.uploadObject("first-file", "First file content".getBytes(UTF_8));
             }
         }
 
@@ -319,23 +288,15 @@ public class LibuplinkInstrumentedTest {
 
             try (Bucket bucket = project.openBucket(expectedBucket, access)) {
                 // Try to download first-file - should succeed
-                try (InputStream is = new ObjectInputStream(bucket, "first-file")) {
-                    BufferedInputStream bis = new BufferedInputStream(is);
-
-                    ByteArrayOutputStream writer = new ByteArrayOutputStream();
-                    byte[] buf = new byte[512];
-                    int read;
-                    while ((read = bis.read(buf)) != -1) {
-                        writer.write(buf, 0, read);
-                    }
-                    assertArrayEquals("First file content".getBytes(), writer.toByteArray());
-                }
+                ByteArrayOutputStream writer = new ByteArrayOutputStream();
+                bucket.downloadObject("first-file", writer);
+                assertArrayEquals("First file content".getBytes(UTF_8), writer.toByteArray());
 
                 // Try to upload new file - should fail
                 String errorMessage = "";
-                try (OutputStream oos = new ObjectOutputStream(bucket, "third-file")) {
-                    oos.write("Third file content".getBytes());
-                } catch (IOException e) {
+                try {
+                    bucket.uploadObject("third-file", "Third file content".getBytes(UTF_8));
+                } catch (StorjException e) {
                     errorMessage = e.getMessage();
                 }
                 assertTrue(errorMessage, errorMessage.contains("Unauthorized API credentials"));
@@ -402,7 +363,7 @@ public class LibuplinkInstrumentedTest {
                 .disallowReads(false)
                 .notAfter(cal.getTime())
                 .notBefore(new Date())
-//                .addCaveatPath(new CaveatPath("bucket".getBytes(), "123456".getBytes()))
+//                .addCaveatPath(new CaveatPath("bucket".getBytes(UTF_8), "123456".getBytes()))
                 .build();
 
         ApiKey newAPIKey = apiKey.restrict(caveat);

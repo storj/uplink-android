@@ -18,6 +18,7 @@ class ObjectInputStream extends InputStream {
     }
 
     public ObjectInputStream(Bucket bucket, String objectPath, int offset, int length) throws StorjException {
+        throw new UnsupportedOperationException();
         // TODO use bucket.internal().downloadRange()
     }
 
