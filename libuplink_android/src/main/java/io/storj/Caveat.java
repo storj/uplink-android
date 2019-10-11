@@ -21,12 +21,12 @@ public class Caveat {
             this.caveat.setNotBefore(builder.notBefore.getTime() / 1000);
         }
         this.caveat.setNonce(builder.nonce);
-        for (CaveatPath path: builder.caveatPaths) {
+        for (CaveatPath path : builder.caveatPaths) {
             this.caveat.addCaveatPath(path.internal());
         }
     }
 
-    io.storj.libuplink.mobile.Caveat internal(){
+    io.storj.libuplink.mobile.Caveat internal() {
         return this.caveat;
     }
 

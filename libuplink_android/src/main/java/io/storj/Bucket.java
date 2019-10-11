@@ -1,40 +1,40 @@
 package io.storj;
 
 public class Bucket implements AutoCloseable {
-	
-	private io.storj.libuplink.mobile.Bucket bucket;
 
-	Bucket(io.storj.libuplink.mobile.Bucket bucket) {
-		this.bucket = bucket;
-	}
-	
-	public String getName() {
-		return bucket.getName();
-	}
+    private io.storj.libuplink.mobile.Bucket bucket;
 
-	public Iterable<ObjectInfo> listObjects(ObjectListOption... options) throws StorjException {
-		return new ObjectIterator(this.bucket, options);
-	}
+    Bucket(io.storj.libuplink.mobile.Bucket bucket) {
+        this.bucket = bucket;
+    }
 
-	public void deleteObject(String objectPath) throws StorjException {
-		try {
-			bucket.deleteObject(objectPath);
-		} catch (Exception e) {
-			throw ExceptionUtil.toStorjException(e);
-		}
-	}
+    public String getName() {
+        return bucket.getName();
+    }
 
-	@Override
-	public void close() throws StorjException {
-		try {
-			bucket.close();
-		} catch (Exception e) {
-			throw ExceptionUtil.toStorjException(e);
-		}
-	}
+    public Iterable<ObjectInfo> listObjects(ObjectListOption... options) throws StorjException {
+        return new ObjectIterator(this.bucket, options);
+    }
 
-	io.storj.libuplink.mobile.Bucket internal() {
-		return bucket;
-	}
+    public void deleteObject(String objectPath) throws StorjException {
+        try {
+            bucket.deleteObject(objectPath);
+        } catch (Exception e) {
+            throw ExceptionUtil.toStorjException(e);
+        }
+    }
+
+    @Override
+    public void close() throws StorjException {
+        try {
+            bucket.close();
+        } catch (Exception e) {
+            throw ExceptionUtil.toStorjException(e);
+        }
+    }
+
+    io.storj.libuplink.mobile.Bucket internal() {
+        return bucket;
+    }
 
 }

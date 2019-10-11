@@ -40,8 +40,8 @@ class ObjectOutputStream extends OutputStream {
         if (count == buf.length) {
             flush();
         }
-         buf[count] = (byte)(b & 0xFF);
-         ++count;
+        buf[count] = (byte) (b & 0xFF);
+        ++count;
     }
 
     @Override

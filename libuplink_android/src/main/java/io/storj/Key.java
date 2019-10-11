@@ -4,11 +4,11 @@ public class Key {
 
     private byte[] keyData;
 
-    public Key(byte[] keyData){
+    public Key(byte[] keyData) {
         this.keyData = keyData;
     }
 
-    public Key(String keyData){
+    public Key(String keyData) {
         this.keyData = keyData.getBytes();
     }
 

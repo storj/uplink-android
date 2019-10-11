@@ -1,108 +1,108 @@
 package io.storj;
 
 public class RedundancyScheme {
-	
-	private io.storj.libuplink.mobile.RedundancyScheme scheme;
 
-	RedundancyScheme(io.storj.libuplink.mobile.RedundancyScheme scheme) {
-		this.scheme = scheme;
-	}
-	
-	public RedundancyAlgorithm getAlgorithm() {
-		return RedundancyAlgorithm.fromValue(scheme.getAlgorithm());
-	}
+    private io.storj.libuplink.mobile.RedundancyScheme scheme;
 
-	public short getRequiredShares() {
-		return scheme.getRequiredShares();
-	}
-	
-	public short getRepairShares() {
-		return scheme.getRepairShares();
-	}
-	
-	public short getSuccessShares() {
-		return scheme.getOptimalShares();
-	}
-	
-	public short getTotalShares() {
-		return scheme.getTotalShares();
-	}
-	
-	public int getShareSize() {
-		return scheme.getShareSize();
-	}
+    RedundancyScheme(io.storj.libuplink.mobile.RedundancyScheme scheme) {
+        this.scheme = scheme;
+    }
 
-	@Override
-	public boolean equals(Object obj) {
-		if (!(obj instanceof RedundancyScheme)) {
-			return false;
-		}
-		RedundancyScheme that = (RedundancyScheme) obj;
-		return scheme.equals(that.scheme);
-	}
+    public RedundancyAlgorithm getAlgorithm() {
+        return RedundancyAlgorithm.fromValue(scheme.getAlgorithm());
+    }
 
-	@Override
-	public int hashCode() {
-		return scheme.hashCode();
-	}
+    public short getRequiredShares() {
+        return scheme.getRequiredShares();
+    }
 
-	io.storj.libuplink.mobile.RedundancyScheme internal() {
-		return scheme;
-	}
+    public short getRepairShares() {
+        return scheme.getRepairShares();
+    }
 
-	private RedundancyScheme(Builder builder) {
-		this.scheme = new io.storj.libuplink.mobile.RedundancyScheme();
-		if (builder.algorithm != null) {
-			this.scheme.setAlgorithm(builder.algorithm.getValue());
-		}
-		this.scheme.setRequiredShares(builder.required);
-		this.scheme.setRepairShares(builder.repair);
-		this.scheme.setOptimalShares(builder.success);
-		this.scheme.setTotalShares(builder.total);
-		this.scheme.setShareSize(builder.shareSize);
-	}
+    public short getSuccessShares() {
+        return scheme.getOptimalShares();
+    }
 
-	public static class Builder {
+    public short getTotalShares() {
+        return scheme.getTotalShares();
+    }
 
-		private RedundancyAlgorithm algorithm;
-		private short required;
-		private short repair;
-		private short success;
-		private short total;
-		private int shareSize;
+    public int getShareSize() {
+        return scheme.getShareSize();
+    }
 
-		public Builder setAlgorithm(RedundancyAlgorithm algorithm) {
-			this.algorithm = algorithm;
-			return this;
-		}
+    @Override
+    public boolean equals(Object obj) {
+        if (!(obj instanceof RedundancyScheme)) {
+            return false;
+        }
+        RedundancyScheme that = (RedundancyScheme) obj;
+        return scheme.equals(that.scheme);
+    }
 
-		public Builder setRequiredShares(short count) {
-			this.required = count;
-			return this;
-		}
+    @Override
+    public int hashCode() {
+        return scheme.hashCode();
+    }
 
-		public Builder setRepairShares(short count) {
-			this.repair = count;
-			return this;
-		}
+    io.storj.libuplink.mobile.RedundancyScheme internal() {
+        return scheme;
+    }
 
-		public Builder setSuccessShares(short count) {
-			this.success = count;
-			return this;
-		}
+    private RedundancyScheme(Builder builder) {
+        this.scheme = new io.storj.libuplink.mobile.RedundancyScheme();
+        if (builder.algorithm != null) {
+            this.scheme.setAlgorithm(builder.algorithm.getValue());
+        }
+        this.scheme.setRequiredShares(builder.required);
+        this.scheme.setRepairShares(builder.repair);
+        this.scheme.setOptimalShares(builder.success);
+        this.scheme.setTotalShares(builder.total);
+        this.scheme.setShareSize(builder.shareSize);
+    }
 
-		public Builder setTotalShares(short count) {
-			this.total = count;
-			return this;
-		}
+    public static class Builder {
 
-		public Builder setShareSize(int size) {
-			this.shareSize = size;
-			return this;
-		}
+        private RedundancyAlgorithm algorithm;
+        private short required;
+        private short repair;
+        private short success;
+        private short total;
+        private int shareSize;
 
-		public RedundancyScheme build() {
-			return new RedundancyScheme(this);
-		}
-	}
+        public Builder setAlgorithm(RedundancyAlgorithm algorithm) {
+            this.algorithm = algorithm;
+            return this;
+        }
+
+        public Builder setRequiredShares(short count) {
+            this.required = count;
+            return this;
+        }
+
+        public Builder setRepairShares(short count) {
+            this.repair = count;
+            return this;
+        }
+
+        public Builder setSuccessShares(short count) {
+            this.success = count;
+            return this;
+        }
+
+        public Builder setTotalShares(short count) {
+            this.total = count;
+            return this;
+        }
+
+        public Builder setShareSize(int size) {
+            this.shareSize = size;
+            return this;
+        }
+
+        public RedundancyScheme build() {
+            return new RedundancyScheme(this);
+        }
+    }
 }
