@@ -77,7 +77,7 @@ public class Caveat {
             return this;
         }
 
-        public Builder addCaveatPath(CaveatPath caveatPath) {
+        public Builder addAllowedPath(CaveatPath caveatPath) {
             this.caveatPaths.add(caveatPath);
             return this;
         }
