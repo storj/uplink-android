@@ -1,6 +1,7 @@
 package io.storj;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class Caveat {
@@ -13,8 +14,12 @@ public class Caveat {
         this.caveat.setDisallowWrites(builder.disallowWrites);
         this.caveat.setDisallowLists(builder.disallowLists);
         this.caveat.setDisallowDeletes(builder.disallowDeletes);
-        this.caveat.setNotAfter(builder.notAfter);
-        this.caveat.setNotBefore(builder.notBefore);
+        if (builder.notAfter != null) {
+            this.caveat.setNotAfter(builder.notAfter.getTime() / 1000);
+        }
+        if (builder.notBefore != null) {
+            this.caveat.setNotBefore(builder.notBefore.getTime() / 1000);
+        }
         this.caveat.setNonce(builder.nonce);
         for (CaveatPath path: builder.caveatPaths) {
             this.caveat.addCaveatPath(path.internal());
@@ -31,8 +36,8 @@ public class Caveat {
         private boolean disallowWrites;
         private boolean disallowLists;
         private boolean disallowDeletes;
-        private long notAfter;
-        private long notBefore;
+        private Date notAfter;
+        private Date notBefore;
         private byte[] nonce;
         private List<CaveatPath> caveatPaths = new ArrayList<>();
 
@@ -57,12 +62,12 @@ public class Caveat {
             return this;
         }
 
-        public Builder notAfter(long notAfter) {
+        public Builder notAfter(Date notAfter) {
             this.notAfter = notAfter;
             return this;
         }
 
-        public Builder notBefore(long notBefore) {
+        public Builder notBefore(Date notBefore) {
             this.notBefore = notBefore;
             return this;
         }

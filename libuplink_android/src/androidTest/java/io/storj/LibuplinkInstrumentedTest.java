@@ -13,6 +13,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -24,7 +25,6 @@ import static org.junit.Assert.*;
 
 @RunWith(AndroidJUnit4.class)
 public class LibuplinkInstrumentedTest {
-
 
     public static final String VALID_SATELLITE_ADDRESS = InstrumentationRegistry.getArguments().getString("storj.sim.host", "172.19.48.151:10000");
     public static final String VALID_API_KEY = InstrumentationRegistry.getArguments().getString("api.key", "13Yqed8J5EKXUkJV8qbaxcoWbkXsqBREXEMv48fFMjZs5GY5gmjynfDsjs9YhwsSBLc9eWfd7riYcsAvimTpLKqp2npGX7NpFUj4wiH");
@@ -453,16 +453,19 @@ public class LibuplinkInstrumentedTest {
     public void testApiKey() throws Exception {
         String apiKeyData = "13YqeKQiA3ANSuDu4rqX6eGs3YWox9GRi9rEUKy1HidXiNNm6a5SiE49Hk9gomHZVcQhq4eFQh8yhDgfGKg268j6vqWKEhnJjFPLqAP";
         ApiKey apiKey = new ApiKey(apiKeyData);
-
         String serialized = apiKey.serialize();
         assertEquals(serialized, apiKeyData);
+
+        Calendar cal = Calendar.getInstance();
+        cal.add(Calendar.MONTH, 1);
+
         Caveat caveat = new Caveat.Builder()
                 .disallowDeletes(true)
                 .disallowLists(true)
                 .disallowWrites(true)
                 .disallowReads(false)
-                .notAfter(50)
-                .notBefore(100)
+                .notAfter(cal.getTime())
+                .notBefore(new Date())
 //                .addCaveatPath(new CaveatPath("bucket".getBytes(), "123456".getBytes()))
                 .build();
 
