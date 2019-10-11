@@ -47,6 +47,15 @@ public class Project implements AutoCloseable {
         }
     }
 
+    public Key saltedKeyFromPassphrase(String passphrase) throws StorjException{
+        try {
+            byte[] keyData = project.saltedKeyFromPassphrase(passphrase);
+            return new Key(keyData);
+        } catch (Exception e) {
+            throw ExceptionUtil.toStorjException(e);
+        }
+    }
+
     @Override
     public void close() throws StorjException {
         try {

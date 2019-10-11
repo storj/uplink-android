@@ -19,8 +19,10 @@ import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;
 
-
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertTrue;
 
 @RunWith(AndroidJUnit4.class)
 public class LibuplinkInstrumentedTest {
@@ -42,12 +44,12 @@ public class LibuplinkInstrumentedTest {
 
     @Test
     public void testBasicBucket() throws Exception {
-        try (io.storj.Uplink uplink = new io.storj.Uplink(uplinkOptions)) {
-            io.storj.ApiKey apiKey = new io.storj.ApiKey(VALID_API_KEY);
+        try (Uplink uplink = new Uplink(uplinkOptions)) {
+            ApiKey apiKey = new ApiKey(VALID_API_KEY);
 
-            try (io.storj.Project project = uplink.openProject(VALID_SATELLITE_ADDRESS, apiKey)) {
+            try (Project project = uplink.openProject(VALID_SATELLITE_ADDRESS, apiKey)) {
                 String expectedBucket = "test-bucket";
-                io.storj.RedundancyScheme rs = new RedundancyScheme.Builder().
+                RedundancyScheme rs = new RedundancyScheme.Builder().
                         setRequiredShares((short) 4).
                         setRepairShares((short) 6).
                         setSuccessShares((short) 8).
@@ -57,7 +59,7 @@ public class LibuplinkInstrumentedTest {
                 try {
                     project.createBucket(expectedBucket, BucketOption.redundancyScheme(rs));
 
-                    io.storj.BucketInfo bucketInfo = project.getBucketInfo(expectedBucket);
+                    BucketInfo bucketInfo = project.getBucketInfo(expectedBucket);
                     Assert.assertEquals(expectedBucket, bucketInfo.getName());
                 } finally {
                     project.deleteBucket(expectedBucket);
@@ -77,8 +79,8 @@ public class LibuplinkInstrumentedTest {
         try (Uplink uplink = new Uplink(uplinkOptions)) {
             ApiKey apiKey = new ApiKey(VALID_API_KEY);
 
-            try (io.storj.Project project = uplink.openProject(VALID_SATELLITE_ADDRESS, apiKey)) {
-                io.storj.RedundancyScheme rs = new RedundancyScheme.Builder().
+            try (Project project = uplink.openProject(VALID_SATELLITE_ADDRESS, apiKey)) {
+                RedundancyScheme rs = new RedundancyScheme.Builder().
                         setRequiredShares((short) 4).
                         setRepairShares((short) 6).
                         setSuccessShares((short) 8).
@@ -119,12 +121,12 @@ public class LibuplinkInstrumentedTest {
 
     @Test
     public void testUploadDownloadInline() throws Exception {
-        try (io.storj.Uplink uplink = new io.storj.Uplink(uplinkOptions)) {
-            io.storj.ApiKey apiKey = new io.storj.ApiKey(VALID_API_KEY);
+        try (Uplink uplink = new Uplink(uplinkOptions)) {
+            ApiKey apiKey = new ApiKey(VALID_API_KEY);
 
-            try (io.storj.Project project = uplink.openProject(VALID_SATELLITE_ADDRESS, apiKey)) {
+            try (Project project = uplink.openProject(VALID_SATELLITE_ADDRESS, apiKey)) {
                 String expectedBucket = "test-bucket";
-                io.storj.RedundancyScheme rs = new RedundancyScheme.Builder().
+                RedundancyScheme rs = new RedundancyScheme.Builder().
                         setRequiredShares((short) 4).
                         setRepairShares((short) 6).
                         setSuccessShares((short) 8).
@@ -173,12 +175,12 @@ public class LibuplinkInstrumentedTest {
 
     @Test
     public void testUploadDownloadDeleteRemote() throws Exception {
-        try (io.storj.Uplink uplink = new io.storj.Uplink(uplinkOptions)) {
-            io.storj.ApiKey apiKey = new io.storj.ApiKey(VALID_API_KEY);
+        try (Uplink uplink = new Uplink(uplinkOptions)) {
+            ApiKey apiKey = new ApiKey(VALID_API_KEY);
 
-            try (io.storj.Project project = uplink.openProject(VALID_SATELLITE_ADDRESS, apiKey)) {
+            try (Project project = uplink.openProject(VALID_SATELLITE_ADDRESS, apiKey)) {
                 String expectedBucket = "test-bucket";
-                io.storj.RedundancyScheme rs = new RedundancyScheme.Builder().
+                RedundancyScheme rs = new RedundancyScheme.Builder().
                         setRequiredShares((short) 4).
                         setRepairShares((short) 6).
                         setSuccessShares((short) 8).
@@ -230,12 +232,12 @@ public class LibuplinkInstrumentedTest {
 
     @Test
     public void testListObjects() throws Exception {
-        try (io.storj.Uplink uplink = new io.storj.Uplink(uplinkOptions)) {
-            io.storj.ApiKey apiKey = new io.storj.ApiKey(VALID_API_KEY);
+        try (Uplink uplink = new Uplink(uplinkOptions)) {
+            ApiKey apiKey = new ApiKey(VALID_API_KEY);
 
-            try (io.storj.Project project = uplink.openProject(VALID_SATELLITE_ADDRESS, apiKey)) {
+            try (Project project = uplink.openProject(VALID_SATELLITE_ADDRESS, apiKey)) {
                 String expectedBucket = "test-bucket";
-                io.storj.RedundancyScheme rs = new RedundancyScheme.Builder().
+                RedundancyScheme rs = new RedundancyScheme.Builder().
                         setRequiredShares((short) 4).
                         setRepairShares((short) 6).
                         setSuccessShares((short) 8).
@@ -288,17 +290,17 @@ public class LibuplinkInstrumentedTest {
     public void testFileSharing() throws Exception {
         String expectedBucket = "test-bucket";
 
-        io.storj.ApiKey apiKey = new io.storj.ApiKey(VALID_API_KEY);
+        ApiKey apiKey = new ApiKey(VALID_API_KEY);
 
-        io.storj.RedundancyScheme rs = new RedundancyScheme.Builder().
+        RedundancyScheme rs = new RedundancyScheme.Builder().
                 setRequiredShares((short) 4).
                 setRepairShares((short) 6).
                 setSuccessShares((short) 8).
                 setTotalShares((short) 10).
                 build();
 
-        try (io.storj.Uplink uplink = new io.storj.Uplink(uplinkOptions)) {
-            try (io.storj.Project project = uplink.openProject(VALID_SATELLITE_ADDRESS, apiKey)) {
+        try (Uplink uplink = new Uplink(uplinkOptions)) {
+            try (Project project = uplink.openProject(VALID_SATELLITE_ADDRESS, apiKey)) {
                 project.createBucket(expectedBucket, BucketOption.redundancyScheme(rs));
 
                 EncryptionAccess access = new EncryptionAccess();
@@ -318,8 +320,8 @@ public class LibuplinkInstrumentedTest {
 
         ApiKey restrictedKey = apiKey.restrict(caveat);
 
-        try (io.storj.Uplink uplink = new io.storj.Uplink(uplinkOptions)) {
-            try (io.storj.Project project = uplink.openProject(VALID_SATELLITE_ADDRESS, restrictedKey)) {
+        try (Uplink uplink = new Uplink(uplinkOptions)) {
+            try (Project project = uplink.openProject(VALID_SATELLITE_ADDRESS, restrictedKey)) {
 
                 EncryptionAccess access = new EncryptionAccess();
                 access.setDefaultKey(new Key("TestEncryptionKey"));
@@ -359,55 +361,40 @@ public class LibuplinkInstrumentedTest {
             }
         } finally {
             // cleanup
-            try (io.storj.Uplink uplink = new io.storj.Uplink(uplinkOptions)) {
-                try (io.storj.Project project = uplink.openProject(VALID_SATELLITE_ADDRESS, apiKey)) {
+            try (Uplink uplink = new Uplink(uplinkOptions)) {
+                try (Project project = uplink.openProject(VALID_SATELLITE_ADDRESS, apiKey)) {
                     project.deleteBucket(expectedBucket);
                 }
             }
         }
     }
 
-    //
-//    @Test
-//    public void testEncryptionAccessFromPassphrase() throws Exception {
-//        UplinkOption uplinkOptions = new UplinkOption();
-//
-//        Uplink uplink = new Uplink(uplinkOptions, filesDir);
-//        try {
-//            Project project = uplink.openProject(VALID_SATELLITE_ADDRESS, VALID_API_KEY);
-//            try {
-//                byte[] saltedKey = project.saltedKeyFromPassphrase("some-passphrase");
-//                EncryptionAccess ea = new EncryptionAccess(saltedKey);
-//                String serialized = ea.serialize();
-//                assertNotEquals("", serialized);
-//            } finally {
-//                project.close();
-//            }
-//        } finally {
-//            uplink.close();
-//        }
-//    }
-//
-//    @Test
-//    public void testEncryptionAccessWithRoot() throws Exception {
-//        UplinkOption uplinkOptions = new UplinkOption();
-//
-//        Uplink uplink = new Uplink(uplinkOptions, filesDir);
-//        try {
-//            Project project = uplink.openProject(VALID_SATELLITE_ADDRESS, VALID_API_KEY);
-//            try {
-//                byte[] saltedKey = project.saltedKeyFromPassphrase("some-passphrase");
-//                EncryptionAccess ea = Mobile.newEncryptionAccessWithRoot("bucket", "unencryptedPath", "encryptedPath", saltedKey);
-//                String serialized = ea.serialize();
-//                assertNotEquals("", serialized);
-//            } finally {
-//                project.close();
-//            }
-//        } finally {
-//            uplink.close();
-//        }
-//    }
-//
+
+    @Test
+    public void testEncryptionAccessFromPassphrase() throws Exception {
+        try (Uplink uplink = new Uplink(uplinkOptions)) {
+            try (Project project = uplink.openProject(VALID_SATELLITE_ADDRESS, new ApiKey(VALID_API_KEY))){
+                Key saltedKey = project.saltedKeyFromPassphrase("some-passphrase");
+                EncryptionAccess ea = new EncryptionAccess();
+                ea.setDefaultKey(saltedKey);
+                String serialized = ea.serialize();
+                assertNotEquals("", serialized);
+            }
+        }
+    }
+
+    @Test
+    public void testEncryptionAccessWithRoot() throws Exception {
+        try (Uplink uplink = new Uplink(uplinkOptions)) {
+            try (Project project = uplink.openProject(VALID_SATELLITE_ADDRESS, new ApiKey(VALID_API_KEY))){
+                Key saltedKey = project.saltedKeyFromPassphrase("some-passphrase");
+                EncryptionAccess ea = EncryptionAccess.withRoot("bucket", "unencryptedPath", "encryptedPath", saltedKey);
+                String serialized = ea.serialize();
+                assertNotEquals("", serialized);
+            }
+        }
+    }
+
     @Test
     public void testApiKey() throws Exception {
         String apiKeyData = "13YqeKQiA3ANSuDu4rqX6eGs3YWox9GRi9rEUKy1HidXiNNm6a5SiE49Hk9gomHZVcQhq4eFQh8yhDgfGKg268j6vqWKEhnJjFPLqAP";
