@@ -25,8 +25,9 @@ import static org.junit.Assert.*;
 @RunWith(AndroidJUnit4.class)
 public class LibuplinkInstrumentedTest {
 
-    public static final String VALID_SATELLITE_ADDRESS = "192.168.1.228:10000";
-    public static final String VALID_API_KEY = "13YqdJSpRnyJ9wxKKkUSwscUVTjaYFadiRyzfKSRAaLwj1F8NAWRrK8bNTSEk85RjEt2WmcbaiqMGde5gnU8K4jtewW1fYWhQuH3f5D";
+
+    public static final String VALID_SATELLITE_ADDRESS = InstrumentationRegistry.getArguments().getString("storj.sim.host", "172.19.48.151:10000");
+    public static final String VALID_API_KEY = InstrumentationRegistry.getArguments().getString("api.key", "13Yqed8J5EKXUkJV8qbaxcoWbkXsqBREXEMv48fFMjZs5GY5gmjynfDsjs9YhwsSBLc9eWfd7riYcsAvimTpLKqp2npGX7NpFUj4wiH");
 
     String filesDir;
 
