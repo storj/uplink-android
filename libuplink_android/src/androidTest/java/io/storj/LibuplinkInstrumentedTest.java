@@ -134,7 +134,7 @@ public class LibuplinkInstrumentedTest {
                 project.createBucket(expectedBucket, BucketOption.redundancyScheme(rs));
 
                 EncryptionAccess access = new EncryptionAccess();
-                access.setDefaultKey("TestEncryptionKey".getBytes());
+                access.setDefaultKey(new Key("TestEncryptionKey"));
 
                 try (Bucket bucket = project.openBucket(expectedBucket, access)) {
                     byte[] expectedData = new byte[2048];
@@ -188,7 +188,7 @@ public class LibuplinkInstrumentedTest {
                 project.createBucket(expectedBucket, BucketOption.redundancyScheme(rs));
 
                 EncryptionAccess access = new EncryptionAccess();
-                access.setDefaultKey("TestEncryptionKey".getBytes());
+                access.setDefaultKey(new Key("TestEncryptionKey"));
 
                 try (Bucket bucket = project.openBucket(expectedBucket, access)) {
                     byte[] expectedData = new byte[2 * 1024 * 1024];
@@ -246,7 +246,7 @@ public class LibuplinkInstrumentedTest {
                         BucketOption.redundancyScheme(rs), BucketOption.pathCipher(CipherSuite.NONE));
 
                 EncryptionAccess access = new EncryptionAccess();
-                access.setDefaultKey("TestEncryptionKey".getBytes());
+                access.setDefaultKey(new Key("TestEncryptionKey"));
 
                 try (Bucket bucket = project.openBucket(expectedBucket, access)) {
                     long before = System.currentTimeMillis();
@@ -302,7 +302,7 @@ public class LibuplinkInstrumentedTest {
                 project.createBucket(expectedBucket, BucketOption.redundancyScheme(rs));
 
                 EncryptionAccess access = new EncryptionAccess();
-                access.setDefaultKey("TestEncryptionKey".getBytes());
+                access.setDefaultKey(new Key("TestEncryptionKey"));
 
                 try (Bucket bucket = project.openBucket(expectedBucket, access)) {
                     try (OutputStream oos = new ObjectOutputStream(bucket, "first-file")) {
@@ -322,7 +322,7 @@ public class LibuplinkInstrumentedTest {
             try (io.storj.Project project = uplink.openProject(VALID_SATELLITE_ADDRESS, restrictedKey)) {
 
                 EncryptionAccess access = new EncryptionAccess();
-                access.setDefaultKey("TestEncryptionKey".getBytes());
+                access.setDefaultKey(new Key("TestEncryptionKey"));
 
                 try (Bucket bucket = project.openBucket(expectedBucket, access)) {
                     // Try to download first-file - should succeed

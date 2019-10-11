@@ -6,17 +6,17 @@ public class EncryptionAccess {
 
     io.storj.libuplink.mobile.EncryptionAccess access;
 
-    public static EncryptionAccess WithDefaultKey(byte[] key) throws StorjException {
+    public static EncryptionAccess withDefaultKey(Key defaultKey) throws StorjException {
         try {
-            return new EncryptionAccess(Mobile.newEncryptionAccessWithDefaultKey(key));
+            return new EncryptionAccess(Mobile.newEncryptionAccessWithDefaultKey(defaultKey.getKeyData()));
         } catch (Exception e) {
             throw ExceptionUtil.toStorjException(e);
         }
     }
 
-    public static EncryptionAccess WithRoot(String bucket, String unencryptedPath, String encryptedPath, byte[] keyData) throws StorjException {
+    public static EncryptionAccess withRoot(String bucket, String unencryptedPath, String encryptedPath, Key key) throws StorjException {
         try {
-            return new EncryptionAccess(Mobile.newEncryptionAccessWithRoot(bucket, unencryptedPath, encryptedPath, keyData));
+            return new EncryptionAccess(Mobile.newEncryptionAccessWithRoot(bucket, unencryptedPath, encryptedPath, key.getKeyData()));
         } catch (Exception e) {
             throw ExceptionUtil.toStorjException(e);
         }
@@ -30,9 +30,9 @@ public class EncryptionAccess {
         this(new io.storj.libuplink.mobile.EncryptionAccess());
     }
 
-    public void setDefaultKey(byte[] key) throws StorjException {
+    public void setDefaultKey(Key key) throws StorjException {
         try {
-            this.access.setDefaultKey(key);
+            this.access.setDefaultKey(key.getKeyData());
         } catch (Exception e) {
             throw ExceptionUtil.toStorjException(e);
         }
