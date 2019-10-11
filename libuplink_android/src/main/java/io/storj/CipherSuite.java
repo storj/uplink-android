@@ -5,7 +5,7 @@ import io.storj.libuplink.mobile.Mobile;
 public enum CipherSuite {
 	NONE(Mobile.CipherSuiteEncNull),
 	AESGCM(Mobile.CipherSuiteEncAESGCM),
-	SECRETBOX(Mobile.CipherSuiteEncSecretBox);
+	SECRET_BOX(Mobile.CipherSuiteEncSecretBox);
 	
 	private byte value;
 	

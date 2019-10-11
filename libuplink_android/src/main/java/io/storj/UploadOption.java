@@ -8,7 +8,7 @@ public class UploadOption {
 
     private enum Key {
         CONTENT_TYPE,
-        ENCRYPTION_PARAMTERS,
+        ENCRYPTION_PARAMETERS,
         EXPIRES,
         REDUNDANCY_SCHEME
     }
@@ -27,7 +27,7 @@ public class UploadOption {
     }
 
     public static UploadOption encryptionParameters(EncryptionParameters encryptionParameters) {
-        return new UploadOption(Key.ENCRYPTION_PARAMTERS, encryptionParameters);
+        return new UploadOption(Key.ENCRYPTION_PARAMETERS, encryptionParameters);
     }
 
     public static UploadOption expires(Date expires) {
@@ -43,7 +43,7 @@ public class UploadOption {
         for (UploadOption option : options) {
             if (option.key == Key.CONTENT_TYPE) {
                 writerOptions.setContentType(option.value.toString());
-            } else if (option.key == Key.ENCRYPTION_PARAMTERS) {
+            } else if (option.key == Key.ENCRYPTION_PARAMETERS) {
                 EncryptionParameters parameters = (EncryptionParameters) option.value;
                 writerOptions.setEncryptionParameters(parameters.internal());
             } else if (option.key == Key.EXPIRES) {

@@ -24,21 +24,6 @@ public class BucketListOption {
         return new BucketListOption(Key.PAGE_SIZE, pageSize);
     }
 
-//
-//	@Override
-//	public boolean equals(Object obj) {
-//		if (!(obj instanceof ObjectListOption)) {
-//			return false;
-//		}
-//		ObjectListOption that = (ObjectListOption) obj;
-//		return options.equals(that.options);
-//	}
-//
-//	@Override
-//	public int hashCode() {
-//		return options.hashCode();
-//	}
-
     static BucketListOptions internal(BucketListOption... options) {
         BucketListOptions listOptions = new BucketListOptions();
         for (BucketListOption option : options) {
@@ -50,6 +35,11 @@ public class BucketListOption {
         }
 
         return listOptions;
+    }
+
+    static class BucketListOptions {
+        String cursor;
+        int pageSize;
     }
 
 }

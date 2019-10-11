@@ -41,21 +41,6 @@ public class ObjectListOption {
         return new ObjectListOption(Key.PAGE_SIZE, pageSize);
     }
 
-//
-//	@Override
-//	public boolean equals(Object obj) {
-//		if (!(obj instanceof ObjectListOption)) {
-//			return false;
-//		}
-//		ObjectListOption that = (ObjectListOption) obj;
-//		return options.equals(that.options);
-//	}
-//
-//	@Override
-//	public int hashCode() {
-//		return options.hashCode();
-//	}
-
     static io.storj.libuplink.mobile.ListOptions internal(ObjectListOption... options) {
         io.storj.libuplink.mobile.ListOptions listOptions = new ListOptions();
         for (ObjectListOption option : options) {

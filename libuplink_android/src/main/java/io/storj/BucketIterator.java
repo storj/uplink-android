@@ -8,7 +8,7 @@ import io.storj.libuplink.mobile.Project;
 class BucketIterator implements Iterator<BucketInfo>, Iterable<BucketInfo> {
 
     private io.storj.libuplink.mobile.Project project;
-    private BucketListOptions options;
+    private BucketListOption.BucketListOptions options;
 
     private io.storj.libuplink.mobile.BucketList currentPage;
     private int pageIndex = 0;

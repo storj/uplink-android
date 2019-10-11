@@ -59,18 +59,8 @@ class ObjectIterator implements Iterator<ObjectInfo>, Iterable<ObjectInfo> {
 
     private void nextPage() throws StorjException {
         try {
-//            int direction = options.getDirection();
             if (currentPage != null) {
                 cursor = currentPage.item(currentPage.length() - 1).getPath();
-//                switch (options.getDirection()) {
-//
-//                    case FORWARD:
-//                    case 2:
-//                        direction = ListDirection.AFTER;
-//                        break;
-//                    default:
-//                        throw new IllegalStateException(String.format("invalid direction: %d", options.getDirection()));
-//                }
             }
 
             io.storj.libuplink.mobile.ListOptions options = new ListOptions();
