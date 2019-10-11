@@ -271,7 +271,7 @@ public class LibuplinkInstrumentedTest {
                         index++;
                     }
                     assertEquals(expectedObjects, index);
-                    
+
                     // cleanup
                     for (int i = 0; i < expectedObjects; i++) {
                         String path = String.format("path%d", i);

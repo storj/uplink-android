@@ -7,7 +7,6 @@ public class ObjectListOption {
     private enum Key {
         PREFIX,
         CURSOR,
-        DELIMITER,
         RECURSIVE,
         PAGE_SIZE
     }
@@ -29,10 +28,6 @@ public class ObjectListOption {
         return new ObjectListOption(Key.CURSOR, cursor);
     }
 
-    public static ObjectListOption delimiter(char delimiter) {
-        return new ObjectListOption(Key.DELIMITER, delimiter);
-    }
-
     public static ObjectListOption recursive(boolean recursive) {
         return new ObjectListOption(Key.RECURSIVE, recursive);
     }
@@ -48,8 +43,6 @@ public class ObjectListOption {
                 listOptions.setPrefix(option.value.toString());
             } else if (option.key == Key.CURSOR) {
                 listOptions.setCursor(option.value.toString());
-            } else if (option.key == Key.DELIMITER) {
-                listOptions.setDelimiter((char) option.value);
             } else if (option.key == Key.RECURSIVE) {
                 listOptions.setRecursive((Boolean) option.value);
             } else if (option.key == Key.PAGE_SIZE) {
