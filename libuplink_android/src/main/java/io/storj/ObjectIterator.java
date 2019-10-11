@@ -69,6 +69,7 @@ class ObjectIterator implements Iterator<ObjectInfo>, Iterable<ObjectInfo> {
             options.setDelimiter(this.options.getDelimiter());
             options.setRecursive(this.options.getRecursive());
             options.setLimit(this.options.getLimit());
+            options.setDirection(2); // after
             currentPage = bucket.listObjects(options);
             pageIndex = 0;
         } catch (Exception e) {

@@ -30,16 +30,18 @@ public class LibuplinkInstrumentedTest {
     public static final String VALID_API_KEY = InstrumentationRegistry.getArguments().getString("api.key", "13Yqed8J5EKXUkJV8qbaxcoWbkXsqBREXEMv48fFMjZs5GY5gmjynfDsjs9YhwsSBLc9eWfd7riYcsAvimTpLKqp2npGX7NpFUj4wiH");
 
     String filesDir;
+    Config config;
 
     @Before
     public void setUp() {
         filesDir = InstrumentationRegistry.getTargetContext().getFilesDir().getAbsolutePath();
+        config = new Config.Builder()
+                .setSkipPeerCAWhitelist(true)
+                .setTempDir(filesDir).build();
     }
 
     @Test
     public void testBasicBucket() throws Exception {
-        Config config = new Config.Builder().setTempDir(filesDir).build();
-
         try (io.storj.Uplink uplink = new io.storj.Uplink(config)) {
             io.storj.ApiKey apiKey = new io.storj.ApiKey(VALID_API_KEY);
 
@@ -75,8 +77,6 @@ public class LibuplinkInstrumentedTest {
 
     @Test
     public void testListBuckets() throws Exception {
-        Config config = new Config.Builder().setTempDir(filesDir).build();
-
         try (Uplink uplink = new Uplink(config)) {
             ApiKey apiKey = new ApiKey(VALID_API_KEY);
 
@@ -145,8 +145,6 @@ public class LibuplinkInstrumentedTest {
 
     @Test
     public void testUploadDownloadInline() throws Exception {
-        Config config = new Config.Builder().setTempDir(filesDir).build();
-
         try (io.storj.Uplink uplink = new io.storj.Uplink(config)) {
             io.storj.ApiKey apiKey = new io.storj.ApiKey(VALID_API_KEY);
 
@@ -204,8 +202,6 @@ public class LibuplinkInstrumentedTest {
 
     @Test
     public void testUploadDownloadDeleteRemote() throws Exception {
-        Config config = new Config.Builder().setTempDir(filesDir).build();
-
         try (io.storj.Uplink uplink = new io.storj.Uplink(config)) {
             io.storj.ApiKey apiKey = new io.storj.ApiKey(VALID_API_KEY);
 
@@ -266,8 +262,6 @@ public class LibuplinkInstrumentedTest {
 
     @Test
     public void testListObjects() throws Exception {
-        Config config = new Config.Builder().setTempDir(filesDir).build();
-
         try (io.storj.Uplink uplink = new io.storj.Uplink(config)) {
             io.storj.ApiKey apiKey = new io.storj.ApiKey(VALID_API_KEY);
 
@@ -332,7 +326,6 @@ public class LibuplinkInstrumentedTest {
     public void testFileSharing() throws Exception {
         String expectedBucket = "test-bucket";
 
-        Config config = new Config.Builder().setTempDir(filesDir).build();
         io.storj.ApiKey apiKey = new io.storj.ApiKey(VALID_API_KEY);
 
         io.storj.RedundancyScheme rs = new RedundancyScheme.Builder().

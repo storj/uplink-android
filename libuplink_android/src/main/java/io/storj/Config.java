@@ -46,6 +46,7 @@ public class Config {
 		this.config = new io.storj.libuplink.mobile.Config();
 		this.config.setMaxInlineSize(builder.maxInlineSize);
 		this.config.setMaxMemory(builder.maxMemory);
+		this.config.setSkipPeerCAWhitelist(builder.skipPeerCAWhitelist);
 		this.tempDir = builder.tempDir;
 	}
 
@@ -54,6 +55,7 @@ public class Config {
 		private long maxInlineSize;
 		private long maxMemory;
 		private String tempDir;
+		private boolean skipPeerCAWhitelist;
 
 		public Builder setMaxInlineSize(long size) {
 			this.maxInlineSize = size;
@@ -67,6 +69,11 @@ public class Config {
 
 		public Builder setTempDir(String dir) {
 			this.tempDir = dir;
+			return this;
+		}
+
+		public Builder setSkipPeerCAWhitelist(boolean skipPeerCAWhitelist){
+			this.skipPeerCAWhitelist = skipPeerCAWhitelist;
 			return this;
 		}
 
