@@ -1,5 +1,8 @@
 package io.storj;
 
+/**
+ * EncryptionParameters is the cipher suite and parameters used for encryption
+ */
 public class EncryptionParameters {
 
     private io.storj.libuplink.mobile.EncryptionParameters params;

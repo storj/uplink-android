@@ -1,5 +1,10 @@
 package io.storj;
 
+/**
+ * Uplink represents the main entrypoint to Storj V3. An Uplink connects to
+ * a specific Satellite and caches connections and resources, allowing one to
+ * create sessions delineated by specific access controls.
+ */
 public class Uplink implements AutoCloseable {
 
     private io.storj.libuplink.mobile.Uplink uplink;
@@ -18,6 +23,11 @@ public class Uplink implements AutoCloseable {
         }
     }
 
+    /**
+     * Closes the Uplink. Opened projects, buckets or objects must not be used after calling Close.
+     *
+     * @throws StorjException
+     */
     public void close() throws StorjException {
         try {
             uplink.close();

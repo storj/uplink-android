@@ -8,6 +8,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+/**
+ * Bucket represents operations you can perform on a bucket
+ */
 public class Bucket implements AutoCloseable {
 
     private static final int BUFFER_SIZE = 128 * 1024;

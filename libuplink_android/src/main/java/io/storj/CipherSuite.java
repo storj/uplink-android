@@ -2,6 +2,10 @@ package io.storj;
 
 import io.storj.libuplink.mobile.Mobile;
 
+/**
+ * CipherSuite specifies one of the encryption suites supported by Storj
+ * libraries for encryption of in-network data.
+ */
 public enum CipherSuite {
     NONE(Mobile.CipherSuiteEncNull),
     AESGCM(Mobile.CipherSuiteEncAESGCM),

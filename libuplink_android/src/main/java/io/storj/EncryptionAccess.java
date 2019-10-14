@@ -2,6 +2,10 @@ package io.storj;
 
 import io.storj.libuplink.mobile.Mobile;
 
+/**
+ * EncryptionAccess represents an encryption access context. It holds information
+ * about how various buckets and objects should be encrypted and decrypted.
+ */
 public class EncryptionAccess {
 
     io.storj.libuplink.mobile.EncryptionAccess access;
