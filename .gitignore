@@ -1,4 +1,5 @@
 .gradle
+local.properties
 /build/
 /.idea/libraries
 /.idea/caches
