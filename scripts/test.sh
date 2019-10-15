@@ -8,6 +8,8 @@ then
       exit 1
 fi
 
+SCRIPTDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+
 PORT=6000
 SERIAL=emulator-${PORT}
 
@@ -28,7 +30,7 @@ echo "no" | $ANDROID_HOME/tools/bin/avdmanager create avd --name "${AVD_NAME}" -
 echo "AVD ${AVD_NAME} created."
 
 # -no-accel needs to be added for Jenkins build 
-$ANDROID_HOME/emulator/emulator-headless -avd ${AVD_NAME} -port ${PORT} -no-boot-anim -no-audio -gpu swiftshader_indirect  2>&1 &
+$ANDROID_HOME/emulator/emulator-headless -avd ${AVD_NAME} -port ${PORT} -no-boot-anim -no-audio -gpu swiftshader_indirect 2>&1 &
 
 #Ensure Android Emulator has booted successfully before continuing
 # TODO add max number of checks and timeout
@@ -46,6 +48,6 @@ STORJ_NETWORK_HOST4=${STORJ_NETWORK_HOST4:-127.0.0.1}
 storj-sim -x --host $STORJ_NETWORK_HOST4 network setup
 
 # run tests
-storj-sim -x --host $STORJ_NETWORK_HOST4 network test bash test-libuplink.sh
+storj-sim -x --host $STORJ_NETWORK_HOST4 network test bash "$SCRIPTDIR/test-libuplink.sh"
 storj-sim -x --host $STORJ_NETWORK_HOST4 network destroy
 
