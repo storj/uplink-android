@@ -8,7 +8,7 @@ class ObjectInputStream extends InputStream {
     private io.storj.libuplink.mobile.Reader reader;
     private byte[] buf = new byte[1];
 
-    public ObjectInputStream(Bucket bucket, String objectPath) throws StorjException {
+    ObjectInputStream(Bucket bucket, String objectPath) throws StorjException {
         try {
             // TODO use bucket.internal().download()
             this.reader = bucket.internal().newReader(objectPath, new io.storj.libuplink.mobile.ReaderOptions());
@@ -17,7 +17,7 @@ class ObjectInputStream extends InputStream {
         }
     }
 
-    public ObjectInputStream(Bucket bucket, String objectPath, int offset, int length) throws StorjException {
+    ObjectInputStream(Bucket bucket, String objectPath, int offset, int length) throws StorjException {
         throw new UnsupportedOperationException();
         // TODO use bucket.internal().downloadRange()
     }

@@ -8,7 +8,7 @@ import io.storj.libuplink.mobile.Mobile;
  */
 public class EncryptionAccess {
 
-    io.storj.libuplink.mobile.EncryptionAccess access;
+    private io.storj.libuplink.mobile.EncryptionAccess access;
 
     EncryptionAccess(io.storj.libuplink.mobile.EncryptionAccess access) {
         this.access = access;
@@ -22,6 +22,14 @@ public class EncryptionAccess {
         }
     }
 
+    public void merge(EncryptionAccess other) throws StorjException {
+        try {
+            this.access.import_(other.internal());
+        } catch (Exception e) {
+            throw ExceptionUtil.toStorjException(e);
+        }
+    }
+
     public String serialize() throws StorjException {
         try {
             return access.serialize();
@@ -30,9 +38,9 @@ public class EncryptionAccess {
         }
     }
 
-    public void merge(EncryptionAccess other) throws StorjException {
+    public static EncryptionAccess parse(String serialized) throws StorjException {
         try {
-            this.access.import_(other.internal());
+            return new EncryptionAccess(Mobile.parseEncryptionAccess(serialized));
         } catch (Exception e) {
             throw ExceptionUtil.toStorjException(e);
         }

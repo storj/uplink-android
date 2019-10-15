@@ -30,7 +30,7 @@ public class Scope {
         return this.restrict(null, restrictions);
     }
 
-    public Scope restrict(Caveat caveat, EncryptionRestriction... restrictions) throws StorjException{
+    public Scope restrict(Caveat caveat, EncryptionRestriction... restrictions) throws StorjException {
         ApiKey apiKey = this.getApiKey();
         if (caveat != null) {
             apiKey = apiKey.restrict(caveat);

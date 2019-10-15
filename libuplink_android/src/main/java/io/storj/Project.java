@@ -4,7 +4,7 @@ public class Project implements AutoCloseable {
 
     private io.storj.libuplink.mobile.Project project;
 
-    public Project(io.storj.libuplink.mobile.Project project) {
+    Project(io.storj.libuplink.mobile.Project project) {
         this.project = project;
     }
 
@@ -17,9 +17,13 @@ public class Project implements AutoCloseable {
         }
     }
 
+    public Bucket openBucket(String bucketName, Scope scope) throws StorjException {
+        return this.openBucket(bucketName, scope.getEncryptionAccess());
+    }
+
     public Bucket openBucket(String bucketName, EncryptionAccess access) throws StorjException {
         try {
-            io.storj.libuplink.mobile.Bucket bucket = project.openBucket(bucketName, access.access);
+            io.storj.libuplink.mobile.Bucket bucket = project.openBucket(bucketName, access.internal());
             return new Bucket(bucket);
         } catch (Exception e) {
             throw ExceptionUtil.toStorjException(e);

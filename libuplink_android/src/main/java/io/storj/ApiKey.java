@@ -1,13 +1,9 @@
 package io.storj;
 
-import java.io.Serializable;
-
 /**
  * ApiKey represents an access credential to certain resources.
  */
-public class ApiKey implements Serializable {
-
-    private static final long serialVersionUID = 7096529321479799953L;
+public class ApiKey {
 
     private io.storj.libuplink.mobile.APIKey apiKey;
 
@@ -16,24 +12,10 @@ public class ApiKey implements Serializable {
     }
 
     /**
-     * Creates new ApiKey.
+     * Generates a new API key restricted by the provided Caveat.
      *
-     * @param serializedApiKey API key in string format
-     * @throws StorjException
-     */
-    public ApiKey(String serializedApiKey) throws StorjException {
-        try {
-            this.apiKey = io.storj.libuplink.mobile.Mobile.parseAPIKey(serializedApiKey);
-        } catch (Exception e) {
-            throw ExceptionUtil.toStorjException(e);
-        }
-    }
-
-    /**
-     * Generates a new ApiKey with the provided Caveat attached.
-     *
-     * @param caveat
-     * @return new restricted ApiKey
+     * @param caveat a Caveat for restricting the access of the API key
+     * @return new restricted API key
      * @throws StorjException
      */
     public ApiKey restrict(Caveat caveat) throws StorjException {
@@ -45,15 +27,30 @@ public class ApiKey implements Serializable {
     }
 
     /**
-     * Serializes the ApiKey to a string.
+     * Serializes the API key to a string.
      *
-     * @return serialized to string ApiKey
+     * @return serialized API key
      */
     public String serialize() {
         return apiKey.serialize();
     }
 
-    io.storj.libuplink.mobile.APIKey internal(){
+    /**
+     * Parses the API key from the serialized string.
+     *
+     * @param serialized serialized API key
+     * @return the parsed API key
+     * @throws StorjException
+     */
+    public static ApiKey parse(String serialized) throws StorjException {
+        try {
+            return new ApiKey(io.storj.libuplink.mobile.Mobile.parseAPIKey(serialized));
+        } catch (Exception e) {
+            throw ExceptionUtil.toStorjException(e);
+        }
+    }
+
+    io.storj.libuplink.mobile.APIKey internal() {
         return apiKey;
     }
 

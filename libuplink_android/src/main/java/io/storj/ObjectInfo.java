@@ -2,7 +2,7 @@ package io.storj;
 
 import java.util.Date;
 
-class ObjectInfo {
+public class ObjectInfo {
 
     private io.storj.libuplink.mobile.ObjectInfo info;
 

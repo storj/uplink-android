@@ -26,7 +26,7 @@ class ObjectOutputStream extends OutputStream {
      */
     private int count;
 
-    public ObjectOutputStream(Bucket bucket, String objectPath, ObjectUploadOption... options) throws StorjException {
+    ObjectOutputStream(Bucket bucket, String objectPath, ObjectUploadOption... options) throws StorjException {
         this.bucket = bucket;
         try {
             this.writer = this.bucket.internal().newWriter(objectPath, ObjectUploadOption.internal(options));

@@ -2,7 +2,7 @@ package io.storj;
 
 public enum RedundancyAlgorithm {
 
-    REEDSOLOMON((byte) 1);
+    REED_SOLOMON((byte) 1);
 
     private byte value;
 

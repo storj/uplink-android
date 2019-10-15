@@ -8,7 +8,7 @@ public class BucketOption {
         PATH_CIPHER,
         ENCRYPTION_PARAMETERS,
         REDUNDANCY_SCHEME,
-        SEGMENT_SIZE
+        SEGMENTS_SIZE
     }
 
     private Key key;
@@ -33,7 +33,7 @@ public class BucketOption {
     }
 
     public static BucketOption segmentsSize(long segmentsSize) {
-        return new BucketOption(Key.SEGMENT_SIZE, segmentsSize);
+        return new BucketOption(Key.SEGMENTS_SIZE, segmentsSize);
     }
 
     static io.storj.libuplink.mobile.BucketConfig internal(BucketOption... options) {
@@ -49,7 +49,7 @@ public class BucketOption {
             } else if (option.key == Key.REDUNDANCY_SCHEME) {
                 RedundancyScheme redundancyScheme = (RedundancyScheme) option.value;
                 bucketConfig.setRedundancyScheme(redundancyScheme.internal());
-            } else if (option.key == Key.SEGMENT_SIZE) {
+            } else if (option.key == Key.SEGMENTS_SIZE) {
                 bucketConfig.setSegmentsSize((Long) option.value);
             }
         }
