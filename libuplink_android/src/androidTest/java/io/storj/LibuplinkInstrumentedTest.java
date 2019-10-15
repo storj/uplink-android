@@ -337,7 +337,7 @@ public class LibuplinkInstrumentedTest {
     @Test
     public void testApiKey() throws Exception {
         String apiKeyData = "13YqeKQiA3ANSuDu4rqX6eGs3YWox9GRi9rEUKy1HidXiNNm6a5SiE49Hk9gomHZVcQhq4eFQh8yhDgfGKg268j6vqWKEhnJjFPLqAP";
-        ApiKey apiKey = new ApiKey(apiKeyData);
+        ApiKey apiKey = ApiKey.parse(apiKeyData);
         String serialized = apiKey.serialize();
         assertEquals(serialized, apiKeyData);
 
