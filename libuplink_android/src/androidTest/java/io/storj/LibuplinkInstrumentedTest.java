@@ -24,14 +24,15 @@ import static org.junit.Assert.assertTrue;
 @RunWith(AndroidJUnit4.class)
 public class LibuplinkInstrumentedTest {
 
-    public static final String VALID_SATELLITE_ADDRESS = InstrumentationRegistry.getArguments().getString("storj.sim.host", "172.19.48.151:10000");
-    public static final String VALID_API_KEY = InstrumentationRegistry.getArguments().getString("api.key", "13Yqed8J5EKXUkJV8qbaxcoWbkXsqBREXEMv48fFMjZs5GY5gmjynfDsjs9YhwsSBLc9eWfd7riYcsAvimTpLKqp2npGX7NpFUj4wiH");
+    public static final String VALID_SCOPE = InstrumentationRegistry.getArguments().getString("scope", "GBK6TEMIPJQUOVVN99C2QO9USKTU26QB6C4VNM0=");
+    public static Scope SCOPE;
 
     String filesDir;
     UplinkOption[] uplinkOptions;
 
     @Before
-    public void setUp() {
+    public void setUp() throws StorjException {
+        SCOPE = new Scope(VALID_SCOPE);
         filesDir = InstrumentationRegistry.getTargetContext().getFilesDir().getAbsolutePath();
         uplinkOptions = new UplinkOption[]{
                 UplinkOption.tempDir(filesDir),
@@ -41,8 +42,7 @@ public class LibuplinkInstrumentedTest {
 
     @Test
     public void testBasicBucket() throws Exception {
-        try (Uplink uplink = new Uplink(uplinkOptions);
-             Project project = uplink.openProject(VALID_SATELLITE_ADDRESS, new ApiKey(VALID_API_KEY))) {
+        try (Uplink uplink = new Uplink(uplinkOptions); Project project = uplink.openProject(SCOPE)) {
 
             String expectedBucket = "test-bucket";
             RedundancyScheme rs = new RedundancyScheme.Builder().
@@ -64,7 +64,7 @@ public class LibuplinkInstrumentedTest {
                 try {
                     project.getBucketInfo(expectedBucket);
                 } catch (StorjException e) {
-                    Assert.assertTrue("Unexpected error: "+ e.getMessage(), e.getMessage().contains("bucket not found"));
+                    Assert.assertTrue("Unexpected error: " + e.getMessage(), e.getMessage().contains("bucket not found"));
                 }
             }
         }
@@ -72,8 +72,7 @@ public class LibuplinkInstrumentedTest {
 
     @Test
     public void testListBuckets() throws Exception {
-        try (Uplink uplink = new Uplink(uplinkOptions);
-             Project project = uplink.openProject(VALID_SATELLITE_ADDRESS, new ApiKey(VALID_API_KEY))) {
+        try (Uplink uplink = new Uplink(uplinkOptions); Project project = uplink.openProject(SCOPE)) {
 
             RedundancyScheme rs = new RedundancyScheme.Builder().
                     setRequiredShares((short) 4).
@@ -115,8 +114,7 @@ public class LibuplinkInstrumentedTest {
 
     @Test
     public void testUploadDownloadInline() throws Exception {
-        try (Uplink uplink = new Uplink(uplinkOptions);
-             Project project = uplink.openProject(VALID_SATELLITE_ADDRESS, new ApiKey(VALID_API_KEY))) {
+        try (Uplink uplink = new Uplink(uplinkOptions); Project project = uplink.openProject(SCOPE)) {
 
             String expectedBucket = "test-bucket";
             RedundancyScheme rs = new RedundancyScheme.Builder().
@@ -153,8 +151,7 @@ public class LibuplinkInstrumentedTest {
 
     @Test
     public void testUploadDownloadDeleteRemote() throws Exception {
-        try (Uplink uplink = new Uplink(uplinkOptions);
-             Project project = uplink.openProject(VALID_SATELLITE_ADDRESS, new ApiKey(VALID_API_KEY))) {
+        try (Uplink uplink = new Uplink(uplinkOptions); Project project = uplink.openProject(SCOPE)) {
 
             String expectedBucket = "test-bucket";
             RedundancyScheme rs = new RedundancyScheme.Builder().
@@ -198,8 +195,7 @@ public class LibuplinkInstrumentedTest {
 
     @Test
     public void testListObjects() throws Exception {
-        try (Uplink uplink = new Uplink(uplinkOptions);
-             Project project = uplink.openProject(VALID_SATELLITE_ADDRESS, new ApiKey(VALID_API_KEY))) {
+        try (Uplink uplink = new Uplink(uplinkOptions); Project project = uplink.openProject(SCOPE)) {
 
             String expectedBucket = "test-bucket";
             RedundancyScheme rs = new RedundancyScheme.Builder().
@@ -252,8 +248,6 @@ public class LibuplinkInstrumentedTest {
     public void testFileSharing() throws Exception {
         String expectedBucket = "test-bucket";
 
-        ApiKey apiKey = new ApiKey(VALID_API_KEY);
-
         RedundancyScheme rs = new RedundancyScheme.Builder().
                 setRequiredShares((short) 4).
                 setRepairShares((short) 6).
@@ -261,8 +255,7 @@ public class LibuplinkInstrumentedTest {
                 setTotalShares((short) 10).
                 build();
 
-        try (Uplink uplink = new Uplink(uplinkOptions);
-             Project project = uplink.openProject(VALID_SATELLITE_ADDRESS, apiKey)) {
+        try (Uplink uplink = new Uplink(uplinkOptions); Project project = uplink.openProject(SCOPE)) {
 
             project.createBucket(expectedBucket, BucketOption.redundancyScheme(rs));
 
@@ -278,10 +271,10 @@ public class LibuplinkInstrumentedTest {
                 .disallowDeletes(true)
                 .disallowWrites(true).build();
 
-        ApiKey restrictedKey = apiKey.restrict(caveat);
+        ApiKey restrictedKey = SCOPE.getApiKey().restrict(caveat);
 
         try (Uplink uplink = new Uplink(uplinkOptions);
-             Project project = uplink.openProject(VALID_SATELLITE_ADDRESS, restrictedKey)) {
+             Project project = uplink.openProject(SCOPE.getSatelliteAddress(), restrictedKey)) {
 
             EncryptionAccess access = new EncryptionAccess();
             access.setDefaultKey(new Key("TestEncryptionKey"));
@@ -312,8 +305,7 @@ public class LibuplinkInstrumentedTest {
             }
         } finally {
             // cleanup
-            try (Uplink uplink = new Uplink(uplinkOptions);
-                 Project project = uplink.openProject(VALID_SATELLITE_ADDRESS, apiKey)) {
+            try (Uplink uplink = new Uplink(uplinkOptions); Project project = uplink.openProject(SCOPE)) {
 
                 project.deleteBucket(expectedBucket);
             }
@@ -323,8 +315,7 @@ public class LibuplinkInstrumentedTest {
 
     @Test
     public void testEncryptionAccessFromPassphrase() throws Exception {
-        try (Uplink uplink = new Uplink(uplinkOptions);
-             Project project = uplink.openProject(VALID_SATELLITE_ADDRESS, new ApiKey(VALID_API_KEY))) {
+        try (Uplink uplink = new Uplink(uplinkOptions); Project project = uplink.openProject(SCOPE)) {
 
             Key saltedKey = project.saltedKeyFromPassphrase("some-passphrase");
             EncryptionAccess ea = new EncryptionAccess();
@@ -336,8 +327,7 @@ public class LibuplinkInstrumentedTest {
 
     @Test
     public void testEncryptionAccessWithRoot() throws Exception {
-        try (Uplink uplink = new Uplink(uplinkOptions);
-             Project project = uplink.openProject(VALID_SATELLITE_ADDRESS, new ApiKey(VALID_API_KEY))) {
+        try (Uplink uplink = new Uplink(uplinkOptions); Project project = uplink.openProject(SCOPE)) {
 
             Key saltedKey = project.saltedKeyFromPassphrase("some-passphrase");
             EncryptionAccess ea = EncryptionAccess.withRoot("bucket", "unencryptedPath", "encryptedPath", saltedKey);
