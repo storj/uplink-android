@@ -10,33 +10,13 @@ public class EncryptionAccess {
 
     io.storj.libuplink.mobile.EncryptionAccess access;
 
-    public static EncryptionAccess withDefaultKey(Key defaultKey) throws StorjException {
-        try {
-            return new EncryptionAccess(Mobile.newEncryptionAccessWithDefaultKey(defaultKey.getKeyData()));
-        } catch (Exception e) {
-            throw ExceptionUtil.toStorjException(e);
-        }
-    }
-
-    public static EncryptionAccess withRoot(String bucket, String unencryptedPath, String encryptedPath, Key key) throws StorjException {
-        try {
-            return new EncryptionAccess(Mobile.newEncryptionAccessWithRoot(bucket, unencryptedPath, encryptedPath, key.getKeyData()));
-        } catch (Exception e) {
-            throw ExceptionUtil.toStorjException(e);
-        }
-    }
-
     EncryptionAccess(io.storj.libuplink.mobile.EncryptionAccess access) {
         this.access = access;
     }
 
-    public EncryptionAccess() {
-        this(new io.storj.libuplink.mobile.EncryptionAccess());
-    }
-
-    public void setDefaultKey(Key key) throws StorjException {
+    public EncryptionAccess(Key saltedKey) throws StorjException {
         try {
-            this.access.setDefaultKey(key.getKeyData());
+            this.access = Mobile.newEncryptionAccessWithDefaultKey(saltedKey.getKeyData());
         } catch (Exception e) {
             throw ExceptionUtil.toStorjException(e);
         }
@@ -44,13 +24,13 @@ public class EncryptionAccess {
 
     public String serialize() throws StorjException {
         try {
-            return this.access.serialize();
+            return access.serialize();
         } catch (Exception e) {
             throw ExceptionUtil.toStorjException(e);
         }
     }
 
-    public void importFrom(EncryptionAccess other) throws StorjException {
+    public void merge(EncryptionAccess other) throws StorjException {
         try {
             this.access.import_(other.internal());
         } catch (Exception e) {
@@ -59,6 +39,6 @@ public class EncryptionAccess {
     }
 
     io.storj.libuplink.mobile.EncryptionAccess internal() {
-        return this.access;
+        return access;
     }
 }

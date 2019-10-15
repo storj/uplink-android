@@ -24,15 +24,15 @@ import static org.junit.Assert.assertTrue;
 @RunWith(AndroidJUnit4.class)
 public class LibuplinkInstrumentedTest {
 
-    public static final String VALID_SCOPE = InstrumentationRegistry.getArguments().getString("scope", "GBK6TEMIPJQUOVVN99C2QO9USKTU26QB6C4VNM0=");
-    public static Scope SCOPE;
+    static final String VALID_SCOPE = InstrumentationRegistry.getArguments().getString("scope", "13GRuHAWnYKcVBgHKbpg6yNT7p4mfjAPjzWKP5vvQFurzmUX5iUExsUr6EhfFPpYdVXGcdE4ed7aAUih41vga4NxmRKfU9qRAGpnLWmUFYmo6AS1P7dxKvxVnbFD3qfcYAv6iF5YcEFQSR6aRQ1h993ZXz37ARg5RYT1gD2DRQF6wCUZxA9eDkDP");
+    static Scope SCOPE;
 
     String filesDir;
     UplinkOption[] uplinkOptions;
 
     @Before
     public void setUp() throws StorjException {
-        SCOPE = new Scope(VALID_SCOPE);
+        SCOPE = Scope.parse(VALID_SCOPE);
         filesDir = InstrumentationRegistry.getTargetContext().getFilesDir().getAbsolutePath();
         uplinkOptions = new UplinkOption[]{
                 UplinkOption.tempDir(filesDir),
@@ -126,10 +126,7 @@ public class LibuplinkInstrumentedTest {
 
             project.createBucket(expectedBucket, BucketOption.redundancyScheme(rs));
 
-            EncryptionAccess access = new EncryptionAccess();
-            access.setDefaultKey(new Key("TestEncryptionKey"));
-
-            try (Bucket bucket = project.openBucket(expectedBucket, access)) {
+            try (Bucket bucket = project.openBucket(expectedBucket, SCOPE.getEncryptionAccess())) {
                 byte[] expectedData = new byte[2048];
                 Random random = new Random();
                 random.nextBytes(expectedData);
@@ -163,10 +160,7 @@ public class LibuplinkInstrumentedTest {
 
             project.createBucket(expectedBucket, BucketOption.redundancyScheme(rs));
 
-            EncryptionAccess access = new EncryptionAccess();
-            access.setDefaultKey(new Key("TestEncryptionKey"));
-
-            try (Bucket bucket = project.openBucket(expectedBucket, access)) {
+            try (Bucket bucket = project.openBucket(expectedBucket, SCOPE.getEncryptionAccess())) {
                 byte[] expectedData = new byte[2 * 1024 * 1024];
                 Random random = new Random();
                 random.nextBytes(expectedData);
@@ -208,10 +202,7 @@ public class LibuplinkInstrumentedTest {
             project.createBucket(expectedBucket,
                     BucketOption.redundancyScheme(rs), BucketOption.pathCipher(CipherSuite.NONE));
 
-            EncryptionAccess access = new EncryptionAccess();
-            access.setDefaultKey(new Key("TestEncryptionKey"));
-
-            try (Bucket bucket = project.openBucket(expectedBucket, access)) {
+            try (Bucket bucket = project.openBucket(expectedBucket, SCOPE.getEncryptionAccess())) {
                 long before = System.currentTimeMillis();
 
                 // TODO should 13 to see listing bug
@@ -259,45 +250,64 @@ public class LibuplinkInstrumentedTest {
 
             project.createBucket(expectedBucket, BucketOption.redundancyScheme(rs));
 
-            EncryptionAccess access = new EncryptionAccess();
-            access.setDefaultKey(new Key("TestEncryptionKey"));
-
-            try (Bucket bucket = project.openBucket(expectedBucket, access)) {
+            try (Bucket bucket = project.openBucket(expectedBucket, SCOPE.getEncryptionAccess())) {
                 bucket.uploadObject("first-file", "First file content".getBytes(UTF_8));
+                bucket.uploadObject("subfolder/second-file", "Second file content".getBytes(UTF_8));
             }
         }
 
-        Caveat caveat = new Caveat.Builder()
-                .disallowDeletes(true)
-                .disallowWrites(true).build();
+        // Share a read-only scope with access only to "subfolder"
+        Scope shared = SCOPE.restrict(
+                new Caveat.Builder().disallowDeletes(true).disallowWrites(true).build(),
+                new EncryptionRestriction(expectedBucket, "subfolder"));
 
-        ApiKey restrictedKey = SCOPE.getApiKey().restrict(caveat);
+        // Serialize the scope to, so it can be easily sent to the other party
+        String serializedShare = shared.serialize();
+
+        // The other party should parse the serialized shared scope and use it for accessing the data
+        Scope parsed = Scope.parse(serializedShare);
 
         try (Uplink uplink = new Uplink(uplinkOptions);
-             Project project = uplink.openProject(SCOPE.getSatelliteAddress(), restrictedKey)) {
+             Project project = uplink.openProject(parsed)) {
 
-            EncryptionAccess access = new EncryptionAccess();
-            access.setDefaultKey(new Key("TestEncryptionKey"));
+            try (Bucket bucket = project.openBucket(expectedBucket, parsed.getEncryptionAccess())) {
+                // Try to download first-file - should fail
+                String errorMessage = "";
+                try {
+                    ByteArrayOutputStream writer = new ByteArrayOutputStream();
+                    bucket.downloadObject("first-file", writer);
+                } catch (StorjException e) {
+                    errorMessage = e.getMessage();
+                }
+                assertTrue(errorMessage, errorMessage.contains("unable to find encryption base"));
 
-            try (Bucket bucket = project.openBucket(expectedBucket, access)) {
                 // Try to download first-file - should succeed
                 ByteArrayOutputStream writer = new ByteArrayOutputStream();
-                bucket.downloadObject("first-file", writer);
-                assertArrayEquals("First file content".getBytes(UTF_8), writer.toByteArray());
+                bucket.downloadObject("subfolder/second-file", writer);
+                assertArrayEquals("Second file content".getBytes(UTF_8), writer.toByteArray());
 
-                // Try to upload new file - should fail
-                String errorMessage = "";
+                // Try to upload new file in bucket root - should fail
+                errorMessage = "";
                 try {
                     bucket.uploadObject("third-file", "Third file content".getBytes(UTF_8));
                 } catch (StorjException e) {
                     errorMessage = e.getMessage();
                 }
-                assertTrue(errorMessage, errorMessage.contains("Unauthorized API credentials"));
+                assertTrue(errorMessage, errorMessage.contains("unable to find encryption base"));
 
-                // Try to delete first-file - should fail
+                // Try to upload new file in subfolder - should fail
                 errorMessage = "";
                 try {
-                    bucket.deleteObject("first-file");
+                    bucket.uploadObject("subfolder/forth-file", "Forth file content".getBytes(UTF_8));
+                } catch (StorjException e) {
+                    errorMessage = e.getMessage();
+                }
+                assertTrue(errorMessage, errorMessage.contains("Unauthorized API credentials"));
+
+                // Try to delete second-file - should fail
+                errorMessage = "";
+                try {
+                    bucket.deleteObject("subfolder/second-file");
                 } catch (StorjException e) {
                     errorMessage = e.getMessage();
                 }
@@ -317,20 +327,8 @@ public class LibuplinkInstrumentedTest {
     public void testEncryptionAccessFromPassphrase() throws Exception {
         try (Uplink uplink = new Uplink(uplinkOptions); Project project = uplink.openProject(SCOPE)) {
 
-            Key saltedKey = project.saltedKeyFromPassphrase("some-passphrase");
-            EncryptionAccess ea = new EncryptionAccess();
-            ea.setDefaultKey(saltedKey);
-            String serialized = ea.serialize();
-            assertNotEquals("", serialized);
-        }
-    }
-
-    @Test
-    public void testEncryptionAccessWithRoot() throws Exception {
-        try (Uplink uplink = new Uplink(uplinkOptions); Project project = uplink.openProject(SCOPE)) {
-
-            Key saltedKey = project.saltedKeyFromPassphrase("some-passphrase");
-            EncryptionAccess ea = EncryptionAccess.withRoot("bucket", "unencryptedPath", "encryptedPath", saltedKey);
+            Key saltedKey = Key.getSaltedKeyFromPassphrase(project, "some-passphrase");
+            EncryptionAccess ea = new EncryptionAccess(saltedKey);
             String serialized = ea.serialize();
             assertNotEquals("", serialized);
         }

@@ -51,7 +51,6 @@ public class Caveat {
             return this;
         }
 
-
         public Builder disallowLists(boolean disallowLists) {
             this.disallowLists = disallowLists;
             return this;
@@ -72,12 +71,12 @@ public class Caveat {
             return this;
         }
 
-        public Builder nonce(byte[] nonce) {
+        Builder nonce(byte[] nonce) {
             this.nonce = nonce;
             return this;
         }
 
-        public Builder addAllowedPath(CaveatPath caveatPath) {
+        Builder addAllowedPath(CaveatPath caveatPath) {
             this.caveatPaths.add(caveatPath);
             return this;
         }

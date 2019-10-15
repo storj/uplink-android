@@ -10,14 +10,6 @@ public class Scope {
         this.scope = scope;
     }
 
-    public Scope(String scopeb58) throws StorjException {
-        try {
-            this.scope = io.storj.libuplink.mobile.Mobile.parseScope(scopeb58);
-        } catch (Exception e) {
-            throw ExceptionUtil.toStorjException(e);
-        }
-    }
-
     public Scope(String satelliteAddress, ApiKey apiKey, EncryptionAccess encryptionAccess) {
         this.scope = io.storj.libuplink.mobile.Mobile.newScope(satelliteAddress, apiKey.internal(), encryptionAccess.internal());
     }
@@ -35,20 +27,22 @@ public class Scope {
     }
 
     public Scope restrict(EncryptionRestriction... restrictions) throws StorjException {
-        return this.restrict(this.getSatelliteAddress(), this.getApiKey(), restrictions);
+        return this.restrict(null, restrictions);
     }
 
-    public Scope restrict(ApiKey apiKey, EncryptionRestriction... restrictions) throws StorjException{
-        return this.restrict(this.getSatelliteAddress(), apiKey, restrictions);
-    }
+    public Scope restrict(Caveat caveat, EncryptionRestriction... restrictions) throws StorjException{
+        ApiKey apiKey = this.getApiKey();
+        if (caveat != null) {
+            apiKey = apiKey.restrict(caveat);
+        }
 
-    public Scope restrict(String satelliteAddress, ApiKey apiKey, EncryptionRestriction... restrictions) throws StorjException{
         EncryptionRestrictions tempRestrictions = new EncryptionRestrictions();
         for (EncryptionRestriction restriction : restrictions) {
             tempRestrictions.add(restriction.internal());
         }
+
         try {
-            io.storj.libuplink.mobile.Scope libScope = scope.encryptionAccess().restrict(satelliteAddress, apiKey.internal(), tempRestrictions);
+            io.storj.libuplink.mobile.Scope libScope = scope.encryptionAccess().restrict(this.getSatelliteAddress(), apiKey.internal(), tempRestrictions);
             return new Scope(libScope);
         } catch (Exception e) {
             throw ExceptionUtil.toStorjException(e);
@@ -58,6 +52,14 @@ public class Scope {
     public String serialize() throws StorjException {
         try {
             return this.scope.serialize();
+        } catch (Exception e) {
+            throw ExceptionUtil.toStorjException(e);
+        }
+    }
+
+    public static Scope parse(String serialized) throws StorjException {
+        try {
+            return new Scope(io.storj.libuplink.mobile.Mobile.parseScope(serialized));
         } catch (Exception e) {
             throw ExceptionUtil.toStorjException(e);
         }

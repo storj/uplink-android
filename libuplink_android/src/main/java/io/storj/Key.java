@@ -6,16 +6,25 @@ public class Key {
 
     private byte[] keyData;
 
-    public Key(byte[] keyData) {
+    Key(byte[] keyData) {
         this.keyData = keyData;
     }
 
-    public Key(String keyData) {
+    Key(String keyData) {
         this.keyData = keyData.getBytes(UTF_8);
     }
 
     byte[] getKeyData() {
         return keyData;
+    }
+
+    public static Key getSaltedKeyFromPassphrase(Project project, String passphrase) throws StorjException {
+        try {
+            byte[] keyData = project.internal().saltedKeyFromPassphrase(passphrase);
+            return new Key(keyData);
+        } catch (Exception e) {
+            throw ExceptionUtil.toStorjException(e);
+        }
     }
 
 }
