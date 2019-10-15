@@ -53,4 +53,8 @@ public class ApiKey implements Serializable {
         return apiKey.serialize();
     }
 
+    io.storj.libuplink.mobile.APIKey internal(){
+        return apiKey;
+    }
+
 }

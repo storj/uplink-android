@@ -49,4 +49,16 @@ public class EncryptionAccess {
             throw ExceptionUtil.toStorjException(e);
         }
     }
+
+    public void importFrom(EncryptionAccess other) throws StorjException {
+        try {
+            this.access.import_(other.internal());
+        } catch (Exception e) {
+            throw ExceptionUtil.toStorjException(e);
+        }
+    }
+
+    io.storj.libuplink.mobile.EncryptionAccess internal() {
+        return this.access;
+    }
 }
