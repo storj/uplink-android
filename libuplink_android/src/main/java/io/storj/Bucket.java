@@ -8,7 +8,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 /**
- * Bucket represents operations you can perform on a bucket
+ * Bucket represents operations you can perform on a bucket like listing, uploading, downloading.
  */
 public class Bucket implements AutoCloseable {
 

@@ -18,6 +18,14 @@ public class Key {
         return keyData;
     }
 
+    /**
+     * Returns a key generated from the given passphrase using a stable, project-specific salt
+     *
+     * @param project    project which will be used to generate key
+     * @param passphrase human readable passphrase
+     * @return salted key
+     * @throws StorjException
+     */
     public static Key getSaltedKeyFromPassphrase(Project project, String passphrase) throws StorjException {
         try {
             byte[] keyData = project.internal().saltedKeyFromPassphrase(passphrase);

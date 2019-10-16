@@ -8,6 +8,14 @@ public class Project implements AutoCloseable {
         this.project = project;
     }
 
+    /**
+     * Creates a new bucket if authorized.
+     *
+     * @param bucketName bucket name
+     * @param options set of bucket options
+     * @return created bucket info
+     * @throws StorjException
+     */
     public BucketInfo createBucket(String bucketName, BucketOption... options) throws StorjException {
         try {
             io.storj.libuplink.mobile.BucketInfo info = project.createBucket(bucketName, BucketOption.internal(options));
@@ -17,6 +25,13 @@ public class Project implements AutoCloseable {
         }
     }
 
+    /**
+     *
+     * @param bucketName
+     * @param scope
+     * @return
+     * @throws StorjException
+     */
     public Bucket openBucket(String bucketName, Scope scope) throws StorjException {
         return this.openBucket(bucketName, scope.getEncryptionAccess());
     }

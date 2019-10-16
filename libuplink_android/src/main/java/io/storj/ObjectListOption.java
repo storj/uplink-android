@@ -20,18 +20,42 @@ public class ObjectListOption {
         this.value = value;
     }
 
+    /**
+     * Prefix option.
+     *
+     * @param prefix prefix for listing
+     * @return prefix object list option
+     */
     public static ObjectListOption prefix(String prefix) {
         return new ObjectListOption(Key.PREFIX, prefix);
     }
 
+    /**
+     * Cursor option.
+     *
+     * @param cursor cursor for listing
+     * @return cursor object list option
+     */
     public static ObjectListOption cursor(String cursor) {
         return new ObjectListOption(Key.CURSOR, cursor);
     }
 
+    /**
+     * Recursive option.
+     *
+     * @param recursive true if listing should work in recursive way
+     * @return recursive object list option
+     */
     public static ObjectListOption recursive(boolean recursive) {
         return new ObjectListOption(Key.RECURSIVE, recursive);
     }
 
+    /**
+     * Page size option.
+     *
+     * @param pageSize number of elements for one page
+     * @return page size object list option
+     */
     public static ObjectListOption pageSize(int pageSize) {
         return new ObjectListOption(Key.PAGE_SIZE, pageSize);
     }

@@ -22,18 +22,46 @@ public class ObjectUploadOption {
         this.value = value;
     }
 
+    /**
+     * Content type option.
+     *
+     * @param contentType if set, gives a MIME content-type for the Object.
+     * @return content type object upload option
+     */
     public static ObjectUploadOption contentType(String contentType) {
         return new ObjectUploadOption(Key.CONTENT_TYPE, contentType);
     }
 
+    /**
+     * Encryption parameters option.
+     *
+     * @param encryptionParameters determines the cipher suite to use for
+     *                             the Object's data encryption. If not set, the Bucket's
+     *                             defaults will be used.
+     * @return encryption parameters object upload option
+     */
     public static ObjectUploadOption encryptionParameters(EncryptionParameters encryptionParameters) {
         return new ObjectUploadOption(Key.ENCRYPTION_PARAMETERS, encryptionParameters);
     }
 
+    /**
+     * Expires option.
+     *
+     * @param expires is the time at which the new Object can expire (be deleted
+     *                automatically from storage nodes).
+     * @return expires object upload option
+     */
     public static ObjectUploadOption expires(Date expires) {
         return new ObjectUploadOption(Key.EXPIRES, expires);
     }
 
+    /**
+     * Redundancy scheme option.
+     *
+     * @param redundancyScheme determines the Reed-Solomon and/or Forward Error Correction
+     *                         encoding parameters to be used for this Object.
+     * @return redundancy scheme object upload option
+     */
     public static ObjectUploadOption redundancyScheme(RedundancyScheme redundancyScheme) {
         return new ObjectUploadOption(Key.REDUNDANCY_SCHEME, redundancyScheme);
     }

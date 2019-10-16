@@ -9,15 +9,35 @@ public class Uplink implements AutoCloseable {
 
     private io.storj.libuplink.mobile.Uplink uplink;
 
+    /**
+     * Creates new Uplink.
+     *
+     * @param options set of options
+     */
     public Uplink(UplinkOption... options) {
         UplinkOption.UplinkOptions uplinkOptions = UplinkOption.internal(options);
         this.uplink = new io.storj.libuplink.mobile.Uplink(uplinkOptions.config, uplinkOptions.tempDir);
     }
 
+    /**
+     * Returns a Project handle with the given scope.
+     *
+     * @param scope
+     * @return project handle
+     * @throws StorjException
+     */
     public Project openProject(Scope scope) throws StorjException {
         return this.openProject(scope.getSatelliteAddress(), scope.getApiKey());
     }
 
+    /**
+     * Returns a Project handle with the given satellite address and API key.
+     *
+     * @param satelliteAddress satellite address
+     * @param apiKey API key for accessing satellite
+     * @return project handle
+     * @throws StorjException
+     */
     public Project openProject(String satelliteAddress, ApiKey apiKey) throws StorjException {
         try {
             io.storj.libuplink.mobile.Project project = uplink.openProject(satelliteAddress, apiKey.serialize());

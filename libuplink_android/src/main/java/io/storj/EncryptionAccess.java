@@ -14,6 +14,12 @@ public class EncryptionAccess {
         this.access = access;
     }
 
+    /**
+     * Constructs encryption access with salted key.
+     *
+     * @param saltedKey salted key
+     * @throws StorjException
+     */
     public EncryptionAccess(Key saltedKey) throws StorjException {
         try {
             this.access = Mobile.newEncryptionAccessWithDefaultKey(saltedKey.getKeyData());
@@ -22,6 +28,14 @@ public class EncryptionAccess {
         }
     }
 
+    /**
+     * Merges the other encryption access context into this one. In cases
+     * of conflicting path decryption settings (including if both accesses have
+     * a default key), the new settings are kept.
+     *
+     * @param other other encryption access
+     * @throws StorjException
+     */
     public void merge(EncryptionAccess other) throws StorjException {
         try {
             this.access.import_(other.internal());
@@ -30,6 +44,12 @@ public class EncryptionAccess {
         }
     }
 
+    /**
+     * Serialize encryption access to base58 string.
+     *
+     * @return serialized encryption access
+     * @throws StorjException
+     */
     public String serialize() throws StorjException {
         try {
             return access.serialize();
@@ -38,6 +58,13 @@ public class EncryptionAccess {
         }
     }
 
+    /**
+     * Parses a base58 serialized encryption access into a working one.
+     *
+     * @param serialized base58 serialized encryption access
+     * @return encryption access
+     * @throws StorjException
+     */
     public static EncryptionAccess parse(String serialized) throws StorjException {
         try {
             return new EncryptionAccess(Mobile.parseEncryptionAccess(serialized));
