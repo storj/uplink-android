@@ -11,7 +11,7 @@ Add the Gradle dependency to the `build.gradle` file of the app module:
 
 ```Gradle
 dependencies {
-    compile 'io.storj:libuplink-android:0.8'
+    implementation 'io.storj:libuplink-android:0.8'
 }
 ```
 
