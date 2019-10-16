@@ -34,7 +34,7 @@ public class Uplink implements AutoCloseable {
      * Returns a Project handle with the given satellite address and API key.
      *
      * @param satelliteAddress satellite address
-     * @param apiKey API key for accessing satellite
+     * @param apiKey           API key for accessing satellite
      * @return project handle
      * @throws StorjException
      */

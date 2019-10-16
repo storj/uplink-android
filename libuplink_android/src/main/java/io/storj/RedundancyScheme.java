@@ -71,31 +71,71 @@ public class RedundancyScheme {
         private short total;
         private int shareSize;
 
+        /**
+         * Algorithm determines the algorithm to be used for redundancy.
+         *
+         * @param algorithm algorithm for redundancy
+         * @return the builder
+         */
         public Builder setAlgorithm(RedundancyAlgorithm algorithm) {
             this.algorithm = algorithm;
             return this;
         }
 
+        /**
+         * RequiredShares is the minimum number of shares required to recover a
+         * stripe, reed-solomon k.
+         *
+         * @param count
+         * @return the builder
+         */
         public Builder setRequiredShares(short count) {
             this.required = count;
             return this;
         }
 
+        /**
+         * RepairShares is the minimum number of safe shares that can remain
+         * before a repair is triggered.
+         *
+         * @param count
+         * @return the builder
+         */
         public Builder setRepairShares(short count) {
             this.repair = count;
             return this;
         }
 
+        /**
+         * SuccessShares is the desired total number of shares for a segment.
+         *
+         * @param count
+         * @return the builder
+         */
         public Builder setSuccessShares(short count) {
             this.success = count;
             return this;
         }
 
+        /**
+         * TotalShares is the number of shares to encode. If it is larger than
+         * OptimalShares, slower uploads of the excess shares will be aborted in
+         * order to improve performance.
+         *
+         * @param count
+         * @return the builder
+         */
         public Builder setTotalShares(short count) {
             this.total = count;
             return this;
         }
 
+        /**
+         * ShareSize is the size in bytes for each erasure shares.
+         *
+         * @param size share size in bytes
+         * @return the builder
+         */
         public Builder setShareSize(int size) {
             this.shareSize = size;
             return this;

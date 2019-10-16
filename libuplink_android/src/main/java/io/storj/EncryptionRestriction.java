@@ -15,7 +15,7 @@ public class EncryptionRestriction {
     /**
      * Creates new encryption restriction.
      *
-     * @param bucket bucket name
+     * @param bucket     bucket name
      * @param pathPrefix path prefix
      */
     public EncryptionRestriction(String bucket, String pathPrefix) {

@@ -50,11 +50,30 @@ public class EncryptionParameters {
         private CipherSuite cipher;
         private int blockSize;
 
+        /**
+         * CipherSuite specifies the cipher suite to be used for encryption.
+         *
+         * @param cipher cipher suite
+         * @return the builder
+         */
         public Builder setCipher(CipherSuite cipher) {
             this.cipher = cipher;
             return this;
         }
 
+        /**
+         * BlockSize determines the unit size at which encryption is performed.
+         * It is important to distinguish this from the block size used by the
+         * cipher suite (probably 128 bits). There is some small overhead for
+         * each encryption unit, so BlockSize should not be too small, but
+         * smaller sizes yield shorter first-byte latency and better seek times.
+         * Note that BlockSize itself is the size of data blocks _after_ they
+         * have been encrypted and the authentication overhead has been added.
+         * It is not the size of the data blocks to be encrypted.
+         *
+         * @param size block size in bytes
+         * @return the builder
+         */
         public Builder setBlockSize(int size) {
             this.blockSize = size;
             return this;
