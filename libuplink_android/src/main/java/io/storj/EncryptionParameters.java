@@ -45,6 +45,9 @@ public class EncryptionParameters {
         this.params.setBlockSize(builder.blockSize);
     }
 
+    /**
+     * Builder for EncryptionParameters.
+     */
     public static class Builder {
 
         private CipherSuite cipher;

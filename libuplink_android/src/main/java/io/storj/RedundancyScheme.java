@@ -1,5 +1,8 @@
 package io.storj;
 
+/**
+ * Specifies the parameters and the algorithm for redundancy.
+ */
 public class RedundancyScheme {
 
     private io.storj.libuplink.mobile.RedundancyScheme scheme;
@@ -50,9 +53,6 @@ public class RedundancyScheme {
         return scheme;
     }
 
-    /**
-     * Builder for RedundancyScheme object.
-     */
     private RedundancyScheme(Builder builder) {
         this.scheme = new io.storj.libuplink.mobile.RedundancyScheme();
         if (builder.algorithm != null) {
@@ -65,6 +65,9 @@ public class RedundancyScheme {
         this.scheme.setShareSize(builder.shareSize);
     }
 
+    /**
+     * Builder for RedundancyScheme object.
+     */
     public static class Builder {
 
         private RedundancyAlgorithm algorithm;
