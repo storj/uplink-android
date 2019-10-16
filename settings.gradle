@@ -1,1 +1,1 @@
-include ':libuplink_android'
+include ':libuplink-android'
