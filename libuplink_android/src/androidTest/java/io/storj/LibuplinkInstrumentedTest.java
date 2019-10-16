@@ -24,7 +24,7 @@ import static org.junit.Assert.assertTrue;
 @RunWith(AndroidJUnit4.class)
 public class LibuplinkInstrumentedTest {
 
-    static final String VALID_SCOPE = InstrumentationRegistry.getArguments().getString("scope", "13GRuHAWnYKcVBgHKbpg6yNT7p4mfjAPjzWKP5vvQFurzmUX5iUExsUr6EhfFPpYdVXGcdE4ed7aAUih41vga4NxmRKfU9qRAGpnLWmUFYmo6AS1P7dxKvxVnbFD3qfcYAv6iF5YcEFQSR6aRQ1h993ZXz37ARg5RYT1gD2DRQF6wCUZxA9eDkDP");
+    static final String VALID_SCOPE = InstrumentationRegistry.getArguments().getString("scope", "13GRuHAWnYKcVBgHKbpg6yNT7p4mfjAPjzWKNu771WT2sgLmyMSanBpFFhoNubNN4Gr7m55LQrR4JR8dfC86MGsWGe11poahaRGs6bRgvJj3cBTZyP2NCE21SsaV3qAcBvzcuvZGBocdw4A6mZiUZVi14JWkhk3Kd5iXyhoBCU69845CvU2My3Qv");
     static Scope SCOPE;
 
     String filesDir;
@@ -126,7 +126,7 @@ public class LibuplinkInstrumentedTest {
 
             project.createBucket(expectedBucket, BucketOption.redundancyScheme(rs));
 
-            try (Bucket bucket = project.openBucket(expectedBucket, SCOPE.getEncryptionAccess())) {
+            try (Bucket bucket = project.openBucket(expectedBucket, SCOPE)) {
                 byte[] expectedData = new byte[2048];
                 Random random = new Random();
                 random.nextBytes(expectedData);
@@ -160,7 +160,7 @@ public class LibuplinkInstrumentedTest {
 
             project.createBucket(expectedBucket, BucketOption.redundancyScheme(rs));
 
-            try (Bucket bucket = project.openBucket(expectedBucket, SCOPE.getEncryptionAccess())) {
+            try (Bucket bucket = project.openBucket(expectedBucket, SCOPE)) {
                 byte[] expectedData = new byte[2 * 1024 * 1024];
                 Random random = new Random();
                 random.nextBytes(expectedData);
@@ -202,7 +202,7 @@ public class LibuplinkInstrumentedTest {
             project.createBucket(expectedBucket,
                     BucketOption.redundancyScheme(rs), BucketOption.pathCipher(CipherSuite.NONE));
 
-            try (Bucket bucket = project.openBucket(expectedBucket, SCOPE.getEncryptionAccess())) {
+            try (Bucket bucket = project.openBucket(expectedBucket, SCOPE)) {
                 long before = System.currentTimeMillis();
 
                 // TODO should 13 to see listing bug
@@ -250,7 +250,7 @@ public class LibuplinkInstrumentedTest {
 
             project.createBucket(expectedBucket, BucketOption.redundancyScheme(rs));
 
-            try (Bucket bucket = project.openBucket(expectedBucket, SCOPE.getEncryptionAccess())) {
+            try (Bucket bucket = project.openBucket(expectedBucket, SCOPE)) {
                 bucket.uploadObject("first-file", "First file content".getBytes(UTF_8));
                 bucket.uploadObject("subfolder/second-file", "Second file content".getBytes(UTF_8));
             }
@@ -315,7 +315,12 @@ public class LibuplinkInstrumentedTest {
             }
         } finally {
             // cleanup
-            try (Uplink uplink = new Uplink(uplinkOptions); Project project = uplink.openProject(SCOPE)) {
+            try (Uplink uplink = new Uplink(uplinkOptions);
+                 Project project = uplink.openProject(SCOPE);
+                 Bucket bucket = project.openBucket(expectedBucket, SCOPE)) {
+
+                bucket.deleteObject("first-file");
+                bucket.deleteObject("subfolder/second-file");
 
                 project.deleteBucket(expectedBucket);
             }
