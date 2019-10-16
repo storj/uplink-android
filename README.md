@@ -1,4 +1,8 @@
 # android-libuplink
+
+[![Storj.io](https://storj.io/img/storj-badge.svg)](https://storj.io)
+[![Javadocs](https://img.shields.io/badge/javadoc-0.8-blue.svg)](https://storj.github.io/android-libuplink/javadoc/0.8/)
+
 Android bindings to Storj V3 libuplink.
 
 ## Requirements
@@ -37,4 +41,3 @@ dependencies {
         project.deleteBucket("my-bucket");
     }
 ```
-Bindings Javdoc can be found [here](https://storj.github.io/android-libuplink/javadoc/0.8/).
