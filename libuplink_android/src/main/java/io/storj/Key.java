@@ -2,6 +2,9 @@ package io.storj;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
+/**
+ * Represents the largest key used by any encryption protocol.
+ */
 public class Key {
 
     private byte[] keyData;

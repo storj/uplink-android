@@ -2,6 +2,9 @@ package io.storj;
 
 import io.storj.libuplink.mobile.Config;
 
+/**
+ * Options for configuring Uplink.
+ */
 public class UplinkOption {
 
     private enum Key {

@@ -30,6 +30,9 @@ public class Caveat {
         return this.caveat;
     }
 
+    /**
+     * Builder for Caveat object.
+     */
     public static class Builder {
 
         private boolean disallowReads;

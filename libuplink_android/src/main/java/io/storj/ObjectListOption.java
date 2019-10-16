@@ -2,6 +2,9 @@ package io.storj;
 
 import io.storj.libuplink.mobile.ListOptions;
 
+/**
+ * Options for objects listing.
+ */
 public class ObjectListOption {
 
     private enum Key {

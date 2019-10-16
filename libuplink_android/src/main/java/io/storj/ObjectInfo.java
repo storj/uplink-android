@@ -3,6 +3,9 @@ package io.storj;
 import java.io.Serializable;
 import java.util.Date;
 
+/**
+ * Represents object metadata.
+ */
 public class ObjectInfo implements Serializable, Comparable<ObjectInfo> {
 
     private io.storj.libuplink.mobile.ObjectInfo info;

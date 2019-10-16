@@ -50,6 +50,9 @@ public class RedundancyScheme {
         return scheme;
     }
 
+    /**
+     * Builder for RedundancyScheme object.
+     */
     private RedundancyScheme(Builder builder) {
         this.scheme = new io.storj.libuplink.mobile.RedundancyScheme();
         if (builder.algorithm != null) {

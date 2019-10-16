@@ -4,6 +4,9 @@ import java.util.Date;
 
 import io.storj.libuplink.mobile.WriterOptions;
 
+/**
+ * Options for uploading objects.
+ */
 public class ObjectUploadOption {
 
     private enum Key {

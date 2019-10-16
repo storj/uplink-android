@@ -1,5 +1,8 @@
 package io.storj;
 
+/**
+ * Options for bucket listing.
+ */
 public class BucketListOption {
 
     private enum Key {

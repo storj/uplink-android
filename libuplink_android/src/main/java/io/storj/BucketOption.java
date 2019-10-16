@@ -2,6 +2,9 @@ package io.storj;
 
 import io.storj.libuplink.mobile.BucketConfig;
 
+/**
+ * Options for bucket creation.
+ */
 public class BucketOption {
 
     private enum Key {

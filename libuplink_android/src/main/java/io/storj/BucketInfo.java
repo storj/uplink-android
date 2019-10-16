@@ -3,6 +3,9 @@ package io.storj;
 import java.io.Serializable;
 import java.util.Date;
 
+/**
+ * Represents bucket metadata.
+ */
 public class BucketInfo implements Serializable, Comparable<BucketInfo> {
 
     private io.storj.libuplink.mobile.BucketInfo info;
