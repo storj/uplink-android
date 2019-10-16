@@ -1,8 +1,9 @@
 package io.storj;
 
+import java.io.Serializable;
 import java.util.Date;
 
-public class BucketInfo {
+public class BucketInfo implements Serializable, Comparable<BucketInfo> {
 
     private io.storj.libuplink.mobile.BucketInfo info;
 
@@ -34,17 +35,31 @@ public class BucketInfo {
         return new EncryptionParameters(info.getEncryptionParameters());
     }
 
+    /**
+     * Two BucketInfos are equal if their names are equal.
+     */
     @Override
     public boolean equals(Object obj) {
         if (!(obj instanceof BucketInfo)) {
             return false;
         }
         BucketInfo that = (BucketInfo) obj;
-        return info.equals(that.info);
+        return getName().equals(that.getName());
     }
 
+    /**
+     * The hash code value of BucketInfo is the hash code value of its name.
+     */
     @Override
     public int hashCode() {
-        return info.hashCode();
+        return getName().hashCode();
+    }
+
+    /**
+     * Two BucketInfos are compared to each other by their names.
+     */
+    @Override
+    public int compareTo(BucketInfo other) {
+        return getName().compareTo(other.getName());
     }
 }
