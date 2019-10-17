@@ -1,6 +1,8 @@
-apply plugin: 'com.android.library'
-apply plugin: 'com.jfrog.bintray'
-apply plugin: 'maven-publish'
+plugins {
+    id 'com.android.library'
+    id 'com.jfrog.bintray'
+    id 'maven-publish'
+}
 
 // To release libuplink-android to Bintray
 // ./gradlew clean assembleRelease sourcesJar javadocJar :libuplink-android:bintrayUpload

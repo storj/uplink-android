@@ -3,7 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/android-libuplink.iml" filepath="$PROJECT_DIR$/android-libuplink.iml" />
-      <module fileurl="file://$PROJECT_DIR$/libuplink_android/libuplink_android.iml" filepath="$PROJECT_DIR$/libuplink_android/libuplink_android.iml" />
+      <module fileurl="file://$PROJECT_DIR$/libuplink-android/libuplink-android.iml" filepath="$PROJECT_DIR$/libuplink-android/libuplink-android.iml" />
     </modules>
   </component>
 </project>
