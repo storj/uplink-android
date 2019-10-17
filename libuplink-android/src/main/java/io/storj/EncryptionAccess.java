@@ -10,7 +10,9 @@ public class EncryptionAccess {
 
     private io.storj.libuplink.mobile.EncryptionAccess access;
 
-    EncryptionAccess(io.storj.libuplink.mobile.EncryptionAccess access) {
+    // We need the 'workaround' parameter to avoid strange compiler issue
+    // for clients of this library that use the public constructor.
+    EncryptionAccess(io.storj.libuplink.mobile.EncryptionAccess access, Object workaround) {
         this.access = access;
     }
 
@@ -67,7 +69,7 @@ public class EncryptionAccess {
      */
     public static EncryptionAccess parse(String serialized) throws StorjException {
         try {
-            return new EncryptionAccess(Mobile.parseEncryptionAccess(serialized));
+            return new EncryptionAccess(Mobile.parseEncryptionAccess(serialized), null);
         } catch (Exception e) {
             throw ExceptionUtil.toStorjException(e);
         }

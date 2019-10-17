@@ -34,7 +34,7 @@ public class Scope {
     }
 
     public EncryptionAccess getEncryptionAccess() {
-        return new EncryptionAccess(this.scope.encryptionAccess());
+        return new EncryptionAccess(this.scope.encryptionAccess(), null);
     }
 
     /**
