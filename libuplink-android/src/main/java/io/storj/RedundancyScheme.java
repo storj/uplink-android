@@ -1,68 +1,93 @@
 package io.storj;
 
+import android.support.annotation.Nullable;
+
+import java.io.Serializable;
+import java.util.Objects;
+
 /**
  * Specifies the parameters and the algorithm for redundancy.
  */
-public class RedundancyScheme {
+public class RedundancyScheme implements Serializable {
 
-    private io.storj.libuplink.mobile.RedundancyScheme scheme;
+    private RedundancyAlgorithm algorithm;
+    private short required;
+    private short repair;
+    private short success;
+    private short total;
+    private int shareSize;
 
     RedundancyScheme(io.storj.libuplink.mobile.RedundancyScheme scheme) {
-        this.scheme = scheme;
+        this.algorithm = RedundancyAlgorithm.fromValue(scheme.getAlgorithm());
+        this.required = scheme.getRequiredShares();
+        this.repair = scheme.getRepairShares();
+        this.success = scheme.getOptimalShares();
+        this.total = scheme.getTotalShares();
+        this.shareSize = scheme.getShareSize();
     }
 
     public RedundancyAlgorithm getAlgorithm() {
-        return RedundancyAlgorithm.fromValue(scheme.getAlgorithm());
+        return algorithm;
     }
 
     public short getRequiredShares() {
-        return scheme.getRequiredShares();
+        return required;
     }
 
     public short getRepairShares() {
-        return scheme.getRepairShares();
+        return repair;
     }
 
     public short getSuccessShares() {
-        return scheme.getOptimalShares();
+        return success;
     }
 
     public short getTotalShares() {
-        return scheme.getTotalShares();
+        return total;
     }
 
     public int getShareSize() {
-        return scheme.getShareSize();
+        return shareSize;
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (!(obj instanceof RedundancyScheme)) {
-            return false;
-        }
-        RedundancyScheme that = (RedundancyScheme) obj;
-        return scheme.equals(that.scheme);
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        RedundancyScheme that = (RedundancyScheme) o;
+        return required == that.required &&
+                repair == that.repair &&
+                success == that.success &&
+                total == that.total &&
+                shareSize == that.shareSize &&
+                algorithm == that.algorithm;
     }
 
     @Override
     public int hashCode() {
-        return scheme.hashCode();
+        return Objects.hash(algorithm, required, repair, success, total, shareSize);
     }
 
     io.storj.libuplink.mobile.RedundancyScheme internal() {
+        io.storj.libuplink.mobile.RedundancyScheme scheme = new io.storj.libuplink.mobile.RedundancyScheme();
+        if (algorithm != null) {
+            scheme.setAlgorithm(algorithm.getValue());
+        }
+        scheme.setRequiredShares(required);
+        scheme.setRepairShares(repair);
+        scheme.setOptimalShares(success);
+        scheme.setTotalShares(total);
+        scheme.setShareSize(shareSize);
         return scheme;
     }
 
     private RedundancyScheme(Builder builder) {
-        this.scheme = new io.storj.libuplink.mobile.RedundancyScheme();
-        if (builder.algorithm != null) {
-            this.scheme.setAlgorithm(builder.algorithm.getValue());
-        }
-        this.scheme.setRequiredShares(builder.required);
-        this.scheme.setRepairShares(builder.repair);
-        this.scheme.setOptimalShares(builder.success);
-        this.scheme.setTotalShares(builder.total);
-        this.scheme.setShareSize(builder.shareSize);
+        this.algorithm = builder.algorithm;
+        this.required = builder.required;
+        this.repair = builder.repair;
+        this.success = builder.success;
+        this.total = builder.total;
+        this.shareSize = builder.shareSize;
     }
 
     /**

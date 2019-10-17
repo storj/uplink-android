@@ -1,48 +1,55 @@
 package io.storj;
 
+import java.io.Serializable;
+import java.util.Objects;
+
 /**
  * EncryptionParameters is the cipher suite and parameters used for encryption
  */
-public class EncryptionParameters {
+public class EncryptionParameters implements Serializable {
 
-    private io.storj.libuplink.mobile.EncryptionParameters params;
+    private CipherSuite cipher;
+    private int blockSize;
 
     EncryptionParameters(io.storj.libuplink.mobile.EncryptionParameters params) {
-        this.params = params;
+        this.cipher = CipherSuite.fromValue(params.getCipherSuite());
+        this.blockSize = params.getBlockSize();
     }
 
     public CipherSuite getCipher() {
-        return CipherSuite.fromValue(params.getCipherSuite());
+        return cipher;
     }
 
     public int getBlockSize() {
-        return params.getBlockSize();
+        return blockSize;
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (!(obj instanceof EncryptionParameters)) {
-            return false;
-        }
-        EncryptionParameters that = (EncryptionParameters) obj;
-        return params.equals(that.params);
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        EncryptionParameters that = (EncryptionParameters) o;
+        return blockSize == that.blockSize &&
+                cipher == that.cipher;
     }
 
     @Override
     public int hashCode() {
-        return params.hashCode();
+        return Objects.hash(cipher, blockSize);
     }
 
     io.storj.libuplink.mobile.EncryptionParameters internal() {
+        io.storj.libuplink.mobile.EncryptionParameters params = new io.storj.libuplink.mobile.EncryptionParameters();
+        if (cipher != null) {
+            params.setCipherSuite(cipher.getValue());
+        }
+        params.setBlockSize(blockSize);
         return params;
     }
 
     private EncryptionParameters(Builder builder) {
-        this.params = new io.storj.libuplink.mobile.EncryptionParameters();
-        if (builder.cipher != null) {
-            this.params.setCipherSuite(builder.cipher.getValue());
-        }
-        this.params.setBlockSize(builder.blockSize);
+        this.cipher = builder.cipher;
+        this.blockSize = builder.blockSize;
     }
 
     /**

@@ -2,67 +2,83 @@ package io.storj;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.Objects;
 
 /**
  * Represents object metadata.
  */
 public class ObjectInfo implements Serializable, Comparable<ObjectInfo> {
 
-    private io.storj.libuplink.mobile.ObjectInfo info;
+    private String bucket;
+    private String path;
+    private int version;
+    private boolean prefix;
+    private long size;
+    private String contentType;
+    private Date created;
+    private Date modified;
+    private Date expires;
 
     ObjectInfo(io.storj.libuplink.mobile.ObjectInfo info) {
-        this.info = info;
-    }
-
-    public int getVersion() {
-        return info.getVersion();
+        this.bucket = info.getBucket();
+        this.path = info.getPath();
+        this.version = info.getVersion();
+        this.prefix = info.getIsPrefix();
+        this.size = info.getSize();
+        this.contentType = info.getContentType();
+        this.created = new Date(info.getCreated());
+        this.modified = new Date(info.getModified());
+        this.expires = new Date(info.getExpires());
     }
 
     public String getBucket() {
-        return info.getBucket();
+        return bucket;
     }
 
     public String getPath() {
-        return info.getPath();
+        return path;
+    }
+
+    public int getVersion() {
+        return version;
     }
 
     public boolean isPrefix() {
-        return info.getIsPrefix();
+        return prefix;
     }
 
     public long getSize() {
-        return info.getSize();
+        return size;
     }
 
     public String getContentType() {
-        return info.getContentType();
+        return contentType;
     }
 
     public Date getCreated() {
-        return new Date(info.getCreated());
+        return created;
     }
 
     public Date getModified() {
-        return new Date(info.getModified());
+        return modified;
     }
 
     public Date getExpires() {
-        return new Date(info.getExpires());
+        return expires;
     }
 
     /**
      * Two ObjectInfos are equal if all their bucket, path, version and prefix flag are equal.
      */
     @Override
-    public boolean equals(Object obj) {
-        if (!(obj instanceof ObjectInfo)) {
-            return false;
-        }
-        ObjectInfo that = (ObjectInfo) obj;
-        return getBucket().equals(that.getBucket()) &&
-                getPath().equals(that.getPath()) &&
-                getVersion() == that.getVersion() &&
-                isPrefix() == that.isPrefix();
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ObjectInfo that = (ObjectInfo) o;
+        return version == that.version &&
+                prefix == that.prefix &&
+                Objects.equals(bucket, that.bucket) &&
+                Objects.equals(path, that.path);
     }
 
     /**
@@ -71,8 +87,7 @@ public class ObjectInfo implements Serializable, Comparable<ObjectInfo> {
      */
     @Override
     public int hashCode() {
-        String concat = getBucket() + "/" + getPath() + "/" + getVersion() + "/" + isPrefix();
-        return concat.hashCode();
+        return Objects.hash(bucket, path, version, prefix);
     }
 
     /**

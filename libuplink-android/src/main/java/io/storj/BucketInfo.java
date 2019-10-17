@@ -2,52 +2,62 @@ package io.storj;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.Objects;
 
 /**
  * Represents bucket metadata.
  */
 public class BucketInfo implements Serializable, Comparable<BucketInfo> {
 
-    private io.storj.libuplink.mobile.BucketInfo info;
+    private String name;
+    private Date created;
+    private CipherSuite pathCipher;
+    private long segmentsSize;
+    private RedundancyScheme redundancy;
+    private EncryptionParameters encryption;
 
     BucketInfo(io.storj.libuplink.mobile.BucketInfo info) {
-        this.info = info;
+        this.name = info.getName();
+        this.created = new Date(info.getCreated());
+        this.pathCipher = CipherSuite.fromValue(info.getPathCipher());
+        this.segmentsSize = info.getSegmentsSize();
+        this.redundancy = new RedundancyScheme(info.getRedundancyScheme());
+        this.encryption = new EncryptionParameters(info.getEncryptionParameters());
     }
 
     public String getName() {
-        return info.getName();
+        return name;
     }
 
     public Date getCreated() {
-        return new Date(info.getCreated());
+        return created;
     }
 
     public CipherSuite getPathCipher() {
-        return CipherSuite.fromValue(info.getPathCipher());
+        return pathCipher;
     }
 
     public long getSegmentsSize() {
-        return info.getSegmentsSize();
+        return segmentsSize;
     }
 
     public RedundancyScheme getRedundancyScheme() {
-        return new RedundancyScheme(info.getRedundancyScheme());
+        return redundancy;
     }
 
     public EncryptionParameters getEncryptionParameters() {
-        return new EncryptionParameters(info.getEncryptionParameters());
+        return encryption;
     }
 
     /**
      * Two BucketInfos are equal if their names are equal.
      */
     @Override
-    public boolean equals(Object obj) {
-        if (!(obj instanceof BucketInfo)) {
-            return false;
-        }
-        BucketInfo that = (BucketInfo) obj;
-        return getName().equals(that.getName());
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        BucketInfo that = (BucketInfo) o;
+        return Objects.equals(name, that.name);
     }
 
     /**
@@ -55,7 +65,7 @@ public class BucketInfo implements Serializable, Comparable<BucketInfo> {
      */
     @Override
     public int hashCode() {
-        return getName().hashCode();
+        return Objects.hash(name);
     }
 
     /**
@@ -63,6 +73,6 @@ public class BucketInfo implements Serializable, Comparable<BucketInfo> {
      */
     @Override
     public int compareTo(BucketInfo other) {
-        return getName().compareTo(other.getName());
+        return name.compareTo(other.name);
     }
 }
