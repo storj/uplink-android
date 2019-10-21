@@ -10,16 +10,18 @@ public class ObjectInputStream extends InputStream {
 
     public ObjectInputStream(Bucket bucket, String objectPath) throws StorjException {
         try {
-            // TODO use bucket.internal().download()
             this.reader = bucket.internal().newReader(objectPath, new io.storj.libuplink.mobile.ReaderOptions());
         } catch (Exception e) {
             throw ExceptionUtil.toStorjException(e);
         }
     }
 
-    ObjectInputStream(Bucket bucket, String objectPath, int offset, int length) throws StorjException {
-        throw new UnsupportedOperationException();
-        // TODO use bucket.internal().downloadRange()
+    public ObjectInputStream(Bucket bucket, String objectPath, long off, long len) throws StorjException {
+        try {
+            this.reader = bucket.internal().newRangeReader(objectPath, off, len, new io.storj.libuplink.mobile.ReaderOptions());
+        } catch (Exception e) {
+            throw ExceptionUtil.toStorjException(e);
+        }
     }
 
     @Override

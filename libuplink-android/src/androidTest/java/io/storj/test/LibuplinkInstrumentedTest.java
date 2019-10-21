@@ -9,6 +9,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.io.ByteArrayOutputStream;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashSet;
@@ -136,9 +137,15 @@ public class LibuplinkInstrumentedTest {
                 String objectPath = "object/path";
                 bucket.uploadObject(objectPath, expectedData);
 
+                // full download
                 ByteArrayOutputStream writer = new ByteArrayOutputStream();
                 bucket.downloadObject(objectPath, writer);
                 assertArrayEquals(expectedData, writer.toByteArray());
+
+                // range download
+                writer.reset();
+                bucket.downloadObject(objectPath, writer, 10, 20);
+                assertArrayEquals(Arrays.copyOfRange(expectedData, 10, 30), writer.toByteArray());
 
                 bucket.deleteObject(objectPath);
             }

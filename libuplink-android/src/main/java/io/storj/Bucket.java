@@ -42,8 +42,23 @@ public class Bucket implements AutoCloseable {
     }
 
     public void downloadObject(String objectPath, OutputStream outputStream) throws StorjException {
-        try (InputStream in = new ObjectInputStream(this, objectPath);
-             BufferedOutputStream out = new BufferedOutputStream(outputStream, BUFFER_SIZE)) {
+        try (InputStream in = new ObjectInputStream(this, objectPath)) {
+            downloadObject(in, outputStream);
+        } catch (IOException e) {
+            throw new StorjException(e);
+        }
+    }
+
+    public void downloadObject(String objectPath, OutputStream outputStream, long off, long len) throws StorjException {
+        try (InputStream in = new ObjectInputStream(this, objectPath, off, len)) {
+            downloadObject(in, outputStream);
+        } catch (IOException e) {
+            throw new StorjException(e);
+        }
+    }
+
+    private void downloadObject(InputStream in, OutputStream outputStream) throws StorjException {
+        try (BufferedOutputStream out = new BufferedOutputStream(outputStream, BUFFER_SIZE)) {
             byte[] buffer = new byte[BUFFER_SIZE];
             int len;
             while ((len = in.read(buffer)) != -1) {
