@@ -3,12 +3,12 @@ package io.storj;
 import java.io.IOException;
 import java.io.InputStream;
 
-class ObjectInputStream extends InputStream {
+public class ObjectInputStream extends InputStream {
 
     private io.storj.libuplink.mobile.Reader reader;
     private byte[] buf = new byte[1];
 
-    ObjectInputStream(Bucket bucket, String objectPath) throws StorjException {
+    public ObjectInputStream(Bucket bucket, String objectPath) throws StorjException {
         try {
             // TODO use bucket.internal().download()
             this.reader = bucket.internal().newReader(objectPath, new io.storj.libuplink.mobile.ReaderOptions());
@@ -46,5 +46,9 @@ class ObjectInputStream extends InputStream {
             throw new IOException(e);
         }
         super.close();
+    }
+
+    public void cancel() {
+        this.reader.cancel();
     }
 }

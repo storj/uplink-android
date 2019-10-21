@@ -3,7 +3,7 @@ package io.storj;
 import java.io.IOException;
 import java.io.OutputStream;
 
-class ObjectOutputStream extends OutputStream {
+public class ObjectOutputStream extends OutputStream {
 
     private Bucket bucket;
     private io.storj.libuplink.mobile.Writer writer;
@@ -26,7 +26,7 @@ class ObjectOutputStream extends OutputStream {
      */
     private int count;
 
-    ObjectOutputStream(Bucket bucket, String objectPath, ObjectUploadOption... options) throws StorjException {
+    public ObjectOutputStream(Bucket bucket, String objectPath, ObjectUploadOption... options) throws StorjException {
         this.bucket = bucket;
         try {
             this.writer = this.bucket.internal().newWriter(objectPath, ObjectUploadOption.internal(options));
@@ -66,5 +66,9 @@ class ObjectOutputStream extends OutputStream {
             throw new IOException(e);
         }
         super.close();
+    }
+
+    public void cancel() {
+        this.writer.cancel();
     }
 }
