@@ -25,7 +25,7 @@ public class ObjectInputStream extends InputStream {
     @Override
     public int read() throws IOException {
         try {
-            int n = reader.read(buf);
+            int n = reader.read(buf, 0, 1);
             if (n == -1) {
                 return n;
             }
@@ -33,6 +33,18 @@ public class ObjectInputStream extends InputStream {
                 return buf[0] & 0xff;
             }
             throw new IOException("invalid state");
+        } catch (Exception e) {
+            throw new IOException(e);
+        }
+    }
+
+    @Override
+    public int read(byte[] b, int off, int len) throws IOException {
+        if (off < 0 || len < 0 || off + len > b.length) {
+            throw new IndexOutOfBoundsException();
+        }
+        try {
+            return reader.read(b, off, len);
         } catch (Exception e) {
             throw new IOException(e);
         }
