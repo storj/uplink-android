@@ -20,22 +20,22 @@ import io.storj.*;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 
 @RunWith(AndroidJUnit4.class)
 public class LibuplinkInstrumentedTest {
 
-    static final String VALID_SCOPE = InstrumentationRegistry.getArguments().getString("scope", "13GRuHAWnYKcVBgHKbpg6yNT7p4mfjAPjzWKNu771WT2sgLmyMSanBpFFhoNubNN4Gr7m55LQrR4JR8dfC86MGsWGe11poahaRGs6bRgvJj3cBTZyP2NCE21SsaV3qAcBvzcuvZGBocdw4A6mZiUZVi14JWkhk3Kd5iXyhoBCU69845CvU2My3Qv");
-    static Scope SCOPE;
+    private static final String VALID_SCOPE = InstrumentationRegistry.getArguments().getString("scope", "13GRuHAWnYKcVBgHKbpg6yNT7p4mfjAPjzWKNu771WT2sgLmyMSanBpFFhoNubNN4Gr7m55LQrR4JR8dfC86MGsWGe11poahaRGs6bRgvJj3cBTZyP2NCE21SsaV3qAcBvzcuvZGBocdw4A6mZiUZVi14JWkhk3Kd5iXyhoBCU69845CvU2My3Qv");
+    private static Scope SCOPE;
 
-    String filesDir;
-    UplinkOption[] uplinkOptions;
+    private UplinkOption[] uplinkOptions;
 
     @Before
     public void setUp() throws StorjException {
         SCOPE = Scope.parse(VALID_SCOPE);
-        filesDir = InstrumentationRegistry.getTargetContext().getFilesDir().getAbsolutePath();
+        String filesDir = InstrumentationRegistry.getTargetContext().getFilesDir().getAbsolutePath();
         uplinkOptions = new UplinkOption[]{
                 UplinkOption.tempDir(filesDir),
                 UplinkOption.skipPeerCAWhitelist(true)
@@ -94,14 +94,14 @@ public class LibuplinkInstrumentedTest {
 
                 Iterable<BucketInfo> buckets = project.listBuckets(
                         BucketListOption.cursor(""), BucketListOption.pageSize(2));
-                String allBuckets = "";
+                StringBuilder allBuckets = new StringBuilder();
                 int numOfBuckets = 0;
                 for (BucketInfo bucket : buckets) {
-                    allBuckets += bucket.getName() + "|";
+                    allBuckets.append(bucket.getName()).append("|");
                     numOfBuckets++;
                 }
 
-                assertEquals(allBuckets, expectedBuckets.size(), numOfBuckets);
+                assertEquals(allBuckets.toString(), expectedBuckets.size(), numOfBuckets);
             } finally {
                 for (int i = 0; i < 10; i++) {
                     String bucket = "test-bucket" + i;
@@ -109,7 +109,7 @@ public class LibuplinkInstrumentedTest {
                 }
 
                 Iterable<BucketInfo> buckets = project.listBuckets(BucketListOption.pageSize(1));
-                assertEquals(false, buckets.iterator().hasNext());
+                assertFalse(buckets.iterator().hasNext());
             }
         }
     }
