@@ -5,19 +5,12 @@ import java.io.OutputStream;
 
 public class ObjectOutputStream extends OutputStream {
 
-    private Bucket bucket;
     private io.storj.libuplink.mobile.Writer writer;
 
     /**
-     * This is the default buffer size
+     * Used for efficiency by `write(int b)`
      */
-    private static final int DEFAULT_BUFFER_SIZE = 512;
-
-    /**
-     * This is the internal byte array used for buffering output before
-     * writing it.
-     */
-    private byte[] buf = new byte[DEFAULT_BUFFER_SIZE];
+    private byte[] buf = new byte[1];
 
     /**
      * This is the number of bytes that are currently in the buffer and
@@ -27,9 +20,8 @@ public class ObjectOutputStream extends OutputStream {
     private int count;
 
     public ObjectOutputStream(Bucket bucket, String objectPath, ObjectUploadOption... options) throws StorjException {
-        this.bucket = bucket;
         try {
-            this.writer = this.bucket.internal().newWriter(objectPath, ObjectUploadOption.internal(options));
+            this.writer = bucket.internal().newWriter(objectPath, ObjectUploadOption.internal(options));
         } catch (Exception e) {
             throw ExceptionUtil.toStorjException(e);
         }
@@ -37,21 +29,23 @@ public class ObjectOutputStream extends OutputStream {
 
     @Override
     public void write(int b) throws IOException {
-        if (count == buf.length) {
-            flush();
-        }
-        buf[count] = (byte) (b & 0xFF);
-        ++count;
+        buf[0] = (byte) b;
+        write(buf, 0, 1);
     }
 
     @Override
-    public void flush() throws IOException {
-        if (count == 0) {
+    public void write(byte[] b, int off, int len) throws IOException {
+        if (b == null) {
+            throw new NullPointerException();
+        } else if ((off < 0) || (off > b.length) || (len < 0) ||
+                ((off + len) > b.length) || ((off + len) < 0)) {
+            throw new IndexOutOfBoundsException();
+        } else if (len == 0) {
             return;
         }
+
         try {
-            this.writer.write(buf, 0, count);
-            this.count = 0;
+            writer.write(b, off, len);
         } catch (Exception e) {
             throw new IOException(e);
         }
@@ -60,7 +54,6 @@ public class ObjectOutputStream extends OutputStream {
     @Override
     public void close() throws IOException {
         try {
-            this.flush();
             this.writer.close();
         } catch (Exception e) {
             throw new IOException(e);
