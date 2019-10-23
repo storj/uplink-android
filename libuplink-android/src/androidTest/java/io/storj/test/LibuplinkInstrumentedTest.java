@@ -56,7 +56,7 @@ public class LibuplinkInstrumentedTest {
                     build();
 
             try {
-                BucketInfo createBucketInfo = project.createBucket(expectedBucket, BucketOption.redundancyScheme(rs));
+                BucketInfo createBucketInfo = project.createBucket(expectedBucket, BucketCreateOption.redundancyScheme(rs));
 
                 BucketInfo getBucketInfo = project.getBucketInfo(expectedBucket);
                 Assert.assertEquals(expectedBucket, getBucketInfo.getName());
@@ -89,7 +89,7 @@ public class LibuplinkInstrumentedTest {
             try {
                 for (int i = 0; i < 10; i++) {
                     String bucket = "test-bucket" + i;
-                    project.createBucket(bucket, BucketOption.redundancyScheme(rs));
+                    project.createBucket(bucket, BucketCreateOption.redundancyScheme(rs));
                     expectedBuckets.add(bucket);
                 }
 
@@ -127,7 +127,7 @@ public class LibuplinkInstrumentedTest {
                     setTotalShares((short) 10).
                     build();
 
-            project.createBucket(expectedBucket, BucketOption.redundancyScheme(rs));
+            project.createBucket(expectedBucket, BucketCreateOption.redundancyScheme(rs));
 
             try (Bucket bucket = project.openBucket(expectedBucket, SCOPE)) {
                 byte[] expectedData = new byte[2048];
@@ -167,7 +167,7 @@ public class LibuplinkInstrumentedTest {
                     setTotalShares((short) 10).
                     build();
 
-            project.createBucket(expectedBucket, BucketOption.redundancyScheme(rs));
+            project.createBucket(expectedBucket, BucketCreateOption.redundancyScheme(rs));
 
             try (Bucket bucket = project.openBucket(expectedBucket, SCOPE)) {
                 byte[] expectedData = new byte[2 * 1024 * 1024];
@@ -209,7 +209,7 @@ public class LibuplinkInstrumentedTest {
                     build();
 
             project.createBucket(expectedBucket,
-                    BucketOption.redundancyScheme(rs), BucketOption.pathCipher(CipherSuite.NONE));
+                    BucketCreateOption.redundancyScheme(rs), BucketCreateOption.pathCipher(CipherSuite.NONE));
 
             try (Bucket bucket = project.openBucket(expectedBucket, SCOPE)) {
                 long before = System.currentTimeMillis();
@@ -257,7 +257,7 @@ public class LibuplinkInstrumentedTest {
 
         try (Uplink uplink = new Uplink(uplinkOptions); Project project = uplink.openProject(SCOPE)) {
 
-            project.createBucket(expectedBucket, BucketOption.redundancyScheme(rs));
+            project.createBucket(expectedBucket, BucketCreateOption.redundancyScheme(rs));
 
             try (Bucket bucket = project.openBucket(expectedBucket, SCOPE)) {
                 bucket.uploadObject("first-file", "First file content".getBytes(UTF_8));

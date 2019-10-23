@@ -20,9 +20,9 @@ public class Project implements AutoCloseable {
      * @return created bucket info
      * @throws StorjException
      */
-    public BucketInfo createBucket(String bucketName, BucketOption... options) throws StorjException {
+    public BucketInfo createBucket(String bucketName, BucketCreateOption... options) throws StorjException {
         try {
-            io.storj.libuplink.mobile.BucketInfo info = project.createBucket(bucketName, BucketOption.internal(options));
+            io.storj.libuplink.mobile.BucketInfo info = project.createBucket(bucketName, BucketCreateOption.internal(options));
             return new BucketInfo(info);
         } catch (Exception e) {
             throw ExceptionUtil.toStorjException(e);

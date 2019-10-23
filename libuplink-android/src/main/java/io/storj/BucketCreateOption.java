@@ -5,7 +5,7 @@ import io.storj.libuplink.mobile.BucketConfig;
 /**
  * Options for bucket creation.
  */
-public class BucketOption {
+public class BucketCreateOption {
 
     private enum Key {
         PATH_CIPHER,
@@ -18,31 +18,31 @@ public class BucketOption {
 
     private Object value;
 
-    BucketOption(Key key, Object value) {
+    BucketCreateOption(Key key, Object value) {
         this.key = key;
         this.value = value;
     }
 
-    public static BucketOption pathCipher(CipherSuite pathCipher) {
-        return new BucketOption(Key.PATH_CIPHER, pathCipher);
+    public static BucketCreateOption pathCipher(CipherSuite pathCipher) {
+        return new BucketCreateOption(Key.PATH_CIPHER, pathCipher);
     }
 
-    public static BucketOption encryptionParameters(EncryptionParameters encryptionParameters) {
-        return new BucketOption(Key.ENCRYPTION_PARAMETERS, encryptionParameters);
+    public static BucketCreateOption encryptionParameters(EncryptionParameters encryptionParameters) {
+        return new BucketCreateOption(Key.ENCRYPTION_PARAMETERS, encryptionParameters);
     }
 
-    public static BucketOption redundancyScheme(RedundancyScheme redundancyScheme) {
-        return new BucketOption(Key.REDUNDANCY_SCHEME, redundancyScheme);
+    public static BucketCreateOption redundancyScheme(RedundancyScheme redundancyScheme) {
+        return new BucketCreateOption(Key.REDUNDANCY_SCHEME, redundancyScheme);
     }
 
-    public static BucketOption segmentsSize(long segmentsSize) {
-        return new BucketOption(Key.SEGMENTS_SIZE, segmentsSize);
+    public static BucketCreateOption segmentsSize(long segmentsSize) {
+        return new BucketCreateOption(Key.SEGMENTS_SIZE, segmentsSize);
     }
 
-    static io.storj.libuplink.mobile.BucketConfig internal(BucketOption... options) {
+    static io.storj.libuplink.mobile.BucketConfig internal(BucketCreateOption... options) {
         io.storj.libuplink.mobile.BucketConfig bucketConfig = new BucketConfig();
 
-        for (BucketOption option : options) {
+        for (BucketCreateOption option : options) {
             if (option.key == Key.PATH_CIPHER) {
                 CipherSuite cipherSuite = (CipherSuite) option.value;
                 bucketConfig.setPathCipher(cipherSuite.getValue());
