@@ -481,7 +481,7 @@ Scope sharedScope = scope.restrict(
         new EncryptionRestriction("my-bucket", "path/to/my"));
 
 // Serialize the scope to, so it can be easily sent to the receiving party.
-String serializedShare = shared.serialize();
+String serializedShare = sharedScope.serialize();
 ```
 
 The receiving party can download the shared file using the following example:
