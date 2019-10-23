@@ -21,6 +21,28 @@ dependencies {
 
 ## Usage
 
++ [API Key](#api-key)
+  - [Parsing serialized API key from string](#parsing-serialized-api-key-from-string)
++ [Scope](#scope)
+  - [Creating new scope from passphrase](#creating-new-scope-from-passphrase)
+  - [Resticting access of scope](#resticting-access-of-scope)
+  - [Serializing scope to string](#serializing-scope-to-string)
+  - [Parsing serialized scope from string](#parsing-serialized-scope-from-string)
++ [Buckets](#buckets)
+  - [Creating new bucket](#creating-new-bucket)
+  - [Getting info about a bucket](#getting-info-about-a-bucket)
+  - [Listing buckets](#listing-buckets)
+  - [Deleting a bucket](#deleting-a-bucket)
++ [Objects](#objects)
+  - [Downloading an object](#downloading-an-object)
+  - [Downloading a range of an object](#downloading-a-range-of-an-object)
+  - [Downloading an object with progress monitoring and cancellation](#downloading-an-object-with-progress-monitoring-and-cancellation)
+  - [Uploading new object](#uploading-new-object)
+  - [Uploading new object with progress monitoring and cancellation](#uploading-new-object-with-progress-monitoring-and-cancellation)
+  - [Listing objects](#listing-objects)
+  - [Deleting an object](#deleting-an-object)
++ [Sharing content](#sharing-content)
+
 ### API Key
 
 The `ApiKey` contains the access key to a project on the satellite.
