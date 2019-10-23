@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.Objects;
 
 /**
- * EncryptionParameters is the cipher suite and parameters used for encryption
+ * Represents the encryption parameters used for encrypting the data on the network.
  */
 public class EncryptionParameters implements Serializable {
 
@@ -16,14 +16,39 @@ public class EncryptionParameters implements Serializable {
         this.blockSize = params.getBlockSize();
     }
 
+    /**
+     * Returns the {@link CipherSuite} used for encryption.
+     *
+     * @return a {@link CipherSuite}
+     */
     public CipherSuite getCipher() {
         return cipher;
     }
 
+    /**
+     * Returns the block size at which encryption is performed.
+     *
+     * <p>It is important to distinguish this from the block size used by the
+     * cipher suite (probably 128 bits). There is some small overhead for
+     * each encryption unit, so the block size should not be too small, but
+     * smaller sizes yield shorter first-byte latency and better seek times.
+     * Note that the block size itself is the size of data blocks _after_ they
+     * have been encrypted and the authentication overhead has been added.
+     * It is not the size of the data blocks to be encrypted.</p>
+     *
+     * @return the block size in bytes
+     */
     public int getBlockSize() {
         return blockSize;
     }
 
+    /**
+     * Two {@link EncryptionParameters} objects are equal if both their {@link CipherSuite} and
+     * block size are equal.
+     *
+     * @return <code>true</code> if this object is the same as the specified object;
+     *          <code>false</code> otherwise.
+     */
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -33,6 +58,12 @@ public class EncryptionParameters implements Serializable {
                 cipher == that.cipher;
     }
 
+    /**
+     * The hash code value of {@link EncryptionParameters} is the hash code value of its
+     * {@link CipherSuite} and block size.
+     *
+     * @return a hash code value for this object
+     */
     @Override
     public int hashCode() {
         return Objects.hash(cipher, blockSize);
@@ -53,7 +84,7 @@ public class EncryptionParameters implements Serializable {
     }
 
     /**
-     * Builder for EncryptionParameters.
+     * Builder for {@link EncryptionParameters} objects.
      */
     public static class Builder {
 
@@ -61,10 +92,10 @@ public class EncryptionParameters implements Serializable {
         private int blockSize;
 
         /**
-         * CipherSuite specifies the cipher suite to be used for encryption.
+         * Determines the {@link CipherSuite} to use for encryption.
          *
-         * @param cipher cipher suite
-         * @return the builder
+         * @param cipher a {@link CipherSuite}
+         * @return a reference to this object
          */
         public Builder setCipher(CipherSuite cipher) {
             this.cipher = cipher;
@@ -72,23 +103,29 @@ public class EncryptionParameters implements Serializable {
         }
 
         /**
-         * BlockSize determines the unit size at which encryption is performed.
-         * It is important to distinguish this from the block size used by the
+         * Determines the block size at which encryption is performed.
+         *
+         * <p>It is important to distinguish this from the block size used by the
          * cipher suite (probably 128 bits). There is some small overhead for
-         * each encryption unit, so BlockSize should not be too small, but
+         * each encryption unit, so the block size should not be too small, but
          * smaller sizes yield shorter first-byte latency and better seek times.
-         * Note that BlockSize itself is the size of data blocks _after_ they
+         * Note that the block size itself is the size of data blocks _after_ they
          * have been encrypted and the authentication overhead has been added.
-         * It is not the size of the data blocks to be encrypted.
+         * It is not the size of the data blocks to be encrypted.</p>
          *
          * @param size block size in bytes
-         * @return the builder
+         * @return a reference to this object
          */
         public Builder setBlockSize(int size) {
             this.blockSize = size;
             return this;
         }
 
+        /**
+         * Creates the new {@link EncryptionParameters} object from this builder.
+         *
+         * @return an {@link EncryptionParameters}
+         */
         public EncryptionParameters build() {
             return new EncryptionParameters(this);
         }

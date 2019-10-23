@@ -26,44 +26,42 @@ public class ObjectUploadOption {
     }
 
     /**
-     * Content type option.
+     * Option for the MIME content type of the new object.
      *
-     * @param contentType if set, gives a MIME content-type for the Object.
-     * @return content type object upload option
+     * @param contentType a {@link String} with the content type
+     * @return a {@link ObjectUploadOption}
      */
     public static ObjectUploadOption contentType(String contentType) {
         return new ObjectUploadOption(Key.CONTENT_TYPE, contentType);
     }
 
     /**
-     * Encryption parameters option.
+     * Option for the {@link EncryptionParameters} for encrypting the new object. If not set, the
+     * bucket's defaults will be used.
      *
-     * @param encryptionParameters determines the cipher suite to use for
-     *                             the Object's data encryption. If not set, the Bucket's
-     *                             defaults will be used.
-     * @return encryption parameters object upload option
+     * @param encryptionParameters {@link EncryptionParameters}
+     * @return a {@link ObjectUploadOption}
      */
     public static ObjectUploadOption encryptionParameters(EncryptionParameters encryptionParameters) {
         return new ObjectUploadOption(Key.ENCRYPTION_PARAMETERS, encryptionParameters);
     }
 
     /**
-     * Expires option.
+     * Option for the expiration date of the new object. If not set, the object will never expire
+     * and will persist on the network until deleted explicitly.
      *
-     * @param expires is the time at which the new Object can expire (be deleted
-     *                automatically from storage nodes).
-     * @return expires object upload option
+     * @param expires the expiration {@link Date}
+     * @return a {@link ObjectUploadOption}
      */
     public static ObjectUploadOption expires(Date expires) {
         return new ObjectUploadOption(Key.EXPIRES, expires);
     }
 
     /**
-     * Redundancy scheme option.
+     * Option for the {@link RedundancyScheme} for encoding the new object into pieces.
      *
-     * @param redundancyScheme determines the Reed-Solomon and/or Forward Error Correction
-     *                         encoding parameters to be used for this Object.
-     * @return redundancy scheme object upload option
+     * @param redundancyScheme a {@link RedundancyScheme}
+     * @return a {@link ObjectUploadOption}
      */
     public static ObjectUploadOption redundancyScheme(RedundancyScheme redundancyScheme) {
         return new ObjectUploadOption(Key.REDUNDANCY_SCHEME, redundancyScheme);

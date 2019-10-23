@@ -3,8 +3,8 @@ package io.storj;
 import io.storj.libuplink.mobile.Mobile;
 
 /**
- * EncryptionAccess represents an encryption access context. It holds information
- * about how various buckets and objects should be encrypted and decrypted.
+ * Represents an encryption access context. It holds information about how various buckets and
+ * objects should be encrypted and decrypted.
  */
 public class EncryptionAccess {
 
@@ -17,10 +17,14 @@ public class EncryptionAccess {
     }
 
     /**
-     * Constructs encryption access with salted key.
+     * Creates new {@link EncryptionAccess} with salted {@link Key}.
      *
-     * @param saltedKey salted key
-     * @throws StorjException
+     * <p>Salted keys can be created with
+     * {@link Key#getSaltedKeyFromPassphrase(Project, String)}.</p>
+     *
+     * @param saltedKey a salted {@link Key}
+     * @throws StorjException in case of error
+     * @see Key#getSaltedKeyFromPassphrase(Project, String)
      */
     public EncryptionAccess(Key saltedKey) throws StorjException {
         try {
@@ -31,12 +35,13 @@ public class EncryptionAccess {
     }
 
     /**
-     * Merges the other encryption access context into this one. In cases
-     * of conflicting path decryption settings (including if both accesses have
-     * a default key), the new settings are kept.
+     * Merges another {@link EncryptionAccess} into this one.
      *
-     * @param other other encryption access
-     * @throws StorjException
+     * <p>The new settings are kept in cases of conflicting path decryption settings, including if
+     * both accesses have a default key.</p>
+     *
+     * @param other an {@link EncryptionAccess} to merge
+     * @throws StorjException in case of error
      */
     public void merge(EncryptionAccess other) throws StorjException {
         try {
@@ -47,10 +52,10 @@ public class EncryptionAccess {
     }
 
     /**
-     * Serialize encryption access to base58 string.
+     * Serialize this {@link EncryptionAccess} to base58-encoded {@link String}.
      *
-     * @return serialized encryption access
-     * @throws StorjException
+     * @return a {@link String} with serialized encryption access context
+     * @throws StorjException in case of error
      */
     public String serialize() throws StorjException {
         try {
@@ -61,11 +66,11 @@ public class EncryptionAccess {
     }
 
     /**
-     * Parses a base58 serialized encryption access into a working one.
+     * Parses a base58-encoded {@link String} to an {@link EncryptionAccess}.
      *
-     * @param serialized base58 serialized encryption access
-     * @return encryption access
-     * @throws StorjException
+     * @param serialized a base58-encoded {@link String}
+     * @return the parsed {@link EncryptionAccess}
+     * @throws StorjException in case of error
      */
     public static EncryptionAccess parse(String serialized) throws StorjException {
         try {

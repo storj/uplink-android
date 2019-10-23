@@ -1,8 +1,20 @@
 package io.storj;
 
 /**
- * Project represents operations you can perform on a project like bucket creating, listing,
- * deleting.
+ * Represents a stateful resource to a project on a satellite. It allows executing operations on the
+ * project like creating, opening, listing, and deleting buckets.
+ *
+ * <p>Make sure to always close the Project object after completing work with it. The Project class
+ * implements the {@link java.lang.AutoCloseable} interface, so it is best to use Project objects
+ * in try-with-resource blocks:</p>
+ *
+ * <pre>
+ * {@code try (Uplink uplink = new Uplink();
+ *       Project project = uplink.openProject(scope)) {
+ *      ...
+ *  }
+ * }
+ * </pre>
  */
 public class Project implements AutoCloseable {
 
@@ -13,12 +25,12 @@ public class Project implements AutoCloseable {
     }
 
     /**
-     * Creates a new bucket if authorized.
+     * Creates a new bucket in this project.
      *
-     * @param bucketName bucket name
-     * @param options    set of bucket options
+     * @param bucketName a bucket name
+     * @param options an optional list of {@link BucketCreateOption}
      * @return created bucket info
-     * @throws StorjException
+     * @throws StorjException in case of error
      */
     public BucketInfo createBucket(String bucketName, BucketCreateOption... options) throws StorjException {
         try {
@@ -30,24 +42,24 @@ public class Project implements AutoCloseable {
     }
 
     /**
-     * Returns a Bucket handle with given scope.
+     * Returns a {@link Bucket} handle with the encryption access from the given scope.
      *
      * @param bucketName bucket name
-     * @param scope      scope encryption access will be used do open bucket
-     * @return handle to a bucket
-     * @throws StorjException
+     * @param scope a {@link Scope}
+     * @return a {@link Bucket} handle
+     * @throws StorjException in case of error
      */
     public Bucket openBucket(String bucketName, Scope scope) throws StorjException {
         return this.openBucket(bucketName, scope.getEncryptionAccess());
     }
 
     /**
-     * Returns a Bucket handle with given encryption access.
+     * Returns a {@link Bucket} handle with given encryption access.
      *
-     * @param bucketName bucket name
-     * @param access     encryption access will be used do open bucket
-     * @return handle to a bucket
-     * @throws StorjException
+     * @param bucketName a bucket name
+     * @param access an {@link EncryptionAccess}
+     * @return a {@link Bucket} handle
+     * @throws StorjException in case of error
      */
     public Bucket openBucket(String bucketName, EncryptionAccess access) throws StorjException {
         try {
@@ -59,11 +71,11 @@ public class Project implements AutoCloseable {
     }
 
     /**
-     * Returns info about bucket.
+     * Returns bucket metadata.
      *
-     * @param bucketName bucket name
-     * @return bucket info
-     * @throws StorjException
+     * @param bucketName a bucket name
+     * @return a {@link BucketInfo}
+     * @throws StorjException in case of error
      */
     public BucketInfo getBucketInfo(String bucketName) throws StorjException {
         try {
@@ -75,22 +87,21 @@ public class Project implements AutoCloseable {
     }
 
     /**
-     * Lists buckets with given options
+     * Lists the buckets in this project.
      *
      * @param options set of options
-     * @return list of buckets
-     * @throws StorjException
+     * @return an optional list of {@link BucketListOption}
+     * @throws StorjException in case of error
      */
     public Iterable<BucketInfo> listBuckets(BucketListOption... options) throws StorjException {
         return new BucketIterator(project, options);
     }
 
     /**
-     * Deletes a bucket if authorized. If the bucket contains any
-     * Objects at the time of deletion, they may be lost permanently.
+     * Deletes a bucket from this project.
      *
-     * @param bucketName bucket name
-     * @throws StorjException
+     * @param bucketName a bucket name
+     * @throws StorjException in case of error
      */
     public void deleteBucket(String bucketName) throws StorjException {
         try {
@@ -100,6 +111,11 @@ public class Project implements AutoCloseable {
         }
     }
 
+    /**
+     * Closes the project and releases the allocated network resources.
+     *
+     * @throws StorjException if an error occurs while closing
+     */
     @Override
     public void close() throws StorjException {
         try {

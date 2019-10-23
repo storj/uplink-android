@@ -1,7 +1,7 @@
 package io.storj;
 
 /**
- * ApiKey represents an access credential to certain resources.
+ * Represents an access credential to certain resources.
  */
 public class ApiKey {
 
@@ -12,11 +12,11 @@ public class ApiKey {
     }
 
     /**
-     * Generates a new API key restricted by the provided Caveat.
+     * Generates a new {@link ApiKey} restricted by the provided {@link Caveat}.
      *
-     * @param caveat a Caveat for restricting the access of the API key
-     * @return new restricted API key
-     * @throws StorjException
+     * @param caveat a {@link Caveat} for restricting the access
+     * @return the restricted {@link ApiKey}
+     * @throws StorjException in case of error
      */
     public ApiKey restrict(Caveat caveat) throws StorjException {
         try {
@@ -27,20 +27,20 @@ public class ApiKey {
     }
 
     /**
-     * Serializes the API key to a string.
+     * Serializes the {@link ApiKey} to base58-encoded {@link String}.
      *
-     * @return serialized API key
+     * @return a {@link String} with the serialized API key
      */
     public String serialize() {
         return apiKey.serialize();
     }
 
     /**
-     * Parses the API key from the serialized string.
+     * Parses a base58-encoded {@link String} to an {@link ApiKey}.
      *
-     * @param serialized serialized API key
-     * @return the parsed API key
-     * @throws StorjException
+     * @param serialized a base58-encoded {@link String}
+     * @return the parsed {@link ApiKey}
+     * @throws StorjException if the serialized string is not a valid API key
      */
     public static ApiKey parse(String serialized) throws StorjException {
         try {

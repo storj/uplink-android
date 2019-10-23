@@ -3,7 +3,9 @@ package io.storj;
 import io.storj.libuplink.mobile.BucketConfig;
 
 /**
- * Options for bucket creation.
+ * Options for creating new buckets.
+ *
+ * @see Project#createBucket(String, BucketCreateOption...)
  */
 public class BucketCreateOption {
 
@@ -23,18 +25,44 @@ public class BucketCreateOption {
         this.value = value;
     }
 
+    /**
+     * Option for setting the {@link CipherSuite} for encrypting all object paths in the bucket.
+     *
+     * @param pathCipher a {@link CipherSuite}
+     * @return a {@link BucketCreateOption}
+     */
     public static BucketCreateOption pathCipher(CipherSuite pathCipher) {
         return new BucketCreateOption(Key.PATH_CIPHER, pathCipher);
     }
 
+    /**
+     * Option for setting the default {@link EncryptionParameters} used when uploading new objects
+     * to the bucket.
+     *
+     * @param encryptionParameters an {@link EncryptionParameters}
+     * @return a {@link BucketCreateOption}
+     */
     public static BucketCreateOption encryptionParameters(EncryptionParameters encryptionParameters) {
         return new BucketCreateOption(Key.ENCRYPTION_PARAMETERS, encryptionParameters);
     }
 
+    /**
+     * Option for setting the default {@link RedundancyScheme} used when uploading new objects to
+     * the bucket.
+     *
+     * @param redundancyScheme a {@link RedundancyScheme}
+     * @return a {@link BucketCreateOption}
+     */
     public static BucketCreateOption redundancyScheme(RedundancyScheme redundancyScheme) {
         return new BucketCreateOption(Key.REDUNDANCY_SCHEME, redundancyScheme);
     }
 
+    /**
+     * Option for setting the segments size used when uploading new objects in the bucket.
+     *
+     * @param segmentsSize size of segments
+     * @return a {@link BucketCreateOption}
+     */
     public static BucketCreateOption segmentsSize(long segmentsSize) {
         return new BucketCreateOption(Key.SEGMENTS_SIZE, segmentsSize);
     }

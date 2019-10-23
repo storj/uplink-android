@@ -3,7 +3,7 @@ package io.storj;
 import io.storj.libuplink.mobile.Config;
 
 /**
- * Options for configuring Uplink.
+ * Options for configuring {@link Uplink}.
  */
 public class UplinkOption {
 
@@ -24,53 +24,50 @@ public class UplinkOption {
     }
 
     /**
-     * MaxInlineSize determines whether the uplink will attempt to
-     * store a new object in the satellite's metainfo. Objects at
-     * or below this size will be marked for inline storage, and
-     * objects above this size will not. (The satellite may reject
-     * the inline storage and require remote storage, still.)
+     * Option for the maximum size of inline objects. The uplink will attempt to store a new object
+     * below this size in the satellite's metainfo. Objects at or below this size will be marked for
+     * inline storage, and objects above this size will not. (The satellite may reject the inline
+     * storage and require remote storage, still.)
      *
-     * @param maxInlineSize maximum inline size (in bytes)
-     * @return option for Uplink configuration
+     * @param maxInlineSize the maximum inline size in bytes
+     * @return an {@link UplinkOption}
      */
     public static UplinkOption maxInlineSize(long maxInlineSize) {
         return new UplinkOption(Key.MAX_INLINE_SIZE, maxInlineSize);
     }
 
     /**
-     * MaxMemory is the default maximum amount of memory to be
-     * allocated for read buffers while performing decodes of
-     * objects. (This option is overrideable per Bucket if the user
-     * so desires.) If set to zero, the library default (4 MiB) will
-     * be used. If set to a negative value, the system will use the
-     * smallest amount of memory it can.
+     * Option for the default maximum amount of memory to be allocated for read buffers while
+     * performing erasure decoding on the downloaded data. If set to zero, the library default
+     * (4 MiB) will be used. If set to a negative value, the system will use the
+     * smallest amount of memory possible.
      *
-     * @param maxMemory max memory for read buffer allocation (in bytes)
-     * @return option for Uplink configuration
+     * @param maxMemory the maximum memory for read buffers in bytes
+     * @return an {@link UplinkOption}
      */
     public static UplinkOption maxMemory(long maxMemory) {
         return new UplinkOption(Key.MAX_MEMORY, maxMemory);
     }
 
     /**
-     * TempDir determines writable temporary location which will
-     * be used to during upload. If not set OS temp directory will be used.
+     * Option for temp directory to be used during upload. If not set, OS temp directory will be
+     * used.
      *
-     * @param tempDir path to temporary directory
-     * @return option for Uplink configuration
+     * @param tempDir path to temp directory
+     * @return an {@link UplinkOption}
      */
     public static UplinkOption tempDir(String tempDir) {
         return new UplinkOption(Key.TEMP_DIR, tempDir);
     }
 
     /**
-     * SkipPeerCAWhitelist determines whether to require all
-     * remote hosts to have identity certificates signed by
-     * Certificate Authorities in the default whitelist. If
-     * set to true, the whitelist will be ignored.
+     * Option that determines whether to require all remote hosts to have identity certificates
+     * signed by Certificate Authorities in the default whitelist. If set to true, the whitelist
+     * will be ignored.
      *
-     * @param skipPeerCAWhitelist
-     * @return option for Uplink configuration
+     * @param skipPeerCAWhitelist set to <code>true</code> to ignore the whilelist, otherwise set to
+     *                            <code>false</code>
+     * @return an {@link UplinkOption}
      */
     public static UplinkOption skipPeerCAWhitelist(boolean skipPeerCAWhitelist) {
         return new UplinkOption(Key.SKIP_PEER_CA_WHITELIST, skipPeerCAWhitelist);

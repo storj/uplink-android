@@ -3,7 +3,7 @@ package io.storj;
 import io.storj.libuplink.mobile.ListOptions;
 
 /**
- * Options for objects listing.
+ * Options for listing objects.
  */
 public class ObjectListOption {
 
@@ -24,40 +24,45 @@ public class ObjectListOption {
     }
 
     /**
-     * Prefix option.
+     * Option for the path prefix to filter the listing results.
      *
-     * @param prefix prefix for listing
-     * @return prefix object list option
+     * @param prefix a {@link String} with path prefix
+     * @return a {@link ObjectListOption}
      */
     public static ObjectListOption prefix(String prefix) {
         return new ObjectListOption(Key.PREFIX, prefix);
     }
 
     /**
-     * Cursor option.
+     * Option for the starting cursor in the object listing. The path of the first object in the
+     * result listing will be <b>after</b> the cursor.
      *
-     * @param cursor cursor for listing
-     * @return cursor object list option
+     * @param cursor a {@link String} with starting cursor
+     * @return a {@link ObjectListOption}
      */
     public static ObjectListOption cursor(String cursor) {
         return new ObjectListOption(Key.CURSOR, cursor);
     }
 
     /**
-     * Recursive option.
+     * Option for recursive listing.
      *
-     * @param recursive true if listing should work in recursive way
-     * @return recursive object list option
+     * @param recursive <code>true</code> for recursive listing, <code>false</code> otherwise
+     * @return a {@link ObjectListOption}
      */
     public static ObjectListOption recursive(boolean recursive) {
         return new ObjectListOption(Key.RECURSIVE, recursive);
     }
 
     /**
-     * Page size option.
+     * Option for the internal page size used in the iterator of the object listing.
      *
-     * @param pageSize number of elements for one page
-     * @return page size object list option
+     * <p>While iterating over the object listing, the iterator makes remote calls to the satellite
+     * for receiving portion if the listing. The page size determines how many objects are returned
+     * on each remote call. Clients may tune the page size for performance reasons.</p>
+     *
+     * @param pageSize the page size
+     * @return a {@link ObjectListOption}
      */
     public static ObjectListOption pageSize(int pageSize) {
         return new ObjectListOption(Key.PAGE_SIZE, pageSize);

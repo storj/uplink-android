@@ -3,8 +3,12 @@ package io.storj;
 import io.storj.libuplink.mobile.EncryptionRestrictions;
 
 /**
- * Scope is a serializable type that represents all of the credentials you need
- * to open a project and some amount of buckets
+ * Represents all credentials you need to access data on the Storj network:
+ * <ul>
+ *     <li>Satellite address in the form of "host:port"</li>
+ *     <li>{@link ApiKey} to access the satellite</li>
+ *     <li>{@link EncryptionAccess} for accessing the encrypted content</li>
+ * </ul>
  */
 public class Scope {
 
@@ -15,46 +19,62 @@ public class Scope {
     }
 
     /**
-     * Creates new scope.
+     * Creates new {@link Scope}.
      *
-     * @param satelliteAddress satellite address
-     * @param apiKey           API key to access satellite
-     * @param encryptionAccess encryption access
+     * @param satelliteAddress a satellite address
+     * @param apiKey an {@link ApiKey} to access satellite
+     * @param encryptionAccess an {@link EncryptionAccess} for accessin the encrypted content
      */
     public Scope(String satelliteAddress, ApiKey apiKey, EncryptionAccess encryptionAccess) {
         this.scope = io.storj.libuplink.mobile.Mobile.newScope(satelliteAddress, apiKey.internal(), encryptionAccess.internal());
     }
 
+    /**
+     * Returns the satellite address.
+     *
+     * @return the satellite address.
+     */
     public String getSatelliteAddress() {
         return this.scope.satelliteAddr();
     }
 
+    /**
+     * Returns the {@link ApiKey} to access the satellite.
+     *
+     * @return the {@link ApiKey}
+     */
     public ApiKey getApiKey() {
         return new ApiKey(this.scope.apiKey());
     }
 
+    /**
+     * Returns the {@link EncryptionAccess} to access the encrypted content.
+     *
+     * @return the {@link EncryptionAccess}
+     */
     public EncryptionAccess getEncryptionAccess() {
         return new EncryptionAccess(this.scope.encryptionAccess(), null);
     }
 
     /**
-     * Restricts access to resources.
+     * Restricts this {@link Scope} with a list of {@link EncryptionRestriction}.
      *
-     * @param restrictions set of restrictions
-     * @return new restricted scope
-     * @throws StorjException
+     * @param restrictions a list of {@link EncryptionRestriction}
+     * @return new restricted {@link Scope}
+     * @throws StorjException in case of error
      */
     public Scope restrict(EncryptionRestriction... restrictions) throws StorjException {
         return this.restrict(null, restrictions);
     }
 
     /**
-     * Restricts access to resources.
+     * Restricts this {@link Scope} with a {@link Caveat} and a list of
+     * {@link EncryptionRestriction}.
      *
-     * @param caveat       caveat
-     * @param restrictions set of restrictions
-     * @return new restricted scope
-     * @throws StorjException
+     * @param caveat a {@link Caveat}
+     * @param restrictions a list of {@link EncryptionRestriction}
+     * @return new restricted {@link Scope}
+     * @throws StorjException in case of error
      */
     public Scope restrict(Caveat caveat, EncryptionRestriction... restrictions) throws StorjException {
         ApiKey apiKey = this.getApiKey();
@@ -76,10 +96,10 @@ public class Scope {
     }
 
     /**
-     * Serializes a scope to a base58-encoded string.
+     * Serializes this {@link Scope} to base58-encoded {@link String}.
      *
-     * @return serialized scope
-     * @throws StorjException
+     * @return a {@link String} with serialized scope
+     * @throws StorjException in case of error
      */
     public String serialize() throws StorjException {
         try {
@@ -90,13 +110,11 @@ public class Scope {
     }
 
     /**
-     * ParseScope unmarshals a base58 encoded scope protobuf and decodes
-     * the fields into the Scope convenience type. It will return an error if the
-     * protobuf is malformed or field validation fails.
+     * Parses a base58-encoded {@link String} to an {@link Scope}.
      *
-     * @param serialized serialized scope
-     * @return new scope
-     * @throws StorjException
+     * @param serialized a base58-encoded {@link String}
+     * @return the parsed {@link Scope}
+     * @throws StorjException in case of error
      */
     public static Scope parse(String serialized) throws StorjException {
         try {

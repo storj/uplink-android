@@ -1,18 +1,18 @@
 package io.storj;
 
 /**
- * Uplink represents the main entrypoint to Storj V3. An Uplink connects to
- * a specific Satellite and caches connections and resources, allowing one to
- * create sessions delineated by specific access controls.
+ * Represents the main entrypoint to the Storj network. An uplink connects to a specific satellite
+ * and caches connections and resources, allowing one to create sessions delineated by specific
+ * access controls.
  */
 public class Uplink implements AutoCloseable {
 
     private io.storj.libuplink.mobile.Uplink uplink;
 
     /**
-     * Creates new Uplink.
+     * Creates new {@link Uplink}.
      *
-     * @param options set of options
+     * @param options an optional list of {@link UplinkOption}
      */
     public Uplink(UplinkOption... options) {
         UplinkOption.UplinkOptions uplinkOptions = UplinkOption.internal(options);
@@ -20,23 +20,23 @@ public class Uplink implements AutoCloseable {
     }
 
     /**
-     * Returns a Project handle with the given scope.
+     * Returns a {@link Project} handle for the given {@link Scope}.
      *
-     * @param scope
-     * @return project handle
-     * @throws StorjException
+     * @param scope a {@link Scope}
+     * @return a {@link Project} handle
+     * @throws StorjException in case of error
      */
     public Project openProject(Scope scope) throws StorjException {
         return this.openProject(scope.getSatelliteAddress(), scope.getApiKey());
     }
 
     /**
-     * Returns a Project handle with the given satellite address and API key.
+     * Returns a {@link Project} handle for the given satellite address and {@link ApiKey}.
      *
-     * @param satelliteAddress satellite address
-     * @param apiKey           API key for accessing satellite
-     * @return project handle
-     * @throws StorjException
+     * @param satelliteAddress a satellite address
+     * @param apiKey an {@link ApiKey} to access the satellite
+     * @return a {@link Project} handle
+     * @throws StorjException in case of error
      */
     public Project openProject(String satelliteAddress, ApiKey apiKey) throws StorjException {
         try {
@@ -48,9 +48,9 @@ public class Uplink implements AutoCloseable {
     }
 
     /**
-     * Closes the Uplink. Opened projects, buckets or objects must not be used after calling Close.
+     * Closes the bucket and releases the allocated network resources.
      *
-     * @throws StorjException
+     * @throws StorjException if an error occurs while closing
      */
     public void close() throws StorjException {
         try {

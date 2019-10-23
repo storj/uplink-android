@@ -31,44 +31,98 @@ public class ObjectInfo implements Serializable, Comparable<ObjectInfo> {
         this.expires = new Date(info.getExpires());
     }
 
+    /**
+     * Returns the bucket that contains this object.
+     *
+     * @return the bucket name
+     */
     public String getBucket() {
         return bucket;
     }
 
+    /**
+     * Returns the path to the object relative to the bucket.
+     *
+     * @return the object path
+     */
     public String getPath() {
         return path;
     }
 
+    /**
+     * Returns the version of the object.
+     *
+     * @return the object version
+     */
     public int getVersion() {
         return version;
     }
 
+    /**
+     * Returns if this is a prefix instead of an object.
+     *
+     * <p>This is useful in non-recursive object listings.</p>
+     *
+     * @return <code>true</code> if this represents a prefix, or <code>false</code> if this
+     *          represents an object
+     */
     public boolean isPrefix() {
         return prefix;
     }
 
+    /**
+     * Returns the size of the object.
+     *
+     * <p>This is the size of the decoded and decrypted object, if downloaded from the network.</p>
+     *
+     * @return the object size
+     */
     public long getSize() {
         return size;
     }
 
+    /**
+     * Returns the MIME content type of the object.
+     *
+     * @return the content type
+     */
     public String getContentType() {
         return contentType;
     }
 
+    /**
+     * Returns the creation time of the object.
+     *
+     * @return the created {@link Date}
+     */
     public Date getCreated() {
         return created;
     }
 
+    /**
+     * Returns the time the object was modified.
+     *
+     * @return the modified {@link Date}
+     */
     public Date getModified() {
         return modified;
     }
 
+    /**
+     * Returns the time the object expires and will be deleted from the network.
+     *
+     * @return the expiration {@link Date}
+     */
     public Date getExpires() {
         return expires;
     }
 
     /**
-     * Two ObjectInfos are equal if all their bucket, path, version and prefix flag are equal.
+     * Two {@link ObjectInfo} objects are equal if all their bucket, path, version and prefix flag
+     * are equal.
+     *
+     * @return <code>true</code> if this object is the same as the specified object;
+     *          <code>false</code> otherwise.
      */
     @Override
     public boolean equals(Object o) {
@@ -82,8 +136,10 @@ public class ObjectInfo implements Serializable, Comparable<ObjectInfo> {
     }
 
     /**
-     * The hash code value of ObjectInfo is the hash code value of the concatenation of its
+     * The hash code value of {@link ObjectInfo} is the hash code value of the concatenation of its
      * bucket, path, version and prefix flag.
+     *
+     * @return a hash code value for this object
      */
     @Override
     public int hashCode() {
@@ -91,8 +147,11 @@ public class ObjectInfo implements Serializable, Comparable<ObjectInfo> {
     }
 
     /**
-     * Two ObjectInfos are compared to each other by their prefix flag, bucket, path and version,
-     * in this order.
+     * Two {@link ObjectInfo} objects are compared to each other by their prefix flag, bucket,
+     * path and version, in this order.
+     *
+     * @return a negative integer, zero, or a positive integer as this object is less than,
+     *          equal to, or greater than the specified object.
      */
     @Override
     public int compareTo(ObjectInfo other) {
