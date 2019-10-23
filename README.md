@@ -83,7 +83,7 @@ String serializedScope = scope.serialize();
 If received a serialized Scope as a string, it can be parsed to `Scope` object.
 
 ```java
-String serializedScope = "13GRuHAW..."
+String serializedScope = "13GRuHAW...";
 Scope scope = Scope.parse(serializedScope);
 ```
 
@@ -117,7 +117,7 @@ try (Uplink uplink = new Uplink();
      Project project = uplink.openProject(scope)) {
     Iterable<BucketInfo> buckets = project.listBucket();
     for (BucketInfo bucket : buckets) {
-        // do something for each bucket
+        // Do something for each bucket.
     }
 }
 ```
@@ -227,12 +227,12 @@ public class DownloadTask extends AsyncTask<Void, Long, Throwable> {
 
         long now = System.currentTimeMillis();
 
-        // calculate the progress in percents
+        // Calculate the progress in percents.
         int progress = (int) ((mDownloadedBytes * 100) / mFile.getSize());
 
-        // check if 1 second elapsed since last notification or progress is at 100%
+        // Check if 1 second elapsed since last notification or progress is at 100%.
         if (progress == 100 || mLastNotifiedTime == 0 || now > mLastNotifiedTime + 1150) {
-            // place your code here to update the GUI with the new progress
+            // Place your code here to update the GUI with the new progress.
             mLastNotifiedTime = now;
         }
     }
@@ -352,12 +352,12 @@ public class UploadTask extends AsyncTask<Void, Long, Throwable> {
 
         long now = System.currentTimeMillis();
 
-        // calculate the progress in percents
+        // Calculate the progress in percents.
         int progress = (int) ((mUploadedBytes * 100) / mFileSize);
 
-        // check if 1 second elapsed since last notification or progress is at 100%
+        // Check if 1 second elapsed since last notification or progress is at 100%.
         if (progress == 100 || mLastNotifiedTime == 0 || now > mLastNotifiedTime + 1150) {
-            // place your code here to update the GUI with the new progress
+            // Place your code here to update the GUI with the new progress.
             mLastNotifiedTime = now;
         }
     }
@@ -401,7 +401,7 @@ try (Uplink uplink = new Uplink();
      Bucket bucket = project.openBucket("my-bucket", scope)) {
     Iterable<BucketInfo> objects = bucket.listObjects();
     for (ObjectInfo object : objects) {
-        // do something for each object
+        // Do something for each object.
     }
 }
 ```
@@ -416,7 +416,7 @@ try (Uplink uplink = new Uplink();
     Iterable<BucketInfo> objects = bucket.listObjects(
         ObjectListOption.prefix("some/path/prefix"), ObjectListOption.recursive(true));
     for (ObjectInfo object : objects) {
-        // do something for each object
+        // Do something for each object.
     }
 }
 ```
@@ -429,5 +429,52 @@ try (Uplink uplink = new Uplink();
      Project project = uplink.openProject(scope);
      Bucket bucket = project.openBucket("my-bucket", scope)) {
     bucket.deleteObject("path/to/my/object"));
+}
+```
+
+### Sharing content
+
+Sharing content on the Storj network is achieved by sharing the following pieces of information to the receiving party:
+
+1. A serialized restricted `Scope` to access the shared content.
+1. The bucket name containing the shared content.
+1. The object path or prefix to the share content.
+
+Below is an example for uploading a file and preparing the restricted `Scope`:
+
+```java
+Scope scope = ...;
+String tempDir = mActivity.getCacheDir().getPath();
+try (Uplink uplink = new Uplink(UplinkOption.tempDir(tempDir));
+     Project project = uplink.openProject(scope);
+     Bucket bucket = project.openBucket("my-bucket", scope);
+     InputStream in = new FileInputStream("path/to/local/file")) {
+    bucket.uploadObject("path/to/my/object", in);
+}
+
+// Share a read-only scope to "my-bucket/path/to/my" folder.
+// It is possible to restrict the scope only to "my-bucket/path/to/my/file" object too.
+Scope sharedScope = scope.restrict(
+        new Caveat.Builder().disallowDeletes(true).disallowWrites(true).build(),
+        new EncryptionRestriction("my-bucket", "path/to/my"));
+
+// Serialize the scope to, so it can be easily sent to the receiving party.
+String serializedShare = shared.serialize();
+```
+
+The receiving party can download the shared file using the following example:
+
+```java
+// Info received by the other party
+String serializedScope = "13GRuHAW...";
+String bucketName = "my-bucket";
+String objectPath = "path/to/my/object";
+
+Scope scope = Scope.parse(serializedScope);
+try (Uplink uplink = new Uplink();
+     Project project = uplink.openProject(scope);
+     Bucket bucket = project.openBucket(bucketName, scope);
+     OutputStream out = new FileOutputStream("path/to/local/file")) {
+    bucket.downloadObject(objectPath, out);
 }
 ```
