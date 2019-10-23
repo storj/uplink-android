@@ -87,25 +87,347 @@ String serializedScope = "13GRuHAW..."
 Scope scope = Scope.parse(serializedScope);
 ```
 
----------------
+### Buckets
+
+#### Creating new bucket
 
 ```java
-    Scope scope = Scope.parse("13GRuHAWnY...");
+Scope scope = ...;
+try (Uplink uplink = new Uplink();
+     Project project = uplink.openProject(scope)) {
+    project.createBucket("my-bucket"));
+}
+```
 
-    try (Uplink uplink = new Uplink(); Project project = uplink.openProject(scope)) {
-        project.createBucket("my-bucket");
+#### Getting info about a bucket
 
-        try (Bucket bucket = project.openBucket("my-bucket", scope)) {
-            String objectPath = "object/path";
-            byte[] data = "File content".getBytes();
-            bucket.uploadObject(objectPath, data);
+```java
+Scope scope = ...;
+try (Uplink uplink = new Uplink();
+     Project project = uplink.openProject(scope)) {
+    BucketInfo info = project.getBucketInfo("my-bucket"));
+}
+```
 
-            ByteArrayOutputStream writer = new ByteArrayOutputStream();
-            bucket.downloadObject(objectPath, writer);
+#### Listing buckets
 
-            bucket.deleteObject(objectPath);
+```java
+Scope scope = ...;
+try (Uplink uplink = new Uplink();
+     Project project = uplink.openProject(scope)) {
+    Iterable<BucketInfo> buckets = project.listBucket();
+    for (BucketInfo bucket : buckets) {
+        // do something for each bucket
+    }
+}
+```
+
+#### Deleting a bucket
+
+```java
+Scope scope = ...;
+try (Uplink uplink = new Uplink();
+     Project project = uplink.openProject(scope)) {
+    project.deleteBucket("my-bucket"));
+}
+```
+
+### Objects
+
+#### Downloading an object
+
+Below is the easiest way for downloading a complete object to a local file. `bucket.downloadObject` is a blocking operation. It will return when the download is complete.
+
+```java
+Scope scope = ...;
+try (Uplink uplink = new Uplink();
+     Project project = uplink.openProject(scope);
+     Bucket bucket = project.openBucket("my-bucket", scope);
+     OutputStream out = new FileOutputStream("path/to/local/file")) {
+    bucket.downloadObject("path/to/my/object", out);
+}
+```
+
+#### Downloading a range of an object
+
+If only a portion of the object should be downloaded, this can be specified with the `off` and `len` parameters. The example below will download only 4 KiB from the object, starting at 1 KiB offset.
+
+```java
+Scope scope = ...;
+long off = 1024;
+long len = 4096;
+try (Uplink uplink = new Uplink();
+     Project project = uplink.openProject(scope);
+     Bucket bucket = project.openBucket("my-bucket", scope);
+     OutputStream out = new FileOutputStream("path/to/local/file")) {
+    bucket.downloadObject("path/to/my/object", out, off, len);
+}
+```
+
+#### Downloading an object with progress monitoring and cancellation
+
+If progress monitoring and/or cancellation is important, the client can take advantage of the `ObjectInputStream` class.
+
+As all operations in the Storj Java API are blocking, the client should use some means for asynchronous processing - like the `AsyncTask` from the Android platform.
+
+The example below shows how to download with progress monitoring and cancellation using the `AsyncTask`:
+
+```java
+public class DownloadTask extends AsyncTask<Void, Long, Throwable> {
+
+    private Scope mScope;
+    private ObjectInfo mFile;
+    private File mLocalFile;
+
+    private int mNotificationId;
+    private long mDownloadedBytes;
+    private long mLastNotifiedTime;
+
+    private ObjectInputStream mInputStream;
+
+    DownloadTask(Scope scope, ObjectInfo file, File localFile) {
+        mScope scope;
+        mFile = file;
+        mLocalFile = localFile;
+    }
+
+    @Override
+    protected Exception doInBackground(Void... params) {
+        try (Uplink uplink = new Uplink();
+             Project project = uplink.openProject(mScope);
+             Bucket bucket = project.openBucket(mFile.getBucket(), mScope);
+             ObjectInputStream in = new ObjectInputStream(bucket, mFile.getPath());
+             OutputStream out = new FileOutputStream(mLocalFile)) {
+            mInputStream = in;
+            byte[] buffer = new byte[128 * 1024];
+            int len;
+            while ((len = in.read(buffer)) != -1) {
+                if (isCancelled()) {
+                    in.cancel();
+                    return null;
+                }
+                out.write(buffer, 0, len);
+                if (isCancelled()) {
+                    in.cancel();
+                    return null;
+                }
+                publishProgress((long) len);
+            }
+        } catch (StorjException | IOException e) {
+            return e;
         }
 
-        project.deleteBucket("my-bucket");
+        return null;
     }
+
+    @Override
+    protected void onProgressUpdate(Long... params) {
+        long increment = params[0];
+        mDownloadedBytes += increment;
+
+        long now = System.currentTimeMillis();
+
+        // calculate the progress in percents
+        int progress = (int) ((mDownloadedBytes * 100) / mFile.getSize());
+
+        // check if 1 second elapsed since last notification or progress is at 100%
+        if (progress == 100 || mLastNotifiedTime == 0 || now > mLastNotifiedTime + 1150) {
+            // place your code here to update the GUI with the new progress
+            mLastNotifiedTime = now;
+        }
+    }
+
+    @Override
+    protected void onPostExecute(Throwable t) {
+        if (t != null) {
+            String errorMessage = t.getMessage();
+            // The download failed.
+            // Place your code here to update the GUI with the error message.
+            return;
+        }
+
+        // The download is successful.
+        // Place your code here to update the GUI.
+    }
+
+    protected void onCancelled(Throwable t) {
+        // The download was cancelled.
+        // Place your code here to update the GUI.
+    }
+
+    /**
+     * Call this method to cancel the download.
+     */
+    void cancel() {
+        this.cancel(false);
+        mInputStream.cancel();
+    }
+}
+```
+
+#### Uploading new object
+
+Below is the easiest way for uploading new object. `bucket.uploadObject` is a blocking operation. It will return when the upload is complete.
+
+Note the importance of specifying the location of the temp directory using the `UplinkOption.tempDir()` option. This is where the file being uploaded will be first encrypted before actually uploaded into pieces to the Storj network. For Android, it is recommended to set the temp directory to the application's cache directory.
+
+```java
+Scope scope = ...;
+String tempDir = mActivity.getCacheDir().getPath();
+try (Uplink uplink = new Uplink(UplinkOption.tempDir(tempDir));
+     Project project = uplink.openProject(scope);
+     Bucket bucket = project.openBucket("my-bucket", scope);
+     InputStream in = new FileInputStream("path/to/local/file")) {
+    bucket.uploadObject("path/to/my/object", in);
+}
+```
+
+#### Uploading new object with progress monitoring and cancellation
+
+If progress monitoring and/or cancellation is important, the client can take advantage of the `ObjectOutputStream` class.
+
+As all operations in the Storj Java API are blocking, the client should use some means for asynchronous processing - like the `AsyncTask` from the Android platform.
+
+The example below shows how to upload with progress monitoring and cancellation using the `AsyncTask`.
+
+Note the importance of specifying the location of the temp directory using the `UplinkOption.tempDir()` option. This is where the file being uploaded will be first encrypted before actually uploaded into pieces to the Storj network. For Android, it is recommended to set the temp directory to the application's cache directory.
+
+```java
+public class UploadTask extends AsyncTask<Void, Long, Throwable> {
+
+    private Scope mScope;
+    private String mBucket;
+    private String objectPath;
+    private File mFile;
+    private String mTempDir;
+
+    private long mFileSize;
+    private long mUploadedBytes;
+    private long mLastNotifiedTime;
+
+    private ObjectOutputStream mOutputStream;
+
+    UploadTask(Scope scope, String bucket, String objectPath, File file, String tempDir) {
+        mScope = scope;
+        mBucket = bucket;
+        mObjectPath = objectPath;
+        mFile = file;
+        mTempDir = tempDir;
+        mFileSize = mFile.length();
+    }
+
+    @Override
+    protected Exception doInBackground(Void... params) {
+        try (Uplink uplink = new Uplink(UplinkOption.tempDir(mTempDir));
+             Project project = uplink.openProject(mScope);
+             Bucket bucket = project.openBucket(mBucket, mScope);
+             InputStream in = new FileInputStream(mFile.getPath());
+             ObjectOutputStream out = new ObjectOutputStream(bucket, mObjectPath)) {
+            mOutputStream = out;
+            byte[] buffer = new byte[128 * 1024];
+            int len;
+            while ((len = in.read(buffer)) != -1) {
+                if (isCancelled()) {
+                    out.cancel();
+                    return null;
+                }
+                out.write(buffer, 0, len);
+                if (isCancelled()) {
+                    out.cancel();
+                    return null;
+                }
+                publishProgress((long) len);
+            }
+        } catch (StorjException | IOException e) {
+            return e;
+        }
+
+        return null;
+    }
+
+    @Override
+    protected void onProgressUpdate(Long... params) {
+        long increment = params[0];
+        mUploadedBytes += increment;
+
+        long now = System.currentTimeMillis();
+
+        // calculate the progress in percents
+        int progress = (int) ((mUploadedBytes * 100) / mFileSize);
+
+        // check if 1 second elapsed since last notification or progress is at 100%
+        if (progress == 100 || mLastNotifiedTime == 0 || now > mLastNotifiedTime + 1150) {
+            // place your code here to update the GUI with the new progress
+            mLastNotifiedTime = now;
+        }
+    }
+
+    @Override
+    protected void onPostExecute(Throwable t) {
+        if (t != null) {
+            String errorMessage = t.getMessage();
+            // The upload failed.
+            // Place your code here to update the GUI with the error message.
+            return;
+        }
+
+        // The upload is successful.
+        // Place your code here to update the GUI.
+    }
+
+    protected void onCancelled(Throwable t) {
+        // The upload was cancelled.
+        // Place your code here to update the GUI.
+    }
+
+    /**
+     * Call this method to cancel the upload.
+     */
+    void cancel() {
+        this.cancel(false);
+        mOutputStream.cancel();
+    }
+}
+```
+
+#### Listing objects
+
+Listing the content of a bucket, non-recursive:
+
+```java
+Scope scope = ...;
+try (Uplink uplink = new Uplink();
+     Project project = uplink.openProject(scope);
+     Bucket bucket = project.openBucket("my-bucket", scope)) {
+    Iterable<BucketInfo> objects = bucket.listObjects();
+    for (ObjectInfo object : objects) {
+        // do something for each object
+    }
+}
+```
+
+Listing all content under specific prefix, recursive:
+
+```java
+Scope scope = ...;
+try (Uplink uplink = new Uplink();
+     Project project = uplink.openProject(scope);
+     Bucket bucket = project.openBucket("my-bucket", scope)) {
+    Iterable<BucketInfo> objects = bucket.listObjects(
+        ObjectListOption.prefix("some/path/prefix"), ObjectListOption.recursive(true));
+    for (ObjectInfo object : objects) {
+        // do something for each object
+    }
+}
+```
+
+#### Deleting an object
+
+```java
+Scope scope = ...;
+try (Uplink uplink = new Uplink();
+     Project project = uplink.openProject(scope);
+     Bucket bucket = project.openBucket("my-bucket", scope)) {
+    bucket.deleteObject("path/to/my/object"));
+}
 ```
