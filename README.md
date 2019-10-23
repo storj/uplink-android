@@ -421,7 +421,7 @@ Scope scope = ...;
 try (Uplink uplink = new Uplink();
      Project project = uplink.openProject(scope);
      Bucket bucket = project.openBucket("my-bucket", scope)) {
-    Iterable<BucketInfo> objects = bucket.listObjects();
+    Iterable<ObjectInfo> objects = bucket.listObjects();
     for (ObjectInfo object : objects) {
         // Do something for each object.
     }
@@ -435,7 +435,7 @@ Scope scope = ...;
 try (Uplink uplink = new Uplink();
      Project project = uplink.openProject(scope);
      Bucket bucket = project.openBucket("my-bucket", scope)) {
-    Iterable<BucketInfo> objects = bucket.listObjects(
+    Iterable<ObjectInfo> objects = bucket.listObjects(
         ObjectListOption.prefix("some/path/prefix"), ObjectListOption.recursive(true));
     for (ObjectInfo object : objects) {
         // Do something for each object.
