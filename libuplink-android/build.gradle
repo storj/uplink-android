@@ -7,7 +7,7 @@ plugins {
 // To release libuplink-android to Bintray
 // ./gradlew clean assembleRelease sourcesJar javadocJar :libuplink-android:bintrayUpload
 
-def libraryVersion = '0.8.0'
+def libraryVersion = '0.9.0'
 
 android {
     compileSdkVersion 28
@@ -15,7 +15,7 @@ android {
     defaultConfig {
         minSdkVersion 21
         targetSdkVersion 28
-        versionCode 2
+        versionCode 10
         versionName libraryVersion
 
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
@@ -50,6 +50,13 @@ task sourcesJar(type: Jar) {
 task javadoc(type: Javadoc) {
     source = android.sourceSets.main.java.srcDirs
     classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
+    options.links("https://docs.oracle.com/javase/7/docs/api/");
+}
+
+afterEvaluate {
+    javadoc.classpath += files(android.libraryVariants.collect { variant ->
+        variant.javaCompile.classpath.files
+    })
 }
 
 task javadocJar(type: Jar, dependsOn: javadoc) {
