@@ -1,7 +1,7 @@
 # android-libuplink
 
 [![Storj.io](https://storj.io/img/storj-badge.svg)](https://storj.io)
-[![Javadocs](https://img.shields.io/badge/javadoc-0.8.0-blue.svg)](https://storj.github.io/android-libuplink/javadoc/0.8.0/)
+[![Javadocs](https://img.shields.io/badge/javadoc-0.9.0-blue.svg)](https://storj.github.io/android-libuplink/javadoc/0.9.0/)
 
 Android bindings to Storj V3 libuplink.
 
@@ -15,7 +15,7 @@ Add the Gradle dependency to the `build.gradle` file of the app module:
 
 ```Gradle
 dependencies {
-    implementation 'io.storj:libuplink-android:0.8.0'
+    implementation 'io.storj:libuplink-android:0.9.0'
 }
 ```
 
