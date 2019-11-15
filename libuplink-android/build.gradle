@@ -7,7 +7,7 @@ plugins {
 // To release libuplink-android to Bintray
 // ./gradlew clean assembleRelease sourcesJar javadocJar :libuplink-android:bintrayUpload
 
-def libraryVersion = '0.9.0'
+def libraryVersion = '0.10.0'
 
 android {
     compileSdkVersion 28
@@ -15,7 +15,7 @@ android {
     defaultConfig {
         minSdkVersion 21
         targetSdkVersion 28
-        versionCode 10
+        versionCode 11
         versionName libraryVersion
 
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
@@ -110,5 +110,5 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
-    implementation 'io.storj:libuplink-android-gomobile:0.9'
+    implementation 'io.storj:libuplink-android-gomobile:0.10.0'
 }
