@@ -111,5 +111,4 @@ dependencies {
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
     implementation 'net.java.dev.jna:jna:5.5.0@aar'
-    implementation 'io.storj:libuplink-android-gomobile:0.9'
 }

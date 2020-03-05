@@ -2,50 +2,35 @@ package io.storj.test;
 
 import android.support.test.runner.AndroidJUnit4;
 
-import com.sun.jna.ptr.PointerByReference;
-
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import io.storj.BucketInfo;
-import io.storj.internal.Reference;
-import io.storj.internal.StringPointer;
 import io.storj.internal.Uplink;
+import io.storj.internal.Uplink.Libuplink.AccessResult;
+import io.storj.internal.Uplink.Libuplink.StringResult;
 
 @RunWith(AndroidJUnit4.class)
 public class LibuplinkInstrumentedTest {
 
     @Test
-    public void testBasic() throws Exception {
-        PointerByReference err = new PointerByReference();
+    public void testAccess() throws Exception {
+        String validAccess = "18HGwKMQy1LtufBQPdN5MxeEbmG1rxnayGz8TyPY9k1W8b2dcm95z2o2b9nEQuBBhGcgrtHUT9HqYjgLAP4jGeRryt3nHkSNv58LkS7TaxCwB1CG4j4eDHXhFHVgvP9BqxL9Zj5Nktb7tVr5RTeHMbR3GAyw8yoqnypAmGMFKLaAKqSSax9okSyEKXQk81gvuccuvhcu5XdDT6BgefRakAcDCH1PaS1UL9TFsjNamJsiSJSSxScixkLaFL9V";
 
-        String test = "13YqdS9JwERmz5UhAajJ5CKfkvbjA8fqfqsMfBTsuPFhYN5SnrZPx3VPkGcgxvQsw8eQZfDb7QY6gFopRLeejQ5YED9gJWo9oUcP8uS";
+        AccessResult result = Uplink.INSTANCE.parse_access(validAccess);
+        Assert.assertNotNull(result.access);
+        Assert.assertNotEquals(0, result.access._handle);
+        Assert.assertNull(result.error);
 
-        StringPointer stringPointer = new StringPointer(test);
-        Reference.ByValue apiKeyRef = Uplink.INSTANCE.parse_api_key(stringPointer, err);
-        Assert.assertNotEquals(0, apiKeyRef._handle);
-        Assert.assertNull(err.getValue());
+        StringResult asResult = Uplink.INSTANCE.access_serialize(result.access);
+        Assert.assertEquals(validAccess, asResult.string.getString(0));
+        Assert.assertNull(asResult.error);
 
-
-        Uplink.Awesome.UplinkConfig config = new Uplink.Awesome.UplinkConfig();
-        Reference.ByValue uplinkRef = Uplink.INSTANCE.new_uplink(config, new StringPointer(""), err);
-        Assert.assertNotEquals(0, uplinkRef._handle);
-        Assert.assertNull(err.getValue());
-
-        String satelliteAddress = "us-central-1.tardigrade.io:7777";
-        Reference.ByValue projectRef = Uplink.INSTANCE.open_project(uplinkRef, new StringPointer(satelliteAddress), apiKeyRef, err);
-        Assert.assertNotEquals(0, projectRef._handle);
-        Assert.assertNull(err.getValue());
-
-        Uplink.Awesome.BucketList.ByValue bucketList = Uplink.INSTANCE.list_buckets(projectRef, null, err);
-        Uplink.Awesome.BucketInfo[] infos = (Uplink.Awesome.BucketInfo[])bucketList.items.toArray(bucketList.length);
-        Assert.assertNotEquals(0, infos.length);
-        Assert.assertNull(err.getValue());
-
-        for (Uplink.Awesome.BucketInfo info : infos){
-            System.out.println(info.name.getString(0));
-        }
+        String invalidAccess = "18HGwKMQy1LtufBQPdN5Merror";
+        result = Uplink.INSTANCE.parse_access(invalidAccess);
+        Assert.assertNull(result.access);
+        Assert.assertNotNull(result.error);
+        Assert.assertNotEquals("", result.error.message.getString(0));
     }
 
 

@@ -17,3 +17,4 @@ gradle-app.setting
 # gradle/wrapper/gradle-wrapper.properties
 
 /libuplink_android/libs/
+/libuplink-android/src/main/jniLibs/
