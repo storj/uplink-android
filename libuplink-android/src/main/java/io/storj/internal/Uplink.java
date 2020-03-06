@@ -72,6 +72,10 @@ public class Uplink {
         AccessResult.ByValue parse_access(String serializedAccess);
 
         StringResult.ByValue access_serialize(Access access);
+
+        void free_access_result(AccessResult.ByValue accessResult);
+
+        void free_access(Access access);
     }
 
 }

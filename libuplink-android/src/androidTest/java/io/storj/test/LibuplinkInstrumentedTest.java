@@ -17,20 +17,25 @@ public class LibuplinkInstrumentedTest {
     public void testAccess() throws Exception {
         String validAccess = "18HGwKMQy1LtufBQPdN5MxeEbmG1rxnayGz8TyPY9k1W8b2dcm95z2o2b9nEQuBBhGcgrtHUT9HqYjgLAP4jGeRryt3nHkSNv58LkS7TaxCwB1CG4j4eDHXhFHVgvP9BqxL9Zj5Nktb7tVr5RTeHMbR3GAyw8yoqnypAmGMFKLaAKqSSax9okSyEKXQk81gvuccuvhcu5XdDT6BgefRakAcDCH1PaS1UL9TFsjNamJsiSJSSxScixkLaFL9V";
 
-        AccessResult result = Uplink.INSTANCE.parse_access(validAccess);
+        AccessResult.ByValue result = Uplink.INSTANCE.parse_access(validAccess);
         Assert.assertNotNull(result.access);
         Assert.assertNotEquals(0, result.access._handle);
         Assert.assertNull(result.error);
+
 
         StringResult asResult = Uplink.INSTANCE.access_serialize(result.access);
         Assert.assertEquals(validAccess, asResult.string.getString(0));
         Assert.assertNull(asResult.error);
 
+        Uplink.INSTANCE.free_access_result(result);
+
         String invalidAccess = "18HGwKMQy1LtufBQPdN5Merror";
-        result = Uplink.INSTANCE.parse_access(invalidAccess);
-        Assert.assertNull(result.access);
-        Assert.assertNotNull(result.error);
-        Assert.assertNotEquals("", result.error.message.getString(0));
+        AccessResult.ByValue resultInvalid = Uplink.INSTANCE.parse_access(invalidAccess);
+        Assert.assertNull(resultInvalid.access);
+        Assert.assertNotNull(resultInvalid.error);
+        Assert.assertNotEquals("", resultInvalid.error.message.getString(0));
+
+        Uplink.INSTANCE.free_access_result(resultInvalid);
     }
 
 
