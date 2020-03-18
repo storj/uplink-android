@@ -1,7 +1,7 @@
 # android-libuplink
 
 [![Storj.io](https://storj.io/img/storj-badge.svg)](https://storj.io)
-[![Javadocs](https://img.shields.io/badge/javadoc-0.11.0-blue.svg)](https://storj.github.io/android-libuplink/javadoc/0.11.0/)
+[![Javadocs](https://img.shields.io/badge/javadoc-0.11.0-blue.svg)](https://storj.github.io/uplink-android/javadoc/0.11.0/)
 
 Android bindings to Storj V3 libuplink.
 
