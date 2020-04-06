@@ -10,14 +10,14 @@ fi
 
 SCRIPTDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 
-PORT=6000
+PORT=5555
 SERIAL=emulator-${PORT}
 
 # setup tmpdir for testfiles and cleanup
 TMP=$(mktemp -d -t tmp.XXXXXXXXXX)
 cleanup(){
       $ANDROID_HOME/platform-tools/adb -s ${SERIAL} emu kill
-	rm -rf "$TMP"
+      rm -rf "$TMP"
 }
 trap cleanup EXIT
 

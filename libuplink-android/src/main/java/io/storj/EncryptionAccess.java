@@ -52,6 +52,22 @@ public class EncryptionAccess {
     }
 
     /**
+     *
+     * @param bucket
+     * @param path
+     * @param key
+     * @return
+     * @throws StorjException
+     */
+    public void overrideEncryptionKey(String bucket, String path, byte[] key) throws StorjException {
+        try {
+            access.overrideEncryptionKey(bucket, path, key);
+        } catch (Exception e) {
+            throw ExceptionUtil.toStorjException(e);
+        }
+    }
+
+    /**
      * Serialize this {@link EncryptionAccess} to base58-encoded {@link String}.
      *
      * @return a {@link String} with serialized encryption access context

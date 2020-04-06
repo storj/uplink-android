@@ -372,4 +372,59 @@ public class LibuplinkInstrumentedTest {
         assertNotEquals(apiKeyData, newAPIKey.serialize());
     }
 
+    @Test
+    public void testMultiTenant() throws Exception {
+        String userID = "user@example.com";
+        String passphrase = "abc123";
+        String fileName = "test.dat";
+        String appBucket = "appbucket";
+        String fileContent = "This is file content";
+
+        try (Uplink uplink = new Uplink(uplinkOptions); Project project = uplink.openProject(SCOPE)) {
+            RedundancyScheme rs = new RedundancyScheme.Builder().
+                    setRequiredShares((short) 4).
+                    setRepairShares((short) 6).
+                    setSuccessShares((short) 8).
+                    setTotalShares((short) 10).
+                    build();
+
+            project.createBucket(appBucket, BucketCreateOption.redundancyScheme(rs));
+        }
+
+        // TODO better salt
+        Scope shared = SCOPE.restrict(
+                new Caveat.Builder().build(),
+                new EncryptionRestriction(appBucket, userID + "/"));
+        byte[] key = Mobile.deriveEncryptionKey(passphrase.getBytes(), userID.getBytes());
+        shared.getEncryptionAccess().overrideEncryptionKey(appBucket, userID, key);
+
+        try (Uplink uplink = new Uplink(uplinkOptions); Project project = uplink.openProject(shared)) {
+            try (Bucket bucket = project.openBucket(appBucket, shared)) {
+                bucket.uploadObject(userID+"/"+fileName, fileContent.getBytes(UTF_8));
+            }
+        }
+
+        // TODO better salt
+        shared = SCOPE.restrict(
+                new Caveat.Builder().build(),
+                new EncryptionRestriction(appBucket, userID + "/"));
+        key = Mobile.deriveEncryptionKey(passphrase.getBytes(), userID.getBytes());
+        shared.getEncryptionAccess().overrideEncryptionKey(appBucket, userID, key);
+
+        try (Uplink uplink = new Uplink(uplinkOptions); Project project = uplink.openProject(shared)) {
+            try (Bucket bucket = project.openBucket(appBucket, shared)) {
+                ByteArrayOutputStream writer = new ByteArrayOutputStream();
+                bucket.downloadObject(userID + "/"+fileName, writer);
+
+                assertEquals(fileContent, writer.toString());
+
+                bucket.deleteObject(userID + "/"+fileName);
+            }
+        }
+
+        try (Uplink uplink = new Uplink(uplinkOptions); Project project = uplink.openProject(SCOPE)) {
+            project.deleteBucket(appBucket);
+        }
+    }
+
 }
