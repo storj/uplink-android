@@ -55,13 +55,13 @@ public class EncryptionAccess {
      * Overrides the encryption key for the prefix with encryption key.
      *
      * @param bucket bucket name
-     * @param path   path in bucket
+     * @param prefix prefix in a bucket
      * @param key    the key
      * @throws StorjException in case of error
      */
-    public void overrideEncryptionKey(String bucket, String path, byte[] key) throws StorjException {
+    public void overrideEncryptionKey(String bucket, String prefix, byte[] key) throws StorjException {
         try {
-            access.overrideEncryptionKey(bucket, path, key);
+            access.overrideEncryptionKey(bucket, prefix, key);
         } catch (Exception e) {
             throw ExceptionUtil.toStorjException(e);
         }
