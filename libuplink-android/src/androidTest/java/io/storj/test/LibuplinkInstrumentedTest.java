@@ -399,7 +399,7 @@ public class LibuplinkInstrumentedTest {
         Scope shared = SCOPE.restrict(
                 new Caveat.Builder().build(),
                 new EncryptionRestriction(appBucket, userID + "/"));
-        byte[] key = Key.deriveEncryptionKey(passphrase.getBytes(), salt);
+        Key key = Key.deriveEncryptionKey(passphrase.getBytes(), salt);
         shared.getEncryptionAccess().overrideEncryptionKey(appBucket, userID, key);
 
         try (Uplink uplink = new Uplink(uplinkOptions); Project project = uplink.openProject(shared)) {
