@@ -13,23 +13,6 @@ public class Key {
 
     private byte[] keyData;
 
-    /**
-     * Derives a salted key for password using the salt.
-     *
-     * @param password the password
-     * @param salt     the salt
-     * @return salted key
-     * @throws StorjException in case of error
-     */
-    public static Key deriveEncryptionKey(byte[] password, byte[] salt) throws StorjException {
-        try {
-            byte[] keyData = Mobile.deriveEncryptionKey(password, salt);
-            return new Key(keyData);
-        } catch (Exception e) {
-            throw ExceptionUtil.toStorjException(e);
-        }
-    }
-
     Key(byte[] keyData) {
         this.keyData = keyData;
     }
@@ -53,6 +36,24 @@ public class Key {
     public static Key getSaltedKeyFromPassphrase(Project project, String passphrase) throws StorjException {
         try {
             byte[] keyData = project.internal().saltedKeyFromPassphrase(passphrase);
+            return new Key(keyData);
+        } catch (Exception e) {
+            throw ExceptionUtil.toStorjException(e);
+        }
+    }
+
+    /**
+     * Returns a key generated from the given passphrase and salt.
+     *
+     * @param salt       the salt
+     * @param passphrase human-readable passphrase
+     * @return salted key
+     * @throws StorjException in case of error
+     */
+    public static Key getSaltedKeyFromPassphrase(byte[] salt, String passphrase) throws StorjException {
+        try {
+            byte[] passphraseBytes = passphrase.getBytes(UTF_8);
+            byte[] keyData = Mobile.deriveEncryptionKey(passphraseBytes, salt);
             return new Key(keyData);
         } catch (Exception e) {
             throw ExceptionUtil.toStorjException(e);
