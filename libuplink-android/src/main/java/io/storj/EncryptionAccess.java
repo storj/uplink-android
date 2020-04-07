@@ -59,9 +59,9 @@ public class EncryptionAccess {
      * @param key    the key
      * @throws StorjException in case of error
      */
-    public void overrideEncryptionKey(String bucket, String prefix, byte[] key) throws StorjException {
+    public void overrideEncryptionKey(String bucket, String prefix, Key key) throws StorjException {
         try {
-            access.overrideEncryptionKey(bucket, prefix, key);
+            access.overrideEncryptionKey(bucket, prefix, key.getKeyData());
         } catch (Exception e) {
             throw ExceptionUtil.toStorjException(e);
         }

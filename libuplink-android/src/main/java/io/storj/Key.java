@@ -21,9 +21,10 @@ public class Key {
      * @return salted key
      * @throws StorjException in case of error
      */
-    public static byte[] deriveEncryptionKey(byte[] password, byte[] salt) throws StorjException {
+    public static Key deriveEncryptionKey(byte[] password, byte[] salt) throws StorjException {
         try {
-            return Mobile.deriveEncryptionKey(password, salt);
+            byte[] keyData = Mobile.deriveEncryptionKey(password, salt);
+            return new Key(keyData);
         } catch (Exception e) {
             throw ExceptionUtil.toStorjException(e);
         }
