@@ -9,6 +9,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.io.ByteArrayOutputStream;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
@@ -365,7 +367,6 @@ public class LibuplinkInstrumentedTest {
                 .disallowReads(false)
                 .notAfter(cal.getTime())
                 .notBefore(new Date())
-//                .addCaveatPath(new CaveatPath("bucket".getBytes(UTF_8), "123456".getBytes()))
                 .build();
 
         ApiKey newAPIKey = apiKey.restrict(caveat);
@@ -391,11 +392,14 @@ public class LibuplinkInstrumentedTest {
             project.createBucket(appBucket, BucketCreateOption.redundancyScheme(rs));
         }
 
-        // TODO better salt
+
+        MessageDigest digest = MessageDigest.getInstance("SHA-256");
+        byte[] salt = digest.digest(userID.getBytes(StandardCharsets.UTF_8));
+
         Scope shared = SCOPE.restrict(
                 new Caveat.Builder().build(),
                 new EncryptionRestriction(appBucket, userID + "/"));
-        byte[] key = Mobile.deriveEncryptionKey(passphrase.getBytes(), userID.getBytes());
+        byte[] key = Key.deriveEncryptionKey(passphrase.getBytes(), salt);
         shared.getEncryptionAccess().overrideEncryptionKey(appBucket, userID, key);
 
         try (Uplink uplink = new Uplink(uplinkOptions); Project project = uplink.openProject(shared)) {
@@ -404,11 +408,10 @@ public class LibuplinkInstrumentedTest {
             }
         }
 
-        // TODO better salt
         shared = SCOPE.restrict(
                 new Caveat.Builder().build(),
                 new EncryptionRestriction(appBucket, userID + "/"));
-        key = Mobile.deriveEncryptionKey(passphrase.getBytes(), userID.getBytes());
+        key = Key.deriveEncryptionKey(passphrase.getBytes(), salt);
         shared.getEncryptionAccess().overrideEncryptionKey(appBucket, userID, key);
 
         try (Uplink uplink = new Uplink(uplinkOptions); Project project = uplink.openProject(shared)) {

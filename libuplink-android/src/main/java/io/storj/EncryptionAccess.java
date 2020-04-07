@@ -52,12 +52,12 @@ public class EncryptionAccess {
     }
 
     /**
+     * Overrides the encryption key for the prefix with encryption key.
      *
-     * @param bucket
-     * @param path
-     * @param key
-     * @return
-     * @throws StorjException
+     * @param bucket bucket name
+     * @param path   path in bucket
+     * @param key    the key
+     * @throws StorjException in case of error
      */
     public void overrideEncryptionKey(String bucket, String path, byte[] key) throws StorjException {
         try {

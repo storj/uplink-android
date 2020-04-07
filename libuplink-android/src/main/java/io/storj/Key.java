@@ -1,5 +1,7 @@
 package io.storj;
 
+import io.storj.libuplink.mobile.Mobile;
+
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 /**
@@ -10,6 +12,22 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 public class Key {
 
     private byte[] keyData;
+
+    /**
+     * Derives a salted key for password using the salt.
+     *
+     * @param password the password
+     * @param salt     the salt
+     * @return salted key
+     * @throws StorjException in case of error
+     */
+    public static byte[] deriveEncryptionKey(byte[] password, byte[] salt) throws StorjException {
+        try {
+            return Mobile.deriveEncryptionKey(password, salt);
+        } catch (Exception e) {
+            throw ExceptionUtil.toStorjException(e);
+        }
+    }
 
     Key(byte[] keyData) {
         this.keyData = keyData;
@@ -26,7 +44,7 @@ public class Key {
     /**
      * Returns a key generated from the given passphrase using a stable, project-specific salt.
      *
-     * @param project project which will be used to for the salt
+     * @param project    project which will be used to for the salt
      * @param passphrase human-readable passphrase
      * @return a salted {@link Key}
      * @throws StorjException in case of error
