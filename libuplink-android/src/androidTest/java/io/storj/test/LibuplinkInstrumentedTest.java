@@ -9,6 +9,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.io.ByteArrayOutputStream;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
@@ -365,11 +367,67 @@ public class LibuplinkInstrumentedTest {
                 .disallowReads(false)
                 .notAfter(cal.getTime())
                 .notBefore(new Date())
-//                .addCaveatPath(new CaveatPath("bucket".getBytes(UTF_8), "123456".getBytes()))
                 .build();
 
         ApiKey newAPIKey = apiKey.restrict(caveat);
         assertNotEquals(apiKeyData, newAPIKey.serialize());
+    }
+
+    @Test
+    public void testMultiTenant() throws Exception {
+        String userID = "user@example.com";
+        String passphrase = "abc123";
+        String fileName = "test.dat";
+        String appBucket = "appbucket";
+        String fileContent = "This is file content";
+
+        try (Uplink uplink = new Uplink(uplinkOptions); Project project = uplink.openProject(SCOPE)) {
+            RedundancyScheme rs = new RedundancyScheme.Builder().
+                    setRequiredShares((short) 4).
+                    setRepairShares((short) 6).
+                    setSuccessShares((short) 8).
+                    setTotalShares((short) 10).
+                    build();
+
+            project.createBucket(appBucket, BucketCreateOption.redundancyScheme(rs));
+        }
+
+
+        MessageDigest digest = MessageDigest.getInstance("SHA-256");
+        byte[] salt = digest.digest(userID.getBytes(StandardCharsets.UTF_8));
+
+        Scope shared = SCOPE.restrict(
+                new Caveat.Builder().build(),
+                new EncryptionRestriction(appBucket, userID + "/"));
+        byte[] key = Key.deriveEncryptionKey(passphrase.getBytes(), salt);
+        shared.getEncryptionAccess().overrideEncryptionKey(appBucket, userID, key);
+
+        try (Uplink uplink = new Uplink(uplinkOptions); Project project = uplink.openProject(shared)) {
+            try (Bucket bucket = project.openBucket(appBucket, shared)) {
+                bucket.uploadObject(userID+"/"+fileName, fileContent.getBytes(UTF_8));
+            }
+        }
+
+        shared = SCOPE.restrict(
+                new Caveat.Builder().build(),
+                new EncryptionRestriction(appBucket, userID + "/"));
+        key = Key.deriveEncryptionKey(passphrase.getBytes(), salt);
+        shared.getEncryptionAccess().overrideEncryptionKey(appBucket, userID, key);
+
+        try (Uplink uplink = new Uplink(uplinkOptions); Project project = uplink.openProject(shared)) {
+            try (Bucket bucket = project.openBucket(appBucket, shared)) {
+                ByteArrayOutputStream writer = new ByteArrayOutputStream();
+                bucket.downloadObject(userID + "/"+fileName, writer);
+
+                assertEquals(fileContent, writer.toString());
+
+                bucket.deleteObject(userID + "/"+fileName);
+            }
+        }
+
+        try (Uplink uplink = new Uplink(uplinkOptions); Project project = uplink.openProject(SCOPE)) {
+            project.deleteBucket(appBucket);
+        }
     }
 
 }

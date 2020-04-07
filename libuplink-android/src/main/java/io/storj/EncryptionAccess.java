@@ -52,6 +52,22 @@ public class EncryptionAccess {
     }
 
     /**
+     * Overrides the encryption key for the prefix with encryption key.
+     *
+     * @param bucket bucket name
+     * @param prefix prefix in a bucket
+     * @param key    the key
+     * @throws StorjException in case of error
+     */
+    public void overrideEncryptionKey(String bucket, String prefix, byte[] key) throws StorjException {
+        try {
+            access.overrideEncryptionKey(bucket, prefix, key);
+        } catch (Exception e) {
+            throw ExceptionUtil.toStorjException(e);
+        }
+    }
+
+    /**
      * Serialize this {@link EncryptionAccess} to base58-encoded {@link String}.
      *
      * @return a {@link String} with serialized encryption access context
