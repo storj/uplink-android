@@ -6,6 +6,9 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import io.storj.Access;
+import io.storj.Permission;
+import io.storj.SharePrefix;
+import io.storj.Uplink;
 
 import static org.junit.Assert.assertEquals;
 
@@ -419,7 +422,9 @@ public class LibuplinkInstrumentedTest {
         Access access = Access.parse(serializedAccess);
         String newSerializedAccess = access.serialize();
         assertEquals(serializedAccess, newSerializedAccess);
-    }
 
+        Access sharedAccess = access.share(new Permission(), new SharePrefix(""));
+        sharedAccess.serialize();
+    }
 
 }
