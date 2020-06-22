@@ -13,7 +13,7 @@ public class Access {
     /**
      * Serializes this {@link Access} to base58-encoded {@link String}.
      *
-     * @return a {@link String} with serialized scope
+     * @return a {@link String} with serialized Access Grant
      * @throws StorjException in case of error
      */
     public String serialize() throws StorjException {
@@ -28,7 +28,7 @@ public class Access {
      * Parses a base58-encoded {@link String} to an {@link Access}.
      *
      * @param serialized a base58-encoded {@link String}
-     * @return the parsed {@link Access}
+     * @return the parsed {@link Access} Grant
      * @throws StorjException in case of error
      */
     public static Access parse(String serialized) throws StorjException {
