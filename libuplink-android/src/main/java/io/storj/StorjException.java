@@ -20,4 +20,8 @@ public class StorjException extends Exception {
         super(cause);
     }
 
+    public StorjException(String message) {
+        super(message);
+    }
+
 }
