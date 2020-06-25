@@ -7,6 +7,12 @@ package io.storj;
  */
 public class Uplink {
 
+    private UplinkOption[] options;
+
+    public Uplink(UplinkOption... options) {
+        this.options = options;
+    }
+
     /**
      * Returns a {@link Project} handle for the given {@link Access}.
      *
@@ -14,51 +20,43 @@ public class Uplink {
      * @return a {@link Project} handle
      * @throws StorjException in case of error
      */
-    public static Project OpenProject(Access access) throws StorjException {
-        io.storj.internal.Uplink.ProjectResult.ByValue result = io.storj.internal.Uplink.INSTANCE.open_project(access.access);
+    public Project openProject(Access access) throws StorjException {
+        io.storj.internal.Uplink.ProjectResult.ByValue result = null;
+
+        io.storj.internal.Uplink.Access.ByReference internalAccess = access.internal();
+        if (options.length == 0) {
+            result = io.storj.internal.Uplink.INSTANCE.open_project(internalAccess);
+        } else {
+            io.storj.internal.Uplink.Config.ByValue config = UplinkOption.internal(options);
+            result = io.storj.internal.Uplink.INSTANCE.config_open_project(config, internalAccess);
+        }
         ExceptionUtil.handleError(result.error);
+
+        io.storj.internal.Uplink.AccessResult.ByValue accessResult = new io.storj.internal.Uplink.AccessResult.ByValue();
+        accessResult.access = internalAccess;
+        io.storj.internal.Uplink.INSTANCE.free_access_result(accessResult);
+
         return new Project(result.project);
     }
 
+    public Access requestAccessWithPassphrase(String satelliteAddress, String apiKey, String passphrase) throws StorjException {
+        io.storj.internal.Uplink.AccessResult.ByValue result = null;
 
-    // /**
-    //  * Creates new {@link Uplink}.
-    //  *
-    //  * @param options an optional list of {@link UplinkOption}
-    //  */
-    // public Uplink(UplinkOption... options) {
-    //     UplinkOption.UplinkOptions uplinkOptions = UplinkOption.internal(options);
-    //     this.uplink = new io.storj.libuplink.mobile.Uplink(uplinkOptions.config, uplinkOptions.tempDir);
-    // }
+        if (options.length == 0) {
+            result = io.storj.internal.Uplink.INSTANCE.request_access_with_passphrase(satelliteAddress, apiKey, passphrase);
+        } else {
+            io.storj.internal.Uplink.Config.ByValue config = UplinkOption.internal(options);
+            result = io.storj.internal.Uplink.INSTANCE.config_request_access_with_passphrase(config, satelliteAddress, apiKey, passphrase);
+        }
+        ExceptionUtil.handleError(result.error);
 
-    // /**
-    //  * Returns a {@link Project} handle for the given satellite address and {@link ApiKey}.
-    //  *
-    //  * @param satelliteAddress a satellite address
-    //  * @param apiKey an {@link ApiKey} to access the satellite
-    //  * @return a {@link Project} handle
-    //  * @throws StorjException in case of error
-    //  */
-    // public Project openProject(String satelliteAddress, ApiKey apiKey) throws StorjException {
-    //     try {
-    //         io.storj.libuplink.mobile.Project project = uplink.openProject(satelliteAddress, apiKey.serialize());
-    //         return new Project(project);
-    //     } catch (Exception e) {
-    //         throw ExceptionUtil.toStorjException(e);
-    //     }
-    // }
+        io.storj.internal.Uplink.StringResult.ByValue stringResult = io.storj.internal.Uplink.INSTANCE.access_serialize(result.access);
+        ExceptionUtil.handleError(stringResult.error);
 
-    // /**
-    //  * Closes the bucket and releases the allocated network resources.
-    //  *
-    //  * @throws StorjException if an error occurs while closing
-    //  */
-    // public void close() throws StorjException {
-    //     try {
-    //         uplink.close();
-    //     } catch (Exception e) {
-    //         throw ExceptionUtil.toStorjException(e);
-    //     }
-    // }
+        Access access = new Access(stringResult.string.getString(0));
+        io.storj.internal.Uplink.INSTANCE.free_access_result(result);
+        io.storj.internal.Uplink.INSTANCE.free_string_result(stringResult);
+        return access;
+    }
 
 }

@@ -13,8 +13,8 @@ public class StorjException extends Exception {
      * detail message of cause).
      *
      * @param cause the cause (which is saved for later retrieval by the
-     *             {@link Throwable#getCause()} method). (A <code>null</code> value is permitted,
-     *             and indicates that the cause is nonexistent or unknown.)
+     *              {@link Throwable#getCause()} method). (A <code>null</code> value is permitted,
+     *              and indicates that the cause is nonexistent or unknown.)
      */
     public StorjException(Throwable cause) {
         super(cause);

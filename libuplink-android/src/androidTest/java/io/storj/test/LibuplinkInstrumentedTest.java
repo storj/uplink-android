@@ -1,64 +1,107 @@
 package io.storj.test;
 
+import android.support.test.InstrumentationRegistry;
 import android.support.test.runner.AndroidJUnit4;
 
+import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import io.storj.Access;
-import io.storj.Permission;
-import io.storj.SharePrefix;
+import io.storj.BucketInfo;
+import io.storj.Buckets;
+import io.storj.Project;
+import io.storj.StorjException;
 import io.storj.Uplink;
+import io.storj.UplinkOption;
 
 import static org.junit.Assert.assertEquals;
 
 @RunWith(AndroidJUnit4.class)
 public class LibuplinkInstrumentedTest {
 
-//    private static final String VALID_SCOPE = InstrumentationRegistry.getArguments().getString("scope", "13GRuHAWnYKcVBgHKbpg6yNT7p4mfjAPjzWKNu771WT2sgLmyMSanBpFFhoNubNN4Gr7m55LQrR4JR8dfC86MGsWGe11poahaRGs6bRgvJj3cBTZyP2NCE21SsaV3qAcBvzcuvZGBocdw4A6mZiUZVi14JWkhk3Kd5iXyhoBCU69845CvU2My3Qv");
-//    private static Scope SCOPE;
-//
-//    private UplinkOption[] uplinkOptions;
+    private static final String VALID_ACCESS = InstrumentationRegistry.getArguments().getString("access", "13GRuHAWnYKcVBgHKbpg6yNT7p4mfjAPjzWKNu771WT2sgLmyMSanBpFFhoNubNN4Gr7m55LQrR4JR8dfC86MGsWGe11poahaRGs6bRgvJj3cBTZyP2NCE21SsaV3qAcBvzcuvZGBocdw4A6mZiUZVi14JWkhk3Kd5iXyhoBCU69845CvU2My3Qv");
+    private static Access ACCESS;
 
-//    @Before
-//    public void setUp() throws StorjException {
-//        SCOPE = Scope.parse(VALID_SCOPE);
-//        String filesDir = InstrumentationRegistry.getTargetContext().getFilesDir().getAbsolutePath();
-//        uplinkOptions = new UplinkOption[]{
-//                UplinkOption.tempDir(filesDir),
-//                UplinkOption.skipPeerCAWhitelist(true)
-//        };
-//    }
-//
-//    @Test
-//    public void testBasicBucket() throws Exception {
-//        try (Uplink uplink = new Uplink(uplinkOptions); Project project = uplink.openProject(SCOPE)) {
-//
-//            String expectedBucket = "test-bucket";
-//            RedundancyScheme rs = new RedundancyScheme.Builder().
-//                    setRequiredShares((short) 4).
-//                    setRepairShares((short) 6).
-//                    setSuccessShares((short) 8).
-//                    setTotalShares((short) 10).
-//                    build();
-//
-//            try {
-//                BucketInfo createBucketInfo = project.createBucket(expectedBucket, BucketCreateOption.redundancyScheme(rs));
-//
-//                BucketInfo getBucketInfo = project.getBucketInfo(expectedBucket);
-//                Assert.assertEquals(expectedBucket, getBucketInfo.getName());
-//                Assert.assertEquals(createBucketInfo, getBucketInfo);
-//            } finally {
-//                project.deleteBucket(expectedBucket);
-//
-//                try {
-//                    project.getBucketInfo(expectedBucket);
-//                } catch (StorjException e) {
-//                    Assert.assertTrue("Unexpected error: " + e.getMessage(), e.getMessage().contains("bucket not found"));
-//                }
-//            }
-//        }
-//    }
+    private UplinkOption[] uplinkOptions;
+
+    @Before
+    public void setUp() throws StorjException {
+        ACCESS = Access.parse(VALID_ACCESS);
+        String filesDir = InstrumentationRegistry.getTargetContext().getFilesDir().getAbsolutePath();
+        uplinkOptions = new UplinkOption[]{
+                UplinkOption.tempDir(filesDir),
+        };
+    }
+
+    @Test
+    public void testBuckets() throws Exception {
+        Uplink uplink = new Uplink(uplinkOptions);
+        try ( Project project = uplink.openProject(ACCESS)) {
+
+            String[] expectedBuckets = new String[]{"test-bucket", "another", "foo", "bar"};
+
+            for (String name:expectedBuckets){
+                BucketInfo createBucketInfo = project.createBucket(name);
+                Assert.assertEquals(name, createBucketInfo.getName());
+
+                BucketInfo statBucket = project.statBucket(name);
+                Assert.assertEquals(name, statBucket.getName());
+                Assert.assertEquals(createBucketInfo, statBucket);
+
+                BucketInfo ensureBucketInfo = project.ensureBucket(name);
+                Assert.assertEquals(name, ensureBucketInfo.getName());
+
+                statBucket = project.statBucket(name);
+                Assert.assertEquals(name, statBucket.getName());
+                Assert.assertEquals(ensureBucketInfo, statBucket);
+            }
+
+            String[] toEnsure = new String[]{"gogo", "for", "itit"};
+            for (String name:toEnsure){
+                BucketInfo ensureBucketInfo = project.ensureBucket(name);
+                Assert.assertEquals(name, ensureBucketInfo.getName());
+
+                BucketInfo statBucket = project.statBucket(name);
+                Assert.assertEquals(name, statBucket.getName());
+                Assert.assertEquals(ensureBucketInfo, statBucket);
+            }
+
+            List<String> combine = new ArrayList<>();
+            combine.addAll(Arrays.asList(expectedBuckets));
+            combine.addAll(Arrays.asList(toEnsure));
+            expectedBuckets = combine.toArray(new String[combine.size()]);
+
+            final List<BucketInfo> buckets = new ArrayList<>();
+            project.listBuckets().iterate(new Buckets.BucketsIterator() {
+                @Override
+                public void iterate(Iterable<BucketInfo> items) {
+                    for (BucketInfo bucket : items) {
+                        buckets.add(bucket);
+                    }
+                }
+            });
+            Assert.assertEquals(expectedBuckets.length, buckets.size());
+
+            for (BucketInfo bucket : buckets){
+                BucketInfo deleteBucketInfo = project.deleteBucket(bucket.getName());
+                Assert.assertEquals(bucket, deleteBucketInfo);
+            }
+
+            for (BucketInfo bucket : buckets){
+                try {
+                    project.statBucket(bucket.getName());
+                } catch (StorjException e) {
+                    Assert.assertTrue("Unexpected error: " + e.getMessage(), e.getMessage().contains("bucket not found"));
+                }
+            }
+        }
+    }
 //
 //    @Test
 //    public void testListBuckets() throws Exception {
@@ -417,14 +460,40 @@ public class LibuplinkInstrumentedTest {
 
     @Test
     public void testAccess() throws Exception {
-        String serializedAccess = "18HGwKQm4xVEyEMFLPMstEhj1jNLqaYZrFMNNbmLE9A6ZpG4bK9zvGYhfQK9w3mLKHD8bN7RaSaZgeCvADU4d3ZmYLvZbWjBvUPjBCKZDVDU1fY6gyMPq9ZQiGwVXC2sXsEdhT5CPTMp3EPnHoUs5EMTgFzbPGRHXb1hSBcVwHdbg4T5ParMkCdWw76MA4yuhw5LetRo45FDTMgY615sW28BBetvCKurYqvie67vDthMv2JATxwaApbyLac8";
-
+        String serializedAccess = VALID_ACCESS;
         Access access = Access.parse(serializedAccess);
         String newSerializedAccess = access.serialize();
         assertEquals(serializedAccess, newSerializedAccess);
 
-        Access sharedAccess = access.share(new Permission(), new SharePrefix(""));
-        sharedAccess.serialize();
+//        Access sharedAccess = access.share(new Permission(), new SharePrefix(""));
+//        sharedAccess.serialize();
+    }
+
+//    @Test
+    public void testRequestAccess() throws Exception {
+        Uplink uplink = new Uplink();
+        Access access = uplink.requestAccessWithPassphrase(
+                "12EayRS2V1kEsWESU9QMRseFhdxYxKicsiFmxrsLZHeLUtdps3S@us-central-1.tardigrade.io:7777",
+                "13YqenFJe65F1bVsiYaggkghx8AS5FCudoKQG3BKNutR7SFUprZNwTDTaUivp9XKATRAvi1Kh59ztmF9ccLxNLWzm8eoxoLRWvH7su2",
+                "abc");
+        System.out.println(access.serialize());
+
+        try (Project project = uplink.openProject(access)) {
+            BucketInfo created = project.statBucket("michal");
+            System.out.println(created.getName());
+
+            final List<BucketInfo> buckets = new ArrayList<>();
+            project.listBuckets().iterate(new Buckets.BucketsIterator() {
+                @Override
+                public void iterate(Iterable<BucketInfo> items) {
+                    for (BucketInfo bucket : items) {
+                        buckets.add(bucket);
+                    }
+                }
+            });
+
+            System.out.println(buckets);
+        }
     }
 
 }
