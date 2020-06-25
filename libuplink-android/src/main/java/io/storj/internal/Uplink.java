@@ -38,47 +38,18 @@ public interface Uplink extends Library {
         }
 
         public static class ByReference extends Handle implements Structure.ByReference {
-
         }
-
-        ;
-
         public static class ByValue extends Handle implements Structure.ByValue {
-
         }
-
-        ;
     }
 
-    ;
 
-    @Structure.FieldOrder({"_handle"})
-    public static class Access extends Structure {
-        public NativeLong _handle;
-
-        public Access() {
-            super();
-        }
-
-        public Access(NativeLong _handle) {
-            super();
-            this._handle = _handle;
-        }
-
+    public static class Access extends Handle {
         public static class ByReference extends Access implements Structure.ByReference {
-
         }
-
-        ;
-
         public static class ByValue extends Access implements Structure.ByValue {
-
         }
-
-        ;
     }
-
-    ;
 
     @Structure.FieldOrder({"_handle"})
     public static class Project extends Structure {
@@ -94,19 +65,10 @@ public interface Uplink extends Library {
         }
 
         public static class ByReference extends Project implements Structure.ByReference {
-
         }
-
-        ;
-
         public static class ByValue extends Project implements Structure.ByValue {
-
         }
-
-        ;
     }
-
-    ;
 
     @Structure.FieldOrder({"user_agent", "dial_timeout_milliseconds", "temp_directory"})
     public static class Config extends Structure {
@@ -129,19 +91,10 @@ public interface Uplink extends Library {
         }
 
         public static class ByReference extends Config implements Structure.ByReference {
-
         }
-
-        ;
-
         public static class ByValue extends Config implements Structure.ByValue {
-
         }
-
-        ;
     }
-
-    ;
 
     @Structure.FieldOrder({"name", "created"})
     public static class Bucket extends Structure {
@@ -159,19 +112,10 @@ public interface Uplink extends Library {
         }
 
         public static class ByReference extends Bucket implements Structure.ByReference {
-
         }
-
-        ;
-
         public static class ByValue extends Bucket implements Structure.ByValue {
-
         }
-
-        ;
     }
-
-    ;
 
     @Structure.FieldOrder({"code", "message"})
     public static class Error extends Structure {
@@ -189,19 +133,10 @@ public interface Uplink extends Library {
         }
 
         public static class ByReference extends Error implements Structure.ByReference {
-
         }
-
-        ;
-
         public static class ByValue extends Error implements Structure.ByValue {
-
         }
-
-        ;
     }
-
-    ;
 
     @Structure.FieldOrder({"access", "error"})
     public static class AccessResult extends Structure {
@@ -219,19 +154,10 @@ public interface Uplink extends Library {
         }
 
         public static class ByReference extends AccessResult implements Structure.ByReference {
-
         }
-
-        ;
-
         public static class ByValue extends AccessResult implements Structure.ByValue {
-
         }
-
-        ;
     }
-
-    ;
 
     @Structure.FieldOrder({"project", "error"})
     public static class ProjectResult extends Structure {
@@ -249,19 +175,10 @@ public interface Uplink extends Library {
         }
 
         public static class ByReference extends ProjectResult implements Structure.ByReference {
-
         }
-
-        ;
-
         public static class ByValue extends ProjectResult implements Structure.ByValue {
-
         }
-
-        ;
     }
-
-    ;
 
     @Structure.FieldOrder({"bucket", "error"})
     public static class BucketResult extends Structure {
@@ -279,19 +196,10 @@ public interface Uplink extends Library {
         }
 
         public static class ByReference extends BucketResult implements Structure.ByReference {
-
         }
-
-        ;
-
         public static class ByValue extends BucketResult implements Structure.ByValue {
-
         }
-
-        ;
     }
-
-    ;
 
     @Structure.FieldOrder({"string", "error"})
     public static class StringResult extends Structure {
@@ -309,19 +217,10 @@ public interface Uplink extends Library {
         }
 
         public static class ByReference extends StringResult implements Structure.ByReference {
-
         }
-
-        ;
-
         public static class ByValue extends StringResult implements Structure.ByValue {
-
         }
-
-        ;
     }
-
-    ;
 
     @Structure.FieldOrder({"allow_download", "allow_upload", "allow_list", "allow_delete", "not_before", "not_after"})
     public static class Permission extends Structure {
@@ -354,16 +253,9 @@ public interface Uplink extends Library {
 
         public static class ByReference extends Permission implements Structure.ByReference {
         }
-
-        ;
-
         public static class ByValue extends Permission implements Structure.ByValue {
         }
-
-        ;
     }
-
-    ;
 
     @Structure.FieldOrder({"bucket", "prefix"})
     public static class SharePrefix extends Structure {
@@ -385,16 +277,9 @@ public interface Uplink extends Library {
 
         public static class ByReference extends SharePrefix implements Structure.ByReference {
         }
-
-        ;
-
         public static class ByValue extends SharePrefix implements Structure.ByValue {
         }
-
-        ;
     }
-
-    ;
 
     @Structure.FieldOrder({"cursor"})
     public static class ListBucketsOptions extends Structure {
@@ -412,15 +297,16 @@ public interface Uplink extends Library {
         public static class ByReference extends ListBucketsOptions implements Structure.ByReference {
         }
 
-        ;
-
         public static class ByValue extends ListBucketsOptions implements Structure.ByValue {
         }
-
-        ;
     }
 
-    ;
+    public static class BucketIterator extends Handle {
+        public static class ByReference extends BucketIterator implements Structure.ByReference {
+        }
+        public static class ByValue extends BucketIterator implements Structure.ByValue {
+        }
+    };
 
     Uplink.AccessResult.ByValue parse_access(String p0);
 
@@ -468,27 +354,4 @@ public interface Uplink extends Library {
 
     void free_error(Uplink.Error p0);
 
-    /**
-     * Pointer to unknown (opaque) type
-     */
-    public static class BucketIterator extends PointerType {
-        public BucketIterator(Pointer address) {
-            super(address);
-        }
-
-        public BucketIterator() {
-            super();
-        }
-    }
-
-    ;
-//	/** Pointer to unknown (opaque) type */
-//	public static class GoInt extends PointerType {
-//		public GoInt(Pointer address) {
-//			super(address);
-//		}
-//		public GoInt() {
-//			super();
-//		}
-//	};
 }

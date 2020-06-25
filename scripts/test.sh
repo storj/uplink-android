@@ -10,6 +10,8 @@ fi
 
 SCRIPTDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 
+$SCRIPTDIR/build-android.sh
+
 PORT=5555
 SERIAL=emulator-${PORT}
 
