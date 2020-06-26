@@ -3,18 +3,24 @@ package io.storj.test;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.runner.AndroidJUnit4;
 
+import com.google.common.io.ByteStreams;
+
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Random;
 
 import io.storj.Access;
 import io.storj.BucketInfo;
 import io.storj.Buckets;
+import io.storj.ObjectInfo;
 import io.storj.Project;
 import io.storj.StorjException;
 import io.storj.Uplink;
@@ -39,7 +45,7 @@ public class LibuplinkInstrumentedTest {
         };
     }
 
-    @Test
+//    @Test
     public void testBuckets() throws Exception {
         Uplink uplink = new Uplink(uplinkOptions);
         try ( Project project = uplink.openProject(ACCESS)) {
@@ -100,6 +106,34 @@ public class LibuplinkInstrumentedTest {
                     Assert.assertTrue("Unexpected error: " + e.getMessage(), e.getMessage().contains("bucket not found"));
                 }
             }
+        }
+    }
+
+    @Test
+    public void testObjects() throws Exception {
+        Uplink uplink = new Uplink(uplinkOptions);
+        try ( Project project = uplink.openProject(ACCESS)) {
+            BucketInfo createBucketInfo = project.createBucket("test-objects-test-bucket");
+
+            byte[] expectedData = new byte[2 * 1024 * 1024];
+            Random random = new Random();
+            random.nextBytes(expectedData);
+
+            try( OutputStream os = project.uploadObject(createBucketInfo.getName(),"test-file")){
+                os.write(expectedData);
+            }
+
+            ObjectInfo objectInfo = project.statObject(createBucketInfo.getName(), "test-file");
+            Assert.assertEquals("test-file", objectInfo.getKey());
+            Assert.assertEquals(expectedData.length, objectInfo.getSystem().getContentLength());
+
+//            byte[] data;
+//            try( InputStream is = project.downloadObject(createBucketInfo.getName(),"test-file")){
+//                data = ByteStreams.toByteArray(is);
+//            }
+//
+//            Assert.assertEquals(expectedData, data);
+
         }
     }
 //

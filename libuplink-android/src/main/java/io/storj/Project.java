@@ -6,7 +6,7 @@ public class Project implements AutoCloseable {
 
     protected Uplink.Project.ByReference project;
 
-    protected Project(Uplink.Project.ByReference project) {
+    Project(Uplink.Project.ByReference project) {
         this.project = project;
     }
 
@@ -42,16 +42,42 @@ public class Project implements AutoCloseable {
     }
 
     public BucketInfo deleteBucket(String bucket) throws StorjException {
-        Uplink.BucketResult.ByValue bucketResult = Uplink.INSTANCE.delete_bucket(this.project, bucket);
+        Uplink.BucketResult.ByValue deleteBucket = Uplink.INSTANCE.delete_bucket(this.project, bucket);
+        ExceptionUtil.handleError(deleteBucket.error);
 
-        BucketInfo bucketInfo = new BucketInfo(bucketResult.bucket);
-        Uplink.INSTANCE.free_bucket_result(bucketResult);
+        BucketInfo bucketInfo = new BucketInfo(deleteBucket.bucket);
+        Uplink.INSTANCE.free_bucket_result(deleteBucket);
         return bucketInfo;
+    }
+
+    public ObjectInfo statObject(String bucket, String key) throws StorjException {
+        Uplink.ObjectResult.ByValue statObject = Uplink.INSTANCE.stat_object(this.project, bucket, key);
+        ExceptionUtil.handleError(statObject.error);
+
+        ObjectInfo objectInfo = new ObjectInfo(statObject.object);
+        Uplink.INSTANCE.free_object_result(statObject);
+        return objectInfo;
+    }
+
+    public ObjectOutputStream uploadObject(String bucket, String key, UploadOption... options) throws StorjException {
+        Uplink.UploadResult.ByValue uploadResult = Uplink.INSTANCE.upload_object(this.project, bucket, key,
+                UploadOption.internal(options));
+        ExceptionUtil.handleError(uploadResult.error);
+
+        return new ObjectOutputStream(uploadResult.upload);
+    }
+
+    public ObjectInputStream downloadObject(String bucket, String key, DownloadOption... options) throws StorjException {
+        Uplink.DownloadResult.ByValue downloadResult = Uplink.INSTANCE.download_object(this.project, bucket, key,
+                DownloadOption.internal(options));
+        ExceptionUtil.handleError(downloadResult.error);
+
+        return new ObjectInputStream(downloadResult.download);
     }
 
     @Override
     public void close() throws Exception {
-        Uplink.Error result = Uplink.INSTANCE.close_project(this.project);
+        Uplink.Error.ByReference result = Uplink.INSTANCE.close_project(this.project);
         ExceptionUtil.handleError(result);
     }
 }

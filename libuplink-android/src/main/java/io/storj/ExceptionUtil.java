@@ -4,10 +4,13 @@ import io.storj.internal.Uplink;
 
 class ExceptionUtil {
 
-    static void handleError(Uplink.Error error) throws StorjException {
+    static void handleError(Uplink.Error.ByReference error) throws StorjException {
         if (error != null) {
-            String message = error.message.getString(0);
-            Uplink.INSTANCE.free_error(error);
+            String message = "" + error.code;
+            if (error.message != null) {
+                message = error.message.getString(0);
+                Uplink.INSTANCE.free_error(error);
+            }
             throw new StorjException(message);
         }
     }

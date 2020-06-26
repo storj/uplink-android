@@ -7,6 +7,10 @@ package io.storj;
  */
 public class Uplink {
 
+    // TODO list
+    // * free all results on error e.g. error is free but result is not
+    //
+
     private UplinkOption[] options;
 
     public Uplink(UplinkOption... options) {

@@ -12,7 +12,6 @@ public class UplinkOption {
         USER_AGENT,
         DIAL_TIMEOUT,
     }
-
     private Key key;
 
     private Object value;

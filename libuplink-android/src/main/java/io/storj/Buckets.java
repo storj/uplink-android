@@ -6,10 +6,10 @@ import io.storj.internal.Uplink;
 
 public class Buckets {
 
-    private io.storj.internal.Uplink.Project project;
+    private Uplink.Project.ByReference project;
     private BucketListOption[] options;
 
-    Buckets(io.storj.internal.Uplink.Project project, BucketListOption... options) {
+    Buckets(Uplink.Project.ByReference project, BucketListOption... options) {
         this.project = project;
         this.options = options;
     }
@@ -72,10 +72,10 @@ public class Buckets {
     }
 
     public void iterate(BucketsIterator bi) throws StorjException {
-        Uplink.BucketIterator cIterator = io.storj.internal.Uplink.INSTANCE.list_buckets(project, BucketListOption.internal(options));
+        Uplink.BucketIterator.ByReference cIterator = io.storj.internal.Uplink.INSTANCE.list_buckets(project, BucketListOption.internal(options));
         try {
             bi.iterate(new InternalIterator(cIterator));
-            Uplink.Error error = io.storj.internal.Uplink.INSTANCE.bucket_iterator_err(cIterator);
+            Uplink.Error.ByReference error = io.storj.internal.Uplink.INSTANCE.bucket_iterator_err(cIterator);
             ExceptionUtil.handleError(error);
         } finally {
             io.storj.internal.Uplink.INSTANCE.free_bucket_iterator(cIterator);

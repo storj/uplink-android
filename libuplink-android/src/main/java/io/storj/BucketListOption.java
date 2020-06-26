@@ -35,8 +35,8 @@ public class BucketListOption {
     }
 
 
-    static Uplink.ListBucketsOptions internal(BucketListOption... options) {
-        Uplink.ListBucketsOptions listOptions = new Uplink.ListBucketsOptions();
+    static Uplink.ListBucketsOptions.ByReference internal(BucketListOption... options) {
+        Uplink.ListBucketsOptions.ByReference listOptions = new Uplink.ListBucketsOptions.ByReference();
         for (BucketListOption option : options) {
             if (option.key == Key.CURSOR) {
                 listOptions.cursor = PointerUtils.toPointer(option.value.toString());
