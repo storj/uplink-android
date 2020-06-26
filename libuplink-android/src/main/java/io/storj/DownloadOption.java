@@ -25,6 +25,10 @@ public class DownloadOption {
 
 
     static io.storj.internal.Uplink.DownloadOptions internal(DownloadOption... options) {
+        if (options.length == 0){
+            return null;
+        }
+
         io.storj.internal.Uplink.DownloadOptions downloadOptions = new Uplink.DownloadOptions();
         for (DownloadOption option : options) {
             if (option.key == Key.OFFSET) {

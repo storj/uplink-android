@@ -59,6 +59,15 @@ public class Project implements AutoCloseable {
         return objectInfo;
     }
 
+    public ObjectInfo deleteObject(String bucket, String key) throws StorjException {
+        Uplink.ObjectResult.ByValue statObject = Uplink.INSTANCE.delete_object(this.project, bucket, key);
+        ExceptionUtil.handleError(statObject.error);
+
+        ObjectInfo objectInfo = new ObjectInfo(statObject.object);
+        Uplink.INSTANCE.free_object_result(statObject);
+        return objectInfo;
+    }
+
     public ObjectOutputStream uploadObject(String bucket, String key, UploadOption... options) throws StorjException {
         Uplink.UploadResult.ByValue uploadResult = Uplink.INSTANCE.upload_object(this.project, bucket, key,
                 UploadOption.internal(options));

@@ -1,45 +1,21 @@
 package io.storj;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 import io.storj.internal.Uplink;
 
-public class ObjectInfo {
+public class ObjectInfo implements Serializable, Comparable<ObjectInfo> {
 
-    public class SystemMetadata {
-        private Date created;
-        private Date expires;
-        private long contentLength;
 
-        protected SystemMetadata(Date created, Date expires, long contentLength){
-            this.created = created;
-            this.expires = expires;
-            this.contentLength= contentLength;
-        }
-
-        public Date getCreated() {
-            return created;
-        }
-
-        public Date getExpires() {
-            return expires;
-        }
-
-        public long getContentLength() {
-            return contentLength;
-        }
-    }
 
     private String key;
     private boolean isPrefix;
     private SystemMetadata system;
     private Map<String, String> custom;
-
-    ObjectInfo(){
-
-    }
 
     ObjectInfo(Uplink.Object object){
         this.key = object.key.getString(0);
@@ -69,5 +45,56 @@ public class ObjectInfo {
 
     public Map<String, String> getCustom() {
         return custom;
+    }
+
+    /**
+     * Two {@link ObjectInfo} objects are equal if their names are equal.
+     *
+     * @return <code>true</code> if this object is the same as the specified object;
+     * <code>false</code> otherwise.
+     */
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ObjectInfo that = (ObjectInfo) o;
+        return Objects.equals(key, that.key)
+                && isPrefix == that.isPrefix;
+//                && Objects.equals(system, that.system)
+//                && Objects.equals(custom, that.custom);
+    }
+
+    /**
+     * The hash code value of {@link ObjectInfo} is the hash code value of its name.
+     *
+     * @return a hash code value for this object
+     */
+    @Override
+    public int hashCode() {
+        return Objects.hash(key);
+    }
+
+    /**
+     * Two {@link ObjectInfo} objects are compared to each other by their prefix flag, bucket,
+     * path and version, in this order.
+     *
+     * @return a negative integer, zero, or a positive integer as this object is less than,
+     *          equal to, or greater than the specified object.
+     */
+    @Override
+    public int compareTo(ObjectInfo other) {
+        int result = Boolean.compare(isPrefix(), other.isPrefix());
+        if (result != 0) {
+            return result;
+        }
+
+        result = getKey().compareTo(other.getKey());
+        if (result != 0) {
+            return result;
+        }
+
+
+        // TODO compare system metadata and custom
+        return 0;
     }
 }

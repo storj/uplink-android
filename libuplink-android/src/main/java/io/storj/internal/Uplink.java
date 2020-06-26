@@ -10,6 +10,7 @@ public interface Uplink extends Library {
 
     public static final Uplink INSTANCE = Native.load("gojni", Uplink.class);
 
+    public static final int EOF = -1;
     public static final int ERROR_UPLOAD_DONE = (int) 0x22;
     public static final int ERROR_INVALID_HANDLE = (int) 0x04;
     public static final int ERROR_OBJECT_NOT_FOUND = (int) 0x21;
@@ -699,7 +700,7 @@ public interface Uplink extends Library {
     // download
     Uplink.DownloadResult.ByValue download_object(Uplink.Project.ByReference project, String bucket, String key, Uplink.DownloadOptions options);
 
-    Uplink.ReadResult.ByValue download_read(Uplink.Download.ByReference download, Pointer bytes, long size);
+    Uplink.ReadResult.ByValue download_read(Uplink.Download.ByReference download, byte[] bytes, long size);
 
     Uplink.ObjectResult.ByValue download_info(Uplink.Download.ByReference download);
 

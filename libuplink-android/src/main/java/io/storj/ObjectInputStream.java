@@ -1,7 +1,5 @@
 package io.storj;
 
-import com.sun.jna.Memory;
-
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -13,6 +11,7 @@ import io.storj.internal.Uplink;
 public class ObjectInputStream extends InputStream {
 
     private Uplink.Download.ByReference cDownload;
+    private boolean isEOF;
     private byte[] buf = new byte[1];
 
     ObjectInputStream(Uplink.Download.ByReference cDownload) throws StorjException {
@@ -35,25 +34,17 @@ public class ObjectInputStream extends InputStream {
      */
     @Override
     public int read() throws IOException {
-        Memory buf = new Memory(1);
-        Uplink.ReadResult.ByValue readResult = Uplink.INSTANCE.download_read(this.cDownload, buf, 1);
         try {
-            try {
-                ExceptionUtil.handleError(readResult.error);
-            } catch (StorjException e) {
-                throw new IOException(e);
-            }
-
-            int n = readResult.bytes_read.intValue();
+            int n = this.read(buf, 0, 1);
             if (n == -1) {
                 return n;
             }
             if (n == 1) {
-                return buf.getByte(0) & 0xff;
+                return buf[0] & 0xff;
             }
             throw new IOException("invalid state");
-        } finally {
-            Uplink.INSTANCE.free_read_result(readResult);
+        } catch (Exception e) {
+            throw new IOException(e);
         }
     }
 
@@ -116,6 +107,10 @@ public class ObjectInputStream extends InputStream {
      */
     @Override
     public int read(byte[] b, int off, int len) throws IOException {
+        if (this.isEOF) {
+            return -1;
+        }
+
         if (b == null) {
             throw new NullPointerException();
         } else if (off < 0 || len < 0 || len > b.length - off) {
@@ -124,21 +119,22 @@ public class ObjectInputStream extends InputStream {
             return 0;
         }
 
-        Memory byteArray = new Memory(len);
+        byte[] byteArray = new byte[len];
         Uplink.ReadResult.ByValue readResult = Uplink.INSTANCE.download_read(this.cDownload, byteArray, len);
-        try {
+
+        if (readResult.error != null && readResult.error.code == Uplink.EOF) {
+            this.isEOF = true;
+        } else {
             try {
                 ExceptionUtil.handleError(readResult.error);
             } catch (StorjException e) {
                 throw new IOException(e);
             }
-            int read = readResult.bytes_read.intValue();
-            System.arraycopy(byteArray.getByteArray(0, read), 0, buf, off, read);
-            Uplink.INSTANCE.free_read_result(readResult);
-            return read;
-        } finally {
-            Uplink.INSTANCE.free_read_result(readResult);
         }
+
+        int read = readResult.bytes_read.intValue();
+        System.arraycopy(byteArray, 0, b, off, read);
+        return read;
     }
 
     /**

@@ -10,6 +10,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import java.io.BufferedInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
@@ -45,14 +47,14 @@ public class LibuplinkInstrumentedTest {
         };
     }
 
-//    @Test
+    //    @Test
     public void testBuckets() throws Exception {
         Uplink uplink = new Uplink(uplinkOptions);
-        try ( Project project = uplink.openProject(ACCESS)) {
+        try (Project project = uplink.openProject(ACCESS)) {
 
             String[] expectedBuckets = new String[]{"test-bucket", "another", "foo", "bar"};
 
-            for (String name:expectedBuckets){
+            for (String name : expectedBuckets) {
                 BucketInfo createBucketInfo = project.createBucket(name);
                 Assert.assertEquals(name, createBucketInfo.getName());
 
@@ -69,7 +71,7 @@ public class LibuplinkInstrumentedTest {
             }
 
             String[] toEnsure = new String[]{"gogo", "for", "itit"};
-            for (String name:toEnsure){
+            for (String name : toEnsure) {
                 BucketInfo ensureBucketInfo = project.ensureBucket(name);
                 Assert.assertEquals(name, ensureBucketInfo.getName());
 
@@ -94,12 +96,12 @@ public class LibuplinkInstrumentedTest {
             });
             Assert.assertEquals(expectedBuckets.length, buckets.size());
 
-            for (BucketInfo bucket : buckets){
+            for (BucketInfo bucket : buckets) {
                 BucketInfo deleteBucketInfo = project.deleteBucket(bucket.getName());
                 Assert.assertEquals(bucket, deleteBucketInfo);
             }
 
-            for (BucketInfo bucket : buckets){
+            for (BucketInfo bucket : buckets) {
                 try {
                     project.statBucket(bucket.getName());
                 } catch (StorjException e) {
@@ -112,14 +114,14 @@ public class LibuplinkInstrumentedTest {
     @Test
     public void testObjects() throws Exception {
         Uplink uplink = new Uplink(uplinkOptions);
-        try ( Project project = uplink.openProject(ACCESS)) {
+        try (Project project = uplink.openProject(ACCESS)) {
             BucketInfo createBucketInfo = project.createBucket("test-objects-test-bucket");
 
             byte[] expectedData = new byte[2 * 1024 * 1024];
             Random random = new Random();
             random.nextBytes(expectedData);
 
-            try( OutputStream os = project.uploadObject(createBucketInfo.getName(),"test-file")){
+            try (OutputStream os = project.uploadObject(createBucketInfo.getName(), "test-file")) {
                 os.write(expectedData);
             }
 
@@ -127,13 +129,14 @@ public class LibuplinkInstrumentedTest {
             Assert.assertEquals("test-file", objectInfo.getKey());
             Assert.assertEquals(expectedData.length, objectInfo.getSystem().getContentLength());
 
-//            byte[] data;
-//            try( InputStream is = project.downloadObject(createBucketInfo.getName(),"test-file")){
-//                data = ByteStreams.toByteArray(is);
-//            }
-//
-//            Assert.assertEquals(expectedData, data);
-
+            byte[] data;
+            try (InputStream is = project.downloadObject(createBucketInfo.getName(), "test-file")) {
+                data =ByteStreams.toByteArray(is);
+            }
+            
+            Assert.assertTrue(Arrays.equals(expectedData, data));
+            ObjectInfo deleteObjectInfo = project.deleteObject(createBucketInfo.getName(), "test-file");
+            Assert.assertTrue(objectInfo.equals(deleteObjectInfo));
         }
     }
 //
@@ -503,7 +506,7 @@ public class LibuplinkInstrumentedTest {
 //        sharedAccess.serialize();
     }
 
-//    @Test
+    //    @Test
     public void testRequestAccess() throws Exception {
         Uplink uplink = new Uplink();
         Access access = uplink.requestAccessWithPassphrase(
