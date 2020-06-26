@@ -10,8 +10,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import java.io.BufferedInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
@@ -47,7 +45,7 @@ public class LibuplinkInstrumentedTest {
         };
     }
 
-    //    @Test
+    @Test
     public void testBuckets() throws Exception {
         Uplink uplink = new Uplink(uplinkOptions);
         try (Project project = uplink.openProject(ACCESS)) {
@@ -131,12 +129,14 @@ public class LibuplinkInstrumentedTest {
 
             byte[] data;
             try (InputStream is = project.downloadObject(createBucketInfo.getName(), "test-file")) {
-                data =ByteStreams.toByteArray(is);
+                data = ByteStreams.toByteArray(is);
             }
-            
-            Assert.assertTrue(Arrays.equals(expectedData, data));
+
+            Assert.assertArrayEquals(expectedData, data);
             ObjectInfo deleteObjectInfo = project.deleteObject(createBucketInfo.getName(), "test-file");
             Assert.assertTrue(objectInfo.equals(deleteObjectInfo));
+
+            project.deleteBucket(createBucketInfo.getName());
         }
     }
 //
