@@ -17,12 +17,12 @@ public class Buckets {
 
     private class InternalIterator implements Iterator<BucketInfo>, Iterable<BucketInfo> {
 
-        private Uplink.BucketIterator cIterator;
+        private Uplink.BucketIterator.ByReference cIterator;
 
         private BucketInfo currentItem;
         private Boolean hasNext = null;
 
-        public InternalIterator(Uplink.BucketIterator cIterator) {
+        public InternalIterator(Uplink.BucketIterator.ByReference cIterator) {
             this.cIterator = cIterator;
         }
 
@@ -31,7 +31,7 @@ public class Buckets {
             if (this.hasNext == null) {
                 this.hasNext = io.storj.internal.Uplink.INSTANCE.bucket_iterator_next(this.cIterator);
                 if (this.hasNext) {
-                    Uplink.Bucket bucket = io.storj.internal.Uplink.INSTANCE.bucket_iterator_item(this.cIterator);
+                    Uplink.Bucket.ByReference bucket = io.storj.internal.Uplink.INSTANCE.bucket_iterator_item(this.cIterator);
                     this.currentItem = new BucketInfo(bucket);
                     io.storj.internal.Uplink.INSTANCE.free_bucket(bucket);
                 }
@@ -45,7 +45,7 @@ public class Buckets {
                 this.hasNext = io.storj.internal.Uplink.INSTANCE.bucket_iterator_next(this.cIterator);
                 BucketInfo result = this.currentItem;
                 if (hasNext) {
-                    Uplink.Bucket bucket = io.storj.internal.Uplink.INSTANCE.bucket_iterator_item(this.cIterator);
+                    Uplink.Bucket.ByReference bucket = io.storj.internal.Uplink.INSTANCE.bucket_iterator_item(this.cIterator);
                     this.currentItem = new BucketInfo(bucket);
                     io.storj.internal.Uplink.INSTANCE.free_bucket(bucket);
                 }
@@ -53,7 +53,7 @@ public class Buckets {
             } else {
                 this.hasNext = io.storj.internal.Uplink.INSTANCE.bucket_iterator_next(this.cIterator);
                 if (this.hasNext) {
-                    Uplink.Bucket bucket = io.storj.internal.Uplink.INSTANCE.bucket_iterator_item(this.cIterator);
+                    Uplink.Bucket.ByReference bucket = io.storj.internal.Uplink.INSTANCE.bucket_iterator_item(this.cIterator);
                     BucketInfo result = new BucketInfo(bucket);
                     io.storj.internal.Uplink.INSTANCE.free_bucket(bucket);
                     return result;

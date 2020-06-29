@@ -631,36 +631,36 @@ public interface Uplink extends Library {
     void free_access_result(Uplink.AccessResult.ByValue result);
 
     // bucket
-    Uplink.BucketResult.ByValue stat_bucket(Uplink.Project p0, String p1);
+    Uplink.BucketResult.ByValue stat_bucket(Uplink.Project.ByReference project, String bucket);
 
-    Uplink.BucketResult.ByValue create_bucket(Uplink.Project p0, String p1);
+    Uplink.BucketResult.ByValue create_bucket(Uplink.Project.ByReference project, String bucket);
 
-    Uplink.BucketResult.ByValue ensure_bucket(Uplink.Project p0, String p1);
+    Uplink.BucketResult.ByValue ensure_bucket(Uplink.Project.ByReference project, String bucket);
 
-    Uplink.BucketResult.ByValue delete_bucket(Uplink.Project p0, String p1);
+    Uplink.BucketResult.ByValue delete_bucket(Uplink.Project.ByReference project, String bucket);
 
     void free_bucket_result(Uplink.BucketResult.ByValue p0);
 
-    void free_bucket(Uplink.Bucket p0);
+    void free_bucket(Uplink.Bucket.ByReference bucket);
 
     Uplink.BucketIterator.ByReference list_buckets(Uplink.Project.ByReference project, Uplink.ListBucketsOptions.ByReference options);
 
-    boolean bucket_iterator_next(Uplink.BucketIterator p0);
+    boolean bucket_iterator_next(Uplink.BucketIterator.ByReference iterator);
 
     Uplink.Error.ByReference bucket_iterator_err(Uplink.BucketIterator.ByReference iterator);
 
-    Uplink.Bucket bucket_iterator_item(Uplink.BucketIterator p0);
+    Uplink.Bucket.ByReference bucket_iterator_item(Uplink.BucketIterator.ByReference iterator);
 
-    void free_bucket_iterator(Uplink.BucketIterator p0);
+    void free_bucket_iterator(Uplink.BucketIterator.ByReference iterator);
 
     // project
-    Uplink.ProjectResult.ByValue config_open_project(Uplink.Config.ByValue p0, Uplink.Access p1);
+    Uplink.ProjectResult.ByValue config_open_project(Uplink.Config.ByValue config, Uplink.Access.ByReference access);
 
-    Uplink.ProjectResult.ByValue open_project(Uplink.Access p0);
+    Uplink.ProjectResult.ByValue open_project(Uplink.Access.ByReference access);
 
     Uplink.Error.ByReference close_project(Uplink.Project.ByReference project);
 
-    void free_project_result(Uplink.ProjectResult.ByValue p0);
+    void free_project_result(Uplink.ProjectResult.ByValue result);
 
     // object
     Uplink.ObjectResult.ByValue stat_object(Uplink.Project.ByReference project, String bucket, String key);
@@ -671,18 +671,18 @@ public interface Uplink extends Library {
 
     void free_object(Uplink.Object.ByReference object);
 
-    Uplink.ObjectIterator list_objects(Uplink.Project p0, String p1, Uplink.ListObjectsOptions p2);
+    Uplink.ObjectIterator.ByReference list_objects(Uplink.Project.ByReference project, String bucket, Uplink.ListObjectsOptions.ByReference options);
 
-    boolean object_iterator_next(Uplink.ObjectIterator p0);
+    boolean object_iterator_next(Uplink.ObjectIterator.ByReference iterator);
 
-    Uplink.Error object_iterator_err(Uplink.ObjectIterator p0);
+    Uplink.Error.ByReference object_iterator_err(Uplink.ObjectIterator.ByReference iterator);
 
-    Uplink.Object object_iterator_item(Uplink.ObjectIterator p0);
+    Uplink.Object.ByReference object_iterator_item(Uplink.ObjectIterator.ByReference iterator);
 
-    void free_object_iterator(Uplink.ObjectIterator p0);
+    void free_object_iterator(Uplink.ObjectIterator.ByReference iterator);
 
     // upload
-    Uplink.UploadResult.ByValue upload_object(Uplink.Project.ByReference project, String bucket, String key, Uplink.UploadOptions options);
+    Uplink.UploadResult.ByValue upload_object(Uplink.Project.ByReference project, String bucket, String key, Uplink.UploadOptions.ByReference options);
 
     Uplink.WriteResult.ByValue upload_write(Uplink.Upload.ByReference upload, Pointer bytes, NativeLong size);
 
@@ -692,11 +692,11 @@ public interface Uplink extends Library {
 
     Uplink.ObjectResult.ByValue upload_info(Uplink.Upload.ByReference upload);
 
-    Uplink.Error.ByReference upload_set_custom_metadata(Uplink.Upload.ByReference upload, Uplink.CustomMetadata.ByValue p1);
+    Uplink.Error.ByReference upload_set_custom_metadata(Uplink.Upload.ByReference upload, Uplink.CustomMetadata.ByValue metadata);
 
-    void free_write_result(Uplink.WriteResult.ByValue p0);
+    void free_write_result(Uplink.WriteResult.ByValue result);
 
-    void free_upload_result(Uplink.UploadResult.ByValue p0);
+    void free_upload_result(Uplink.UploadResult.ByValue result);
 
     // download
     Uplink.DownloadResult.ByValue download_object(Uplink.Project.ByReference project, String bucket, String key, Uplink.DownloadOptions options);

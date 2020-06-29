@@ -21,12 +21,12 @@ public class UploadOption {
         return new UploadOption(Key.EXPIRES, expires);
     }
 
-    static io.storj.internal.Uplink.UploadOptions internal(UploadOption... options) {
+    static io.storj.internal.Uplink.UploadOptions.ByReference internal(UploadOption... options) {
         if (options.length==0){
             return null;
         }
 
-        io.storj.internal.Uplink.UploadOptions uploadOptions = new Uplink.UploadOptions();
+        io.storj.internal.Uplink.UploadOptions.ByReference uploadOptions = new Uplink.UploadOptions.ByReference();
         for (UploadOption option : options) {
             if (option.key == Key.EXPIRES) {
                 uploadOptions.expires = (long)option.value;
