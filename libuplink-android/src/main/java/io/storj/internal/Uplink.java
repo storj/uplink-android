@@ -625,7 +625,7 @@ public interface Uplink extends Library {
 
     Uplink.StringResult.ByValue access_serialize(Uplink.Access p0);
 
-    Uplink.AccessResult.ByValue access_share(Uplink.Access p0, Uplink.Permission p1, Uplink.SharePrefix p2, long p3);
+    Uplink.AccessResult.ByValue access_share(Uplink.Access p0, Uplink.Permission p1, Uplink.SharePrefix p2, NativeLong p3);
 
     void free_access_result(Uplink.AccessResult.ByValue p0);
 
@@ -683,7 +683,7 @@ public interface Uplink extends Library {
     // upload
     Uplink.UploadResult.ByValue upload_object(Uplink.Project.ByReference project, String bucket, String key, Uplink.UploadOptions options);
 
-    Uplink.WriteResult.ByValue upload_write(Uplink.Upload.ByReference upload, Pointer bytes, long size);
+    Uplink.WriteResult.ByValue upload_write(Uplink.Upload.ByReference upload, Pointer bytes, NativeLong size);
 
     Uplink.Error.ByReference upload_commit(Uplink.Upload.ByReference upload);
 
@@ -700,7 +700,7 @@ public interface Uplink extends Library {
     // download
     Uplink.DownloadResult.ByValue download_object(Uplink.Project.ByReference project, String bucket, String key, Uplink.DownloadOptions options);
 
-    Uplink.ReadResult.ByValue download_read(Uplink.Download.ByReference download, byte[] bytes, long size);
+    Uplink.ReadResult.ByValue download_read(Uplink.Download.ByReference download, byte[] bytes, NativeLong size);
 
     Uplink.ObjectResult.ByValue download_info(Uplink.Download.ByReference download);
 

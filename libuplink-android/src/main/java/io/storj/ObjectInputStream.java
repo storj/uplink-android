@@ -1,5 +1,7 @@
 package io.storj;
 
+import com.sun.jna.NativeLong;
+
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -120,7 +122,7 @@ public class ObjectInputStream extends InputStream {
         }
 
         byte[] byteArray = new byte[len];
-        Uplink.ReadResult.ByValue readResult = Uplink.INSTANCE.download_read(this.cDownload, byteArray, len);
+        Uplink.ReadResult.ByValue readResult = Uplink.INSTANCE.download_read(this.cDownload, byteArray, new NativeLong(len));
 
         if (readResult.error != null && readResult.error.code == Uplink.EOF) {
             this.isEOF = true;

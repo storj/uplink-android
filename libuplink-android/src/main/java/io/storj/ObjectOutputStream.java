@@ -1,6 +1,7 @@
 package io.storj;
 
 import com.sun.jna.Memory;
+import com.sun.jna.Native;
 import com.sun.jna.NativeLong;
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
@@ -48,7 +49,7 @@ public class ObjectOutputStream extends OutputStream {
 
         Pointer byteArray = new Memory(1);
         byteArray.write(0, buf, 0, buf.length);
-        Uplink.WriteResult.ByValue writeResult = Uplink.INSTANCE.upload_write(this.cUpload, byteArray, 1);
+        Uplink.WriteResult.ByValue writeResult = Uplink.INSTANCE.upload_write(this.cUpload, byteArray, new NativeLong(1));
         try {
             ExceptionUtil.handleError(writeResult.error);
         } catch (StorjException e) {
@@ -98,7 +99,7 @@ public class ObjectOutputStream extends OutputStream {
 
         Pointer byteArray = new Memory(len);
         byteArray.write(0, b, off, len);
-        Uplink.WriteResult.ByValue writeResult = Uplink.INSTANCE.upload_write(this.cUpload, byteArray, len);
+        Uplink.WriteResult.ByValue writeResult = Uplink.INSTANCE.upload_write(this.cUpload, byteArray, new NativeLong(len));
         try {
             ExceptionUtil.handleError(writeResult.error);
         } catch (StorjException e) {
@@ -129,6 +130,10 @@ public class ObjectOutputStream extends OutputStream {
     }
 
     public void setCustom(Map<String, String> metadata) throws StorjException {
+        if (metadata.isEmpty()){
+            return;
+        }
+
         Uplink.CustomMetadataEntry.ByReference singleEntry = new Uplink.CustomMetadataEntry.ByReference();
         Structure[] entries = singleEntry.toArray(metadata.size());
         int i = 0;
