@@ -1,6 +1,5 @@
 package io.storj;
 
-import io.storj.internal.PointerUtils;
 import io.storj.internal.Uplink;
 
 /**
@@ -39,7 +38,7 @@ public class BucketListOption {
         Uplink.ListBucketsOptions.ByReference listOptions = new Uplink.ListBucketsOptions.ByReference();
         for (BucketListOption option : options) {
             if (option.key == Key.CURSOR) {
-                listOptions.cursor = PointerUtils.toPointer(option.value.toString());
+                listOptions.cursor = option.value.toString();
             }
         }
 

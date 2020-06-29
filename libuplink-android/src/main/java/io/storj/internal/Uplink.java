@@ -62,18 +62,18 @@ public interface Uplink extends Library {
 
     @Structure.FieldOrder({"user_agent", "dial_timeout_milliseconds", "temp_directory"})
     public static class Config extends Structure {
-        public Pointer user_agent;
+        public String user_agent;
         public int dial_timeout_milliseconds;
         /**
          * temp_directory specifies where to save data during downloads to use less memory.
          */
-        public Pointer temp_directory;
+        public String temp_directory;
 
         public Config() {
             super();
         }
 
-        public Config(Pointer user_agent, int dial_timeout_milliseconds, Pointer temp_directory) {
+        public Config(String user_agent, int dial_timeout_milliseconds, String temp_directory) {
             super();
             this.user_agent = user_agent;
             this.dial_timeout_milliseconds = dial_timeout_milliseconds;
@@ -89,14 +89,14 @@ public interface Uplink extends Library {
 
     @Structure.FieldOrder({"name", "created"})
     public static class Bucket extends Structure {
-        public Pointer name;
+        public String name;
         public long created;
 
         public Bucket() {
             super();
         }
 
-        public Bucket(Pointer name, long created) {
+        public Bucket(String name, long created) {
             super();
             this.name = name;
             this.created = created;
@@ -112,13 +112,13 @@ public interface Uplink extends Library {
     @Structure.FieldOrder({"code", "message"})
     public static class Error extends Structure {
         public int code;
-        public Pointer message;
+        public String message;
 
         public Error() {
             super();
         }
 
-        public Error(int code, Pointer message) {
+        public Error(int code, String message) {
             super();
             this.code = code;
             this.message = message;
@@ -282,13 +282,13 @@ public interface Uplink extends Library {
 
     @Structure.FieldOrder({"cursor"})
     public static class ListBucketsOptions extends Structure {
-        public Pointer cursor;
+        public String cursor;
 
         public ListBucketsOptions() {
             super();
         }
 
-        public ListBucketsOptions(Pointer cursor) {
+        public ListBucketsOptions(String cursor) {
             super();
             this.cursor = cursor;
         }
@@ -334,16 +334,16 @@ public interface Uplink extends Library {
 
     @Structure.FieldOrder({"key", "is_prefix", "system", "custom"})
     public static class Object extends Structure {
-        public Pointer key;
+        public String key;
         public byte is_prefix;
-        public Uplink.SystemMetadata system;
-        public Uplink.CustomMetadata custom;
+        public Uplink.SystemMetadata.ByValue system;
+        public Uplink.CustomMetadata.ByValue custom;
 
         public Object() {
             super();
         }
 
-        public Object(Pointer key, byte is_prefix, Uplink.SystemMetadata system, Uplink.CustomMetadata custom) {
+        public Object(String key, byte is_prefix, Uplink.SystemMetadata.ByValue system, Uplink.CustomMetadata.ByValue custom) {
             super();
             this.key = key;
             this.is_prefix = is_prefix;
@@ -384,16 +384,16 @@ public interface Uplink extends Library {
 
     @Structure.FieldOrder({"key", "key_length", "value", "value_length"})
     public static class CustomMetadataEntry extends Structure {
-        public Pointer key;
+        public String key;
         public NativeLong key_length;
-        public Pointer value;
+        public String value;
         public NativeLong value_length;
 
         public CustomMetadataEntry() {
             super();
         }
 
-        public CustomMetadataEntry(Pointer key, NativeLong key_length, Pointer value, NativeLong value_length) {
+        public CustomMetadataEntry(String key, NativeLong key_length, String value, NativeLong value_length) {
             super();
             this.key = key;
             this.key_length = key_length;
@@ -691,7 +691,7 @@ public interface Uplink extends Library {
 
     Uplink.ObjectResult.ByValue upload_info(Uplink.Upload.ByReference upload);
 
-    Uplink.Error.ByReference upload_set_custom_metadata(Uplink.Upload.ByReference upload, Uplink.CustomMetadata p1);
+    Uplink.Error.ByReference upload_set_custom_metadata(Uplink.Upload.ByReference upload, Uplink.CustomMetadata.ByValue p1);
 
     void free_write_result(Uplink.WriteResult.ByValue p0);
 

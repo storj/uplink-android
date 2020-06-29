@@ -3,6 +3,7 @@ package io.storj.test;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.runner.AndroidJUnit4;
 
+import com.google.common.collect.Maps;
 import com.google.common.io.ByteStreams;
 
 import org.junit.Assert;
@@ -14,19 +15,23 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 import io.storj.Access;
 import io.storj.BucketInfo;
 import io.storj.Buckets;
 import io.storj.ObjectInfo;
+import io.storj.ObjectOutputStream;
 import io.storj.Project;
 import io.storj.StorjException;
 import io.storj.Uplink;
 import io.storj.UplinkOption;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 @RunWith(AndroidJUnit4.class)
 public class LibuplinkInstrumentedTest {
@@ -45,7 +50,7 @@ public class LibuplinkInstrumentedTest {
         };
     }
 
-    @Test
+//    @Test
     public void testBuckets() throws Exception {
         Uplink uplink = new Uplink(uplinkOptions);
         try (Project project = uplink.openProject(ACCESS)) {
@@ -119,13 +124,30 @@ public class LibuplinkInstrumentedTest {
             Random random = new Random();
             random.nextBytes(expectedData);
 
-            try (OutputStream os = project.uploadObject(createBucketInfo.getName(), "test-file")) {
+            Map<String, String> metadata = new HashMap<>();
+            metadata.put("custom-meta-1", "foo");
+            metadata.put("custom-meta-2", "boo");
+            try (ObjectOutputStream os = project.uploadObject(createBucketInfo.getName(), "test-file")) {
+                os.setCustom(metadata);
                 os.write(expectedData);
+                os.commit();
             }
 
             ObjectInfo objectInfo = project.statObject(createBucketInfo.getName(), "test-file");
             Assert.assertEquals("test-file", objectInfo.getKey());
             Assert.assertEquals(expectedData.length, objectInfo.getSystem().getContentLength());
+            Assert.assertEquals(metadata, objectInfo.getCustom());
+
+            try (ObjectOutputStream os = project.uploadObject(createBucketInfo.getName(), "test-file-2")) {
+                os.write(expectedData);
+                os.abort();
+            }
+
+            try {
+                project.statObject(createBucketInfo.getName(), "test-file-2");
+                fail("Exception not thrown");
+            }catch (StorjException e){
+            }
 
             byte[] data;
             try (InputStream is = project.downloadObject(createBucketInfo.getName(), "test-file")) {
@@ -134,7 +156,7 @@ public class LibuplinkInstrumentedTest {
 
             Assert.assertArrayEquals(expectedData, data);
             ObjectInfo deleteObjectInfo = project.deleteObject(createBucketInfo.getName(), "test-file");
-            Assert.assertTrue(objectInfo.equals(deleteObjectInfo));
+            Assert.assertEquals(objectInfo, deleteObjectInfo);
 
             project.deleteBucket(createBucketInfo.getName());
         }

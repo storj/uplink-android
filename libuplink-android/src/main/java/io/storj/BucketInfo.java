@@ -15,7 +15,7 @@ public class BucketInfo implements Serializable, Comparable<BucketInfo> {
     private Date created;
 
     BucketInfo(Uplink.Bucket bucket) {
-        this.name = bucket.name.getString(0);
+        this.name = bucket.name;
         this.created = new Date(bucket.created);
     }
 

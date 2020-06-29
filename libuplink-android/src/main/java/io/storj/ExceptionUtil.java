@@ -8,7 +8,7 @@ class ExceptionUtil {
         if (error != null) {
             String message = "" + error.code;
             if (error.message != null) {
-                message = error.message.getString(0);
+                message = error.message;
                 Uplink.INSTANCE.free_error(error);
             }
             throw new StorjException(message);

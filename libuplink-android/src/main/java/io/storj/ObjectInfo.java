@@ -1,5 +1,7 @@
 package io.storj;
 
+import com.sun.jna.Structure;
+
 import java.io.Serializable;
 import java.util.Date;
 import java.util.HashMap;
@@ -10,25 +12,24 @@ import io.storj.internal.Uplink;
 
 public class ObjectInfo implements Serializable, Comparable<ObjectInfo> {
 
-
-
     private String key;
     private boolean isPrefix;
     private SystemMetadata system;
-    private Map<String, String> custom;
+    private Map<String, String> custom = new HashMap<>();
 
-    ObjectInfo(Uplink.Object object){
-        this.key = object.key.getString(0);
+    ObjectInfo(Uplink.Object object) {
+        this.key = object.key;
         this.isPrefix = object.is_prefix == 1;
         this.system = new SystemMetadata(new Date(object.system.created),
                 new Date(object.system.expires), object.system.content_length);
 
-        // TODO add custom metadata
-        this.custom = new HashMap<>();
-//        for (long i =0; i< object.custom.count.longValue();i++){
-//            object.custom.entries.
-//        }
-//        object.custom.
+        if (object.custom.count.longValue()> 0){
+            Structure[] entries = object.custom.entries.toArray(object.custom.count.intValue());
+            for (int i = 0; i < entries.length; i++) {
+                Uplink.CustomMetadataEntry entry = (Uplink.CustomMetadataEntry) entries[i];
+                custom.put(entry.key, entry.value);
+            }
+        }
     }
 
     public String getKey() {
@@ -79,7 +80,7 @@ public class ObjectInfo implements Serializable, Comparable<ObjectInfo> {
      * path and version, in this order.
      *
      * @return a negative integer, zero, or a positive integer as this object is less than,
-     *          equal to, or greater than the specified object.
+     * equal to, or greater than the specified object.
      */
     @Override
     public int compareTo(ObjectInfo other) {

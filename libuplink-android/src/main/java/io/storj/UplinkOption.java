@@ -1,7 +1,5 @@
 package io.storj;
 
-import io.storj.internal.PointerUtils;
-
 /**
  * Options for configuring {@link Uplink}.
  */
@@ -45,9 +43,9 @@ public class UplinkOption {
 
         for (UplinkOption option : options) {
             if (option.key == Key.TEMP_DIR) {
-                config.temp_directory = PointerUtils.toPointer(option.value.toString());
+                config.temp_directory = option.value.toString();
             } else if (option.key == Key.USER_AGENT) {
-                config.user_agent = PointerUtils.toPointer(option.value.toString());
+                config.user_agent = option.value.toString();
             } else if (option.key == Key.DIAL_TIMEOUT) {
                 config.dial_timeout_milliseconds = (Integer) option.value;
             }

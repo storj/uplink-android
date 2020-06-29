@@ -1,6 +1,5 @@
 package io.storj;
 
-import io.storj.internal.PointerUtils;
 import io.storj.internal.Uplink;
 
 public class DownloadOption {

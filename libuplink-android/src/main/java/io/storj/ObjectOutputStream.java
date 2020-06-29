@@ -1,10 +1,13 @@
 package io.storj;
 
 import com.sun.jna.Memory;
+import com.sun.jna.NativeLong;
 import com.sun.jna.Pointer;
+import com.sun.jna.Structure;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Map;
 
 import io.storj.internal.Uplink;
 
@@ -115,24 +118,43 @@ public class ObjectOutputStream extends OutputStream {
      */
     @Override
     public void close() throws IOException {
+        Uplink.UploadResult.ByValue result = new Uplink.UploadResult.ByValue();
+        result.upload = this.cUpload;
+        Uplink.INSTANCE.free_upload_result(result);
+    }
+
+    public void commit() throws StorjException {
         Uplink.Error.ByReference error = Uplink.INSTANCE.upload_commit(this.cUpload);
-        try {
-            ExceptionUtil.handleError(error);
-        } catch (StorjException e) {
-            throw new IOException(e);
-        } finally {
-            Uplink.UploadResult.ByValue result = new Uplink.UploadResult.ByValue();
-            result.upload = this.cUpload;
-            Uplink.INSTANCE.free_upload_result(result);
+        ExceptionUtil.handleError(error);
+    }
+
+    public void setCustom(Map<String, String> metadata) throws StorjException {
+        Uplink.CustomMetadataEntry.ByReference singleEntry = new Uplink.CustomMetadataEntry.ByReference();
+        Structure[] entries = singleEntry.toArray(metadata.size());
+        int i = 0;
+        for (Map.Entry<String, String> metadataEntry : metadata.entrySet()) {
+            Uplink.CustomMetadataEntry.ByReference entry = (Uplink.CustomMetadataEntry.ByReference) entries[i];
+            entry.key = metadataEntry.getKey();
+            entry.key_length = new NativeLong(metadataEntry.getKey().length());
+            entry.value = metadataEntry.getValue();
+            entry.value_length = new NativeLong(metadataEntry.getValue().length());
+            i++;
         }
+
+        Uplink.CustomMetadata.ByValue customMetadata = new Uplink.CustomMetadata.ByValue();
+        customMetadata.entries = ((Uplink.CustomMetadataEntry.ByReference) entries[0]);
+        customMetadata.count = new NativeLong(entries.length);
+
+        Uplink.Error.ByReference error = Uplink.INSTANCE.upload_set_custom_metadata(this.cUpload, customMetadata);
+        ExceptionUtil.handleError(error);
     }
 
     /**
-     * Cancels the upload process.
+     * Aborts the upload process.
      *
      * @throws IOException if an I/O error occurs.
      */
-    public void cancel() throws IOException {
+    public void abort() throws IOException {
         Uplink.Error.ByReference error = Uplink.INSTANCE.upload_abort(this.cUpload);
         try {
             ExceptionUtil.handleError(error);
