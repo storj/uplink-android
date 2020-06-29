@@ -3,7 +3,6 @@ package io.storj.test;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.runner.AndroidJUnit4;
 
-import com.google.common.collect.Maps;
 import com.google.common.io.ByteStreams;
 
 import org.junit.Assert;
@@ -12,17 +11,16 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.function.Consumer;
 
 import io.storj.Access;
 import io.storj.BucketInfo;
-import io.storj.Buckets;
 import io.storj.ObjectInfo;
 import io.storj.ObjectOutputStream;
 import io.storj.Permission;
@@ -52,7 +50,7 @@ public class LibuplinkInstrumentedTest {
         };
     }
 
-//    @Test
+    //    @Test
     public void testBuckets() throws Exception {
         Uplink uplink = new Uplink(uplinkOptions);
         try (Project project = uplink.openProject(ACCESS)) {
@@ -91,12 +89,10 @@ public class LibuplinkInstrumentedTest {
             expectedBuckets = combine.toArray(new String[combine.size()]);
 
             final List<BucketInfo> buckets = new ArrayList<>();
-            project.listBuckets().iterate(new Buckets.BucketsIterator() {
+            project.listBuckets().iterate(new Consumer<BucketInfo>() {
                 @Override
-                public void iterate(Iterable<BucketInfo> items) {
-                    for (BucketInfo bucket : items) {
-                        buckets.add(bucket);
-                    }
+                public void accept(BucketInfo bucketInfo) {
+                    buckets.add(bucketInfo);
                 }
             });
             Assert.assertEquals(expectedBuckets.length, buckets.size());
@@ -148,7 +144,7 @@ public class LibuplinkInstrumentedTest {
             try {
                 project.statObject(createBucketInfo.getName(), "test-file-2");
                 fail("Exception not thrown");
-            }catch (StorjException e){
+            } catch (StorjException e) {
             }
 
             byte[] data;

@@ -1,6 +1,7 @@
 package io.storj;
 
 import java.util.Iterator;
+import java.util.function.Consumer;
 
 import io.storj.internal.Uplink;
 
@@ -12,10 +13,6 @@ public class Buckets {
     Buckets(Uplink.Project.ByReference project, BucketListOption... options) {
         this.project = project;
         this.options = options;
-    }
-
-    public interface BucketsIterator {
-        void iterate(Iterable<BucketInfo> i);
     }
 
     private class InternalIterator implements Iterator<BucketInfo>, Iterable<BucketInfo> {
@@ -71,10 +68,12 @@ public class Buckets {
         }
     }
 
-    public void iterate(BucketsIterator bi) throws StorjException {
+    public void iterate(Consumer<BucketInfo> bi) throws StorjException {
         Uplink.BucketIterator.ByReference cIterator = io.storj.internal.Uplink.INSTANCE.list_buckets(project, BucketListOption.internal(options));
         try {
-            bi.iterate(new InternalIterator(cIterator));
+            for (BucketInfo bucketInfo : new InternalIterator(cIterator)){
+                bi.accept(bucketInfo);
+            }
             Uplink.Error.ByReference error = io.storj.internal.Uplink.INSTANCE.bucket_iterator_err(cIterator);
             ExceptionUtil.handleError(error);
         } finally {
