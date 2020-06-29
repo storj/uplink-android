@@ -13,4 +13,12 @@ public class SharePrefix {
         this.bucket = bucket;
         this.prefix = prefix;
     }
+
+    public String getBucket() {
+        return bucket;
+    }
+
+    public String getPrefix() {
+        return prefix;
+    }
 }

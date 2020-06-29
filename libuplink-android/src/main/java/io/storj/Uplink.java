@@ -27,19 +27,20 @@ public class Uplink {
     public Project openProject(Access access) throws StorjException {
         io.storj.internal.Uplink.ProjectResult.ByValue result = null;
 
-        io.storj.internal.Uplink.Access.ByReference internalAccess = access.internal();
-        if (options.length == 0) {
-            result = io.storj.internal.Uplink.INSTANCE.open_project(internalAccess);
-        } else {
-            io.storj.internal.Uplink.Config.ByValue config = UplinkOption.internal(options);
-            result = io.storj.internal.Uplink.INSTANCE.config_open_project(config, internalAccess);
+        io.storj.internal.Uplink.AccessResult.ByValue internalAccess = io.storj.internal.Uplink.INSTANCE.parse_access(access.serializedAccess);
+        ExceptionUtil.handleError(internalAccess.error);
+
+        try {
+            if (options.length == 0) {
+                result = io.storj.internal.Uplink.INSTANCE.open_project(internalAccess.access);
+            } else {
+                io.storj.internal.Uplink.Config.ByValue config = UplinkOption.internal(options);
+                result = io.storj.internal.Uplink.INSTANCE.config_open_project(config, internalAccess.access);
+            }
+            ExceptionUtil.handleError(result.error);
+        } finally {
+            io.storj.internal.Uplink.INSTANCE.free_access_result(internalAccess);
         }
-        ExceptionUtil.handleError(result.error);
-
-        io.storj.internal.Uplink.AccessResult.ByValue accessResult = new io.storj.internal.Uplink.AccessResult.ByValue();
-        accessResult.access = internalAccess;
-        io.storj.internal.Uplink.INSTANCE.free_access_result(accessResult);
-
         return new Project(result.project);
     }
 
@@ -55,12 +56,14 @@ public class Uplink {
         ExceptionUtil.handleError(result.error);
 
         io.storj.internal.Uplink.StringResult.ByValue stringResult = io.storj.internal.Uplink.INSTANCE.access_serialize(result.access);
-        ExceptionUtil.handleError(stringResult.error);
+        try {
+            ExceptionUtil.handleError(stringResult.error);
 
-        Access access = new Access(stringResult.string.getString(0));
-        io.storj.internal.Uplink.INSTANCE.free_access_result(result);
-        io.storj.internal.Uplink.INSTANCE.free_string_result(stringResult);
-        return access;
+            return new Access(stringResult.string);
+        }finally {
+            io.storj.internal.Uplink.INSTANCE.free_access_result(result);
+            io.storj.internal.Uplink.INSTANCE.free_string_result(stringResult);
+        }
     }
 
 }

@@ -38,21 +38,46 @@ public class Access {
         return new Access(serialized);
     }
 
-    protected Uplink.Access.ByReference internal() throws StorjException {
-        Uplink.AccessResult.ByValue result = Uplink.INSTANCE.parse_access(this.serializedAccess);
-        ExceptionUtil.handleError(result.error);
-        return result.access;
-    }
+    public Access share(Permission permission, SharePrefix... prefixes) throws StorjException {
+        Uplink.Permission.ByValue cPermission = permission.internal();
+        Uplink.AccessResult.ByValue accessResult = null;
+        Uplink.AccessResult.ByValue shareResult = null;
+        Uplink.StringResult.ByValue stringResult = null;
 
-//    public Access share(Permission permission, SharePrefix... prefixes) throws StorjException {
-//        Uplink.SharePrefix[] aa = new Uplink.SharePrefix[prefixes.length];
-//        for (int i = 0; i < prefixes.length;i++) {
-//            aa[i] = new Uplink.SharePrefix();
-//        }
-//        Uplink.Permission.ByReference permission1 = new Uplink.Permission.ByReference();
-//        Uplink.SharePrefix.ByReference sharePrefix = new Uplink.SharePrefix.ByReference();
-//        Uplink.AccessResult.ByValue result = Uplink.INSTANCE.access_share(this.access, permission1, sharePrefix, 0);
-//        ExceptionUtil.handleError(result.error);
-//        return new Access(result.access);
-//    }
+        Uplink.SharePrefix.ByReference firstPrefix = new Uplink.SharePrefix.ByReference();
+        if (prefixes.length > 0) {
+            Uplink.SharePrefix.ByReference[] cPrefixes = (Uplink.SharePrefix.ByReference[]) firstPrefix.toArray(prefixes.length);
+            int i = 0;
+            for (SharePrefix prefix : prefixes) {
+                cPrefixes[0].bucket = prefix.getBucket();
+                cPrefixes[0].prefix = prefix.getPrefix();
+                i++;
+            }
+            firstPrefix = cPrefixes[0];
+        }
+
+
+        try {
+            accessResult = Uplink.INSTANCE.parse_access(this.serializedAccess);
+            ExceptionUtil.handleError(accessResult.error);
+
+            shareResult = Uplink.INSTANCE.access_share(accessResult.access, cPermission, firstPrefix, prefixes.length);
+            ExceptionUtil.handleError(shareResult.error);
+
+            stringResult = Uplink.INSTANCE.access_serialize(shareResult.access);
+            ExceptionUtil.handleError(stringResult.error);
+
+            return new Access(stringResult.string);
+        } finally {
+            if (accessResult != null) {
+                Uplink.INSTANCE.free_access_result(accessResult);
+            }
+            if (shareResult != null) {
+                Uplink.INSTANCE.free_access_result(shareResult);
+            }
+            if (stringResult != null) {
+                Uplink.INSTANCE.free_string_result(stringResult);
+            }
+        }
+    }
 }

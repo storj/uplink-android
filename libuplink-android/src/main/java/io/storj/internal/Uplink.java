@@ -199,14 +199,14 @@ public interface Uplink extends Library {
 
     @Structure.FieldOrder({"string", "error"})
     public static class StringResult extends Structure {
-        public Pointer string;
+        public String string;
         public Uplink.Error.ByReference error;
 
         public StringResult() {
             super();
         }
 
-        public StringResult(Pointer string, Uplink.Error.ByReference error) {
+        public StringResult(String string, Uplink.Error.ByReference error) {
             super();
             this.string = string;
             this.error = error;
@@ -257,17 +257,17 @@ public interface Uplink extends Library {
 
     @Structure.FieldOrder({"bucket", "prefix"})
     public static class SharePrefix extends Structure {
-        public Pointer bucket;
+        public String bucket;
         /**
          * prefix is the prefix of the shared object keys.
          */
-        public Pointer prefix;
+        public String prefix;
 
         public SharePrefix() {
             super();
         }
 
-        public SharePrefix(Pointer bucket, Pointer prefix) {
+        public SharePrefix(String bucket, String prefix) {
             super();
             this.bucket = bucket;
             this.prefix = prefix;
@@ -617,17 +617,18 @@ public interface Uplink extends Library {
     }
 
     // access
-    Uplink.AccessResult.ByValue parse_access(String p0);
+    Uplink.AccessResult.ByValue parse_access(String access);
 
-    Uplink.AccessResult.ByValue request_access_with_passphrase(String p0, String p1, String p2);
+    Uplink.AccessResult.ByValue request_access_with_passphrase(String address, String apiKey, String passphrase);
 
-    Uplink.AccessResult.ByValue config_request_access_with_passphrase(Uplink.Config.ByValue p0, String p1, String p2, String p3);
+    Uplink.AccessResult.ByValue config_request_access_with_passphrase(Uplink.Config.ByValue config, String address, String apiKey, String passphrase);
 
-    Uplink.StringResult.ByValue access_serialize(Uplink.Access p0);
+    Uplink.StringResult.ByValue access_serialize(Uplink.Access.ByReference access);
 
-    Uplink.AccessResult.ByValue access_share(Uplink.Access p0, Uplink.Permission p1, Uplink.SharePrefix p2, NativeLong p3);
+    // long is used directly because in uplink-c its long long
+    Uplink.AccessResult.ByValue access_share(Uplink.Access.ByReference access, Uplink.Permission.ByValue permission, Uplink.SharePrefix.ByReference prefixes, long size);
 
-    void free_access_result(Uplink.AccessResult.ByValue p0);
+    void free_access_result(Uplink.AccessResult.ByValue result);
 
     // bucket
     Uplink.BucketResult.ByValue stat_bucket(Uplink.Project p0, String p1);

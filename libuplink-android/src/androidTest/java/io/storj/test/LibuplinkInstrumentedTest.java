@@ -25,7 +25,9 @@ import io.storj.BucketInfo;
 import io.storj.Buckets;
 import io.storj.ObjectInfo;
 import io.storj.ObjectOutputStream;
+import io.storj.Permission;
 import io.storj.Project;
+import io.storj.SharePrefix;
 import io.storj.StorjException;
 import io.storj.Uplink;
 import io.storj.UplinkOption;
@@ -524,35 +526,13 @@ public class LibuplinkInstrumentedTest {
         String newSerializedAccess = access.serialize();
         assertEquals(serializedAccess, newSerializedAccess);
 
-//        Access sharedAccess = access.share(new Permission(), new SharePrefix(""));
-//        sharedAccess.serialize();
+        Permission permission = new Permission.Builder().allowDownload().allowList().build();
+        Access sharedAccess = access.share(permission);
+        sharedAccess.serialize();
+
+        permission = new Permission.Builder().allowDownload().allowList().allowUpload().allowDelete().build();
+        sharedAccess = access.share(permission,
+                new SharePrefix("bucket1"), new SharePrefix("bucket2", "my-prefix"));
+        sharedAccess.serialize();
     }
-
-    //    @Test
-    public void testRequestAccess() throws Exception {
-        Uplink uplink = new Uplink();
-        Access access = uplink.requestAccessWithPassphrase(
-                "12EayRS2V1kEsWESU9QMRseFhdxYxKicsiFmxrsLZHeLUtdps3S@us-central-1.tardigrade.io:7777",
-                "13YqenFJe65F1bVsiYaggkghx8AS5FCudoKQG3BKNutR7SFUprZNwTDTaUivp9XKATRAvi1Kh59ztmF9ccLxNLWzm8eoxoLRWvH7su2",
-                "abc");
-        System.out.println(access.serialize());
-
-        try (Project project = uplink.openProject(access)) {
-            BucketInfo created = project.statBucket("michal");
-            System.out.println(created.getName());
-
-            final List<BucketInfo> buckets = new ArrayList<>();
-            project.listBuckets().iterate(new Buckets.BucketsIterator() {
-                @Override
-                public void iterate(Iterable<BucketInfo> items) {
-                    for (BucketInfo bucket : items) {
-                        buckets.add(bucket);
-                    }
-                }
-            });
-
-            System.out.println(buckets);
-        }
-    }
-
 }
