@@ -50,7 +50,7 @@ public class LibuplinkInstrumentedTest {
         };
     }
 
-    //    @Test
+    @Test
     public void testBuckets() throws Exception {
         Uplink uplink = new Uplink(uplinkOptions);
         try (Project project = uplink.openProject(ACCESS)) {

@@ -8,7 +8,7 @@ import com.sun.jna.Structure;
 
 public interface Uplink extends Library {
 
-    public static final Uplink INSTANCE = Native.load("gojni", Uplink.class);
+    public static final Uplink INSTANCE = Native.load("uplink", Uplink.class);
 
     public static final int EOF = -1;
     public static final int ERROR_UPLOAD_DONE = (int) 0x22;

@@ -38,3 +38,6 @@ captures/
 .idea/jarRepositories.xml
 .idea/workspace.xml
 .idea/codeStyles/Project.xml
+
+.build/
+*.log
