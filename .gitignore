@@ -1,8 +1,6 @@
 .gradle
 local.properties
 /build/
-/.idea/libraries
-/.idea/caches
 
 # Ignore Gradle GUI config
 gradle-app.setting
@@ -17,3 +15,34 @@ gradle-app.setting
 # gradle/wrapper/gradle-wrapper.properties
 
 /libuplink_android/libs/
+
+# Android Studio Navigation editor temp files
+.navigation/
+
+# Android Studio captures folder
+captures/
+
+# IntelliJ
+*.iml
+.idea/encodings.xml
+.idea/runConfigurations.xml
+.idea/vcs.xml
+.idea/tasks.xml
+.idea/gradle.xml
+.idea/assetWizardSettings.xml
+.idea/dictionaries
+.idea/libraries
+# Android Studio 3 in .gitignore file.
+.idea/caches
+.idea/modules.xml
+# Comment next line if keeping position of elements in Navigation Editor is relevant for you
+.idea/navEditor.xml
+.idea/misc.xml
+.idea/jarRepositories.xml
+.idea/workspace.xml
+.idea/codeStyles/Project.xml
+
+.build/
+*.log
+
+.idea/compiler.xml

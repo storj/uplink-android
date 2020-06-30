@@ -1,0 +1,119 @@
+plugins {
+    id 'com.android.library'
+    id 'com.jfrog.bintray' version '1.8.5'
+    id 'maven-publish'
+}
+
+// To release libuplink-android to Bintray
+// ./gradlew clean :uplink-android:bintrayUpload
+
+def libraryVersion = '1.0.0-rc.1'
+version = libraryVersion
+
+android {
+    compileSdkVersion 28
+
+    defaultConfig {
+        minSdkVersion 21
+        targetSdkVersion 28
+        versionCode 1
+        versionName libraryVersion
+
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+afterEvaluate {
+    publishing {
+        publications {
+            release(MavenPublication) {
+                from components.release
+
+                groupId = 'io.storj'
+                artifactId = 'uplink-android'
+                version
+                
+                artifact tasks.sourcesJar
+                artifact tasks.javadocsJar
+            }
+        }
+    }
+}
+
+task javadoc(type: Javadoc) {
+    failOnError false
+    source = android.sourceSets.main.java.sourceFiles
+    classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
+    classpath += configurations.compile
+}
+
+task javadocsJar(type: Jar) {
+    dependsOn javadoc
+
+    from javadoc.destinationDir
+    archiveClassifier.set("javadoc")
+}
+
+task sourcesJar(type: Jar) {
+    from android.sourceSets.main.java.srcDirs
+    archiveClassifier.set("sources")
+}
+
+task buildJniLibs(type :Exec) {
+    def localProperties = new File(project.rootDir, "local.properties")
+    if (localProperties.exists()) {
+        Properties properties = new Properties()
+        localProperties.withInputStream { instr ->
+            properties.load(instr)
+        }
+        environment "ANDROID_HOME", properties.getProperty('sdk.dir')
+    }
+
+    commandLine 'sh', './scripts/build-android.sh'
+}
+
+project.afterEvaluate {
+    preBuild.dependsOn buildJniLibs
+}
+
+bintray {
+    user = System.getenv('BINTRAY_USER')
+    key  = System.getenv('BINTRAY_API_KEY')
+    pkg {
+        repo = 'maven'
+        name = 'uplink-android'
+        userOrg = 'storj'
+        licenses = ['MIT']
+        vcsUrl = 'https://github.com/storj/uplink-android.git'
+        publish = false
+//        override = true
+        version {
+            name = libraryVersion
+            vcsTag = libraryVersion
+        }
+    }
+    publications = ['release']
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+
+    implementation 'com.android.support:appcompat-v7:28.0.0'
+    testImplementation 'junit:junit:4.12'
+    androidTestImplementation 'com.android.support.test:runner:1.0.2'
+    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
+    androidTestImplementation 'com.google.guava:guava:29.0-android'
+
+    api ('io.storj:uplink-java:1.0.0-rc.1') {
+        exclude group: 'net.java.dev.jna', module: 'jna'
+    }
+    implementation 'net.java.dev.jna:jna:5.5.0@aar'
+}
