@@ -1,7 +1,7 @@
 # android-libuplink
 
 [![Storj.io](https://storj.io/img/storj-badge.svg)](https://storj.io)
-[![Javadocs](https://img.shields.io/badge/javadoc-0.12.0-blue.svg)](https://storj.github.io/uplink-android/javadoc/0.12.0/)
+[![Javadocs](https://img.shields.io/badge/javadoc-1.0.0--rc.1-blue.svg)](https://storj.github.io/uplink-android/javadoc/1.0.0-rc.1/)
 
 Android bindings to Storj V3 libuplink.
 
@@ -15,7 +15,7 @@ Add the Gradle dependency to the `build.gradle` file of the app module:
 
 ```Gradle
 dependencies {
-    implementation 'io.storj:uplink-android:1.0.0'
+    implementation 'io.storj:uplink-android:1.0.0-rc.1'
 }
 ```
 
@@ -189,34 +189,35 @@ public class DownloadTask extends AsyncTask<Void, Long, Throwable> {
 
     private Access mAccess;
     private String mBucket;
-    private ObjectInfo mFile;
+    private ObjectInfo mInfo;
     private File mLocalFile;
 
     private int mNotificationId;
     private long mDownloadedBytes;
     private long mLastNotifiedTime;
 
-    DownloadTask(Access access, String bucket, ObjectInfo file, File localFile) {
+    DownloadTask(Access access, String bucket, ObjectInfo info, File localFile) {
         mAccess = access;
         mBucket = bucket;
-        mFile = file;
+        mInfo = info;
         mLocalFile = localFile;
     }
 
     @Override
     protected Exception doInBackground(Void... params) {
-        Uplink uplink = new Uplink();
-        try (Project project = uplink.openProject(mAccess);
-             ObjectInputStream in = project.downloadObject(mBucket, mFile.getKey());
+        try (Project project = new Uplink().openProject(mAccess);
+             ObjectInputStream in = project.downloadObject(mBucket, mInfo.getKey());
              OutputStream out = new FileOutputStream(mLocalFile)) {
             byte[] buffer = new byte[128 * 1024];
             int len;
             while ((len = in.read(buffer)) != -1) {
                 if (isCancelled()) {
+                    // exiting the try-with-resource block aborts the download process
                     return null;
                 }
                 out.write(buffer, 0, len);
                 if (isCancelled()) {
+                    // exiting the try-with-resource block aborts the download process
                     return null;
                 }
                 publishProgress((long) len);
@@ -224,8 +225,6 @@ public class DownloadTask extends AsyncTask<Void, Long, Throwable> {
         } catch (StorjException | IOException e) {
             return e;
         }
-
-        return null;
     }
 
     @Override
@@ -236,7 +235,8 @@ public class DownloadTask extends AsyncTask<Void, Long, Throwable> {
         long now = System.currentTimeMillis();
 
         // Calculate the progress in percents.
-        int progress = (int) ((mDownloadedBytes * 100) / mFile.getSize());
+        long size = mFile.getSystemMetadata().getContentLength();
+        int progress = (size == 0) ? 100 : (int) ((mDownloadedBytes * 100) / size);
 
         // Check if 1 second elapsed since last notification or progress is at 100%.
         if (progress == 100 || mLastNotifiedTime == 0 || now > mLastNotifiedTime + 1150) {
@@ -280,7 +280,7 @@ Note the importance of specifying the location of the temp directory using the `
 
 ```java
 Access access = ...;
-String tempDir = mActivity.getCacheDir().getPath();
+String tempDir = ...;
 Uplink uplink = new Uplink(UplinkOption.tempDir(tempDir));
 try (Project project = uplink.openProject(access);
         OutputStream out = project.uploadObject("my-bucket", "key/to/my/object");
@@ -306,9 +306,9 @@ Note the importance of specifying the location of the temp directory using the `
 ```java
 public class UploadTask extends AsyncTask<Void, Long, Throwable> {
 
-    private Scope mScope;
+    private Access mAccess;
     private String mBucket;
-    private String objectPath;
+    private String mObjectKey;
     private File mFile;
     private String mTempDir;
 
@@ -316,12 +316,10 @@ public class UploadTask extends AsyncTask<Void, Long, Throwable> {
     private long mUploadedBytes;
     private long mLastNotifiedTime;
 
-    private ObjectOutputStream mOutputStream;
-
-    UploadTask(Scope scope, String bucket, String objectPath, File file, String tempDir) {
-        mScope = scope;
+    UploadTask(Access access, String bucket, String objectKey, File file, String tempDir) {
+        mAccess = scope;
         mBucket = bucket;
-        mObjectPath = objectPath;
+        mObjectKey = objectKey;
         mFile = file;
         mTempDir = tempDir;
         mFileSize = mFile.length();
@@ -329,27 +327,27 @@ public class UploadTask extends AsyncTask<Void, Long, Throwable> {
 
     @Override
     protected Exception doInBackground(Void... params) {
-        try (Uplink uplink = new Uplink(UplinkOption.tempDir(mTempDir));
-             Project project = uplink.openProject(mScope);
-             Bucket bucket = project.openBucket(mBucket, mScope);
-             InputStream in = new FileInputStream(mFile.getPath());
-             ObjectOutputStream out = new ObjectOutputStream(bucket, mObjectPath)) {
-            mOutputStream = out;
+        Uplink uplink = new Uplink(UplinkOption.tempDir(mTempDir));
+        try (Project project = uplink.openProject(mAccess);
+             InputStream in = new FileInputStream(mFilePath);
+             ObjectOutputStream out = project.uploadObject(mBucket, mObjectKey)) {
             byte[] buffer = new byte[128 * 1024];
             int len;
             while ((len = in.read(buffer)) != -1) {
                 if (isCancelled()) {
-                    out.cancel();
+                    // exiting the try-with-resource block without commit aborts the upload process
                     return null;
                 }
                 out.write(buffer, 0, len);
                 if (isCancelled()) {
-                    out.cancel();
+                    // exiting the try-with-resource block without commit aborts the upload process
                     return null;
                 }
                 publishProgress((long) len);
             }
+            out.commit();
         } catch (StorjException | IOException e) {
+            // exiting the try-with-resource block without commit aborts the upload process
             return e;
         }
 
@@ -364,9 +362,9 @@ public class UploadTask extends AsyncTask<Void, Long, Throwable> {
         long now = System.currentTimeMillis();
 
         // Calculate the progress in percents.
-        int progress = (int) ((mUploadedBytes * 100) / mFileSize);
+        int progress = (mFileSize == 0) ? 100 : (int) ((mUploadedBytes * 100) / mFileSize);
 
-        // Check if 1 second elapsed since last notification or progress is at 100%.
+        // check if 1 second elapsed since last notification or progress is at 100%
         if (progress == 100 || mLastNotifiedTime == 0 || now > mLastNotifiedTime + 1150) {
             // Place your code here to update the GUI with the new progress.
             mLastNotifiedTime = now;
@@ -396,7 +394,6 @@ public class UploadTask extends AsyncTask<Void, Long, Throwable> {
      */
     void cancel() {
         this.cancel(false);
-        mOutputStream.cancel();
     }
 }
 ```
@@ -452,7 +449,7 @@ Below is an example for uploading a file and preparing the restricted `Access` G
 
 ```java
 Access access = ...;
-String tempDir = mActivity.getCacheDir().getPath();
+String tempDir = ...;
 Uplink uplink = new Uplink(UplinkOption.tempDir(tempDir));
 try (Project project = uplink.openProject(access);
         OutputStream out = project.uploadObject("my-bucket", "key/to/my/object");
