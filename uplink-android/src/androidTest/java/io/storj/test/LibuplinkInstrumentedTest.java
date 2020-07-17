@@ -37,6 +37,7 @@ import static org.junit.Assert.fail;
 public class LibuplinkInstrumentedTest {
 
     private static final String VALID_ACCESS = InstrumentationRegistry.getArguments().getString("access", "13GRuHAWnYKcVBgHKbpg6yNT7p4mfjAPjzWKNu771WT2sgLmyMSanBpFFhoNubNN4Gr7m55LQrR4JR8dfC86MGsWGe11poahaRGs6bRgvJj3cBTZyP2NCE21SsaV3qAcBvzcuvZGBocdw4A6mZiUZVi14JWkhk3Kd5iXyhoBCU69845CvU2My3Qv");
+
     private static Access ACCESS;
 
     private UplinkOption[] uplinkOptions;
@@ -110,7 +111,7 @@ public class LibuplinkInstrumentedTest {
         }
     }
 
-    @Test
+//    @Test
     public void testObjects() throws Exception {
         Uplink uplink = new Uplink(uplinkOptions);
         try (Project project = uplink.openProject(ACCESS)) {
@@ -170,7 +171,7 @@ public class LibuplinkInstrumentedTest {
         }
     }
 
-    @Test
+//    @Test
     public void testObjectsListing() throws Exception {
         Uplink uplink = new Uplink(uplinkOptions);
         try (Project project = uplink.openProject(ACCESS)) {
@@ -213,7 +214,7 @@ public class LibuplinkInstrumentedTest {
         }
     }
 
-    @Test
+//    @Test
     public void testUploadDownloadParallel() throws Exception {
         ExecutorService executor
                 = Executors.newFixedThreadPool(4);
@@ -282,7 +283,7 @@ public class LibuplinkInstrumentedTest {
         }
     }
 
-    @Test
+//    @Test
     public void testPermissions() throws Exception {
         String testData = "test-data";
         Uplink uplink = new Uplink(uplinkOptions);
@@ -328,7 +329,7 @@ public class LibuplinkInstrumentedTest {
         }
     }
 
-    @Test
+//    @Test
     public void testAccess() throws Exception {
         String serializedAccess = VALID_ACCESS;
         Access access = Access.parse(serializedAccess);
@@ -347,7 +348,7 @@ public class LibuplinkInstrumentedTest {
         sharedAccess.overrideEncryptionKey("bucket2", "my-prefix/", new EncryptionKey("strong-pass", "salt".getBytes()));
     }
 
-    @Test
+//    @Test
     public void testErrors() throws Exception {
         try {
             Access access = Access.parse("INVALID_ACCESS");

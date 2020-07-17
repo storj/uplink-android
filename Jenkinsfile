@@ -2,7 +2,7 @@ pipeline {
     agent {
         docker {
             label 'main'
-            image docker.build("storj-ci", "--pull https://github.com/storj/ci.git").id
+            image docker.build("storj-ci", "--pull https://github.com/storj/ci.git#:android").id
             args '-u root:root --cap-add SYS_PTRACE -v "/tmp/gomod":/go/pkg/mod'
         }
     }
@@ -20,25 +20,26 @@ pipeline {
             }
         }
 
-        // stage('Verification') {
-        //     parallel {
-        //         stage('Testsuite') {
-        //             environment {
-        //                 STORJ_SIM_POSTGRES = 'postgres://postgres@localhost/teststorj?sslmode=disable'
-        //             }
-        //             steps {
-        //                 sh 'psql -U postgres -c \'create database teststorj;\''
-        //                 sh './scripts/test-java.sh'
-        //             }
+        stage('Verification') {
+            parallel {
+                stage('Testsuite') {
+                    environment {
+                        ANDROID_HOME = '/opt/android-sdk-linux'
+                        STORJ_SIM_POSTGRES = 'postgres://postgres@localhost/teststorj?sslmode=disable'
+                    }
+                    steps {
+                        sh 'psql -U postgres -c \'create database teststorj;\''
+                        sh './scripts/test-android.sh'
+                    }
 
-        //             post {
-        //                 always {
-        //                     junit 'uplink-java/build/test-results/test/TEST-io.storj.UplinkTest.xml'
-        //                 }
-        //             }
-        //         }
-        //     }
-        // }
+                    post {
+                        always {
+                            junit 'uplink-android/build/outputs/androidTest-results/connected/TEST-android_libuplink_test(AVD) - 7.0-uplink-android-.xml'
+                        }
+                    }
+                }
+            }
+        }
     }
 
     post {

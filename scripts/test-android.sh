@@ -10,6 +10,18 @@ fi
 
 SCRIPTDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 
+go install \
+	storj.io/storj/cmd/certificates \
+	storj.io/storj/cmd/identity \
+	storj.io/storj/cmd/satellite \
+	storj.io/storj/cmd/storagenode \
+	storj.io/storj/cmd/versioncontrol \
+	storj.io/storj/cmd/storj-sim
+
+go install storj.io/gateway
+
+$SCRIPTDIR/../uplink-android/scripts/build-android.sh
+
 PORT=5555
 SERIAL=emulator-${PORT}
 
@@ -30,7 +42,7 @@ echo "no" | $ANDROID_HOME/tools/bin/avdmanager create avd --name "${AVD_NAME}" -
 echo "AVD ${AVD_NAME} created."
 
 # -no-accel needs to be added for Jenkins build 
-$ANDROID_HOME/emulator/emulator-headless -avd ${AVD_NAME} -port ${PORT} -no-boot-anim -no-audio -gpu swiftshader_indirect 2>&1 &
+$ANDROID_HOME/emulator/emulator -avd ${AVD_NAME} -port ${PORT} -no-window -no-boot-anim -no-audio -gpu swiftshader_indirect -no-accel 2>&1 &
 
 #Ensure Android Emulator has booted successfully before continuing
 # TODO add max number of checks and timeout
