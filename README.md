@@ -1,7 +1,7 @@
 # android-libuplink
 
 [![Storj.io](https://storj.io/img/storj-badge.svg)](https://storj.io)
-[![Javadocs](https://img.shields.io/badge/javadoc-0.12.0-blue.svg)](https://storj.github.io/uplink-android/javadoc/0.12.0/)
+[![Javadocs](https://img.shields.io/badge/javadoc-1.0.0--rc.1-blue.svg)](https://storj.github.io/uplink-android/javadoc/1.0.0-rc.1/)
 
 Android bindings to Storj V3 libuplink.
 
@@ -15,19 +15,17 @@ Add the Gradle dependency to the `build.gradle` file of the app module:
 
 ```Gradle
 dependencies {
-    implementation 'io.storj:libuplink-android:0.12.0'
+    implementation 'io.storj:uplink-android:1.0.0-rc.1'
 }
 ```
 
 ## Usage
 
-+ [API Key](#api-key)
-  - [Parsing serialized API key from string](#parsing-serialized-api-key-from-string)
-+ [Scope](#scope)
-  - [Creating new scope from passphrase](#creating-new-scope-from-passphrase)
-  - [Resticting access of scope](#resticting-access-of-scope)
-  - [Serializing scope to string](#serializing-scope-to-string)
-  - [Parsing serialized scope from string](#parsing-serialized-scope-from-string)
++ [Access Grant](#access-grant)
+  - [Creating new access grant from passphrase](#creating-new-access-grant-from-passphrase)
+  - [Sharing access grant](#sharing-access-grant)
+  - [Serializing access grant to string](#serializing-access-grant-to-string)
+  - [Parsing serialized access grant from string](#parsing-serialized-access-grant-from-string)
 + [Buckets](#buckets)
   - [Creating new bucket](#creating-new-bucket)
   - [Getting info about a bucket](#getting-info-about-a-bucket)
@@ -43,70 +41,51 @@ dependencies {
   - [Deleting an object](#deleting-an-object)
 + [Sharing content](#sharing-content)
 
-### API Key
+### Access Grant
 
-The `ApiKey` contains the access key to a project on the satellite.
-
-#### Parsing serialized API key from string
-
-API keys are obtained from the satellite Web interface as a serialized string. They must be parsed to `ApiKey` object.
-
-```java
-String serializedApiKey = "13Yqft7v...";
-ApiKey apiKey = ApiKey.parse(serializedApiKey);
-```
-
-### Scope
-
-The `Scope` contains all information required to access resources on the Storj network:
+The `Access Grant` contains all information required to access resources on the Storj network:
 - Satellite Address where metadata is stored
 - API Key for accessing a project on the satellite
 - Encryption Access for decrypting the content
 
-#### Creating new scope from passphrase
+#### Creating new access grant from passphrase
 
-New `Scope` can be created from Satellite Address, API Key and passphrase.
+New `Access Grant` can be requested from satellite with Satellite Address, API Key and passphrase.
 
 ```java
 String satelliteAddress = "us-central-1.tardigrade.io:7777";
 String serializedApiKey = "13Yqft7v...";
 String passphrase = "super secret passphrase";
 
-ApiKey apiKey = ApiKey.parse(serializedApiKey);
-try (Uplink uplink = new Uplink();
-     Project project = uplink.openProject(satelliteAddress, apiKey)) {
-    Key saltedKey = Key.getSaltedKeyFromPassphrase(project, passphrase);
-    EncryptionAccess access = new EncryptionAccess(saltedKey);
-    Scope scope = new Scope(satelliteAddress, apiKey, access);
-}
+Uplink uplink = new Uplink();
+Access access = uplink.requestAccessWithPassphrase(satelliteAddress, serializedApiKey, passphrase);
 ```
 
-#### Resticting access of scope
+#### Sharing access grant
 
-Scopes can be restricted in terms of allowed operations and access to specific buckets and objects.
+`Access Grant` can be shared in terms of allowed operations and access to specific buckets and objects.
 
 ```java
-Scope sharedScope = SCOPE.restrict(
-        new Caveat.Builder().disallowDeletes(true).disallowWrites(true).build(),
-        new EncryptionRestriction("my-bucket", "pictures/birthday/"));
+Permission permission = new Permission.Builder().allowDownload().allowList().build();
+access.share(permission, new SharePrefix("my-bucket", "pictures/birthday/"));
 ```
 
-#### Serializing scope to string
+#### Serializing access grant to string
 
-Scopes can be serialized to string for easy sharing.
+`Access Grant` can be serialized to string for easy sharing.
 
 ```java
-Scope scope = ...;
-String serializedScope = scope.serialize(); 
+Access access = ...;
+String serializedAccess = access.serialize(); 
 ```
 
-#### Parsing serialized scope from string
+#### Parsing serialized access grant from string
 
-If received a serialized Scope as a string, it can be parsed to `Scope` object.
+If received a serialized `Access Grant` as a string, it can be parsed to `Access` object.
 
 ```java
-String serializedScope = "13GRuHAW...";
-Scope scope = Scope.parse(serializedScope);
+String serializedAccess = "13GRuHAW...";
+Access access = Access.parse(serializedAccess);
 ```
 
 ### Buckets
@@ -114,31 +93,31 @@ Scope scope = Scope.parse(serializedScope);
 #### Creating new bucket
 
 ```java
-Scope scope = ...;
-try (Uplink uplink = new Uplink();
-     Project project = uplink.openProject(scope)) {
-    project.createBucket("my-bucket"));
+Access access = ...;
+Uplink uplink = new Uplink();
+try (Project project = uplink.openProject(access)) {
+    project.createBucket("my-bucket");
 }
 ```
 
 #### Getting info about a bucket
 
 ```java
-Scope scope = ...;
-try (Uplink uplink = new Uplink();
-     Project project = uplink.openProject(scope)) {
-    BucketInfo info = project.getBucketInfo("my-bucket"));
+Access access = ...;
+Uplink uplink = new Uplink();
+try (Project project = uplink.openProject(access)) {
+    BucketInfo info = project.statBucket("my-bucket"));
 }
 ```
 
 #### Listing buckets
 
 ```java
-Scope scope = ...;
-try (Uplink uplink = new Uplink();
-     Project project = uplink.openProject(scope)) {
-    Iterable<BucketInfo> buckets = project.listBucket();
-    for (BucketInfo bucket : buckets) {
+Access access = ...;
+Uplink uplink = new Uplink();
+try (Project project = uplink.openProject(access);
+        BucketIterator iterator = project.listBuckets()) {
+    for (BucketInfo info : iterator) {
         // Do something for each bucket.
     }
 }
@@ -147,10 +126,10 @@ try (Uplink uplink = new Uplink();
 #### Deleting a bucket
 
 ```java
-Scope scope = ...;
-try (Uplink uplink = new Uplink();
-     Project project = uplink.openProject(scope)) {
-    project.deleteBucket("my-bucket"));
+Access access = ...;
+Uplink uplink = new Uplink();
+try (Project project = uplink.openProject(access)) {
+    BucketInfo info = project.deleteBucket("my-bucket"));
 }
 ```
 
@@ -158,31 +137,42 @@ try (Uplink uplink = new Uplink();
 
 #### Downloading an object
 
-Below is the easiest way for downloading a complete object to a local file. `bucket.downloadObject` is a blocking operation. It will return when the download is complete.
+Below is the easiest way for downloading a complete object to a local file.
 
 ```java
-Scope scope = ...;
-try (Uplink uplink = new Uplink();
-     Project project = uplink.openProject(scope);
-     Bucket bucket = project.openBucket("my-bucket", scope);
-     OutputStream out = new FileOutputStream("path/to/local/file")) {
-    bucket.downloadObject("path/to/my/object", out);
+Access access = ...;
+Uplink uplink = new Uplink();
+try (Project project = uplink.openProject(access);
+        InputStream in = project.downloadObject("my-bucket", "key/to/my/object");
+        OutputStream out = new FileOutputStream("path/to/local/file")) {
+    byte[] buffer = new byte[8 * 1024];
+    int bytesRead;
+    while ((bytesRead = in.read(buffer)) != -1) {
+        out.write(buffer, 0, bytesRead);
+    }
 }
 ```
 
 #### Downloading a range of an object
 
-If only a portion of the object should be downloaded, this can be specified with the `off` and `len` parameters. The example below will download only 4 KiB from the object, starting at 1 KiB offset.
+If only a portion of the object should be downloaded, this can be specified with download options. The example below will download only 4 KiB from the object, starting at 1 KiB offset.
 
 ```java
-Scope scope = ...;
-long off = 1024;
-long len = 4096;
-try (Uplink uplink = new Uplink();
-     Project project = uplink.openProject(scope);
-     Bucket bucket = project.openBucket("my-bucket", scope);
-     OutputStream out = new FileOutputStream("path/to/local/file")) {
-    bucket.downloadObject("path/to/my/object", out, off, len);
+Access access = ...;
+Uplink uplink = new Uplink();
+ObjectDownloadOption[] options = new ObjectDownloadOption[]{
+        ObjectDownloadOption.offset(1024),
+        ObjectDownloadOption.length(4096)
+};
+try (Project project = uplink.openProject(access);
+        InputStream in = project.downloadObject("my-bucket", "key/to/my/object",
+                options);
+        OutputStream out = new FileOutputStream("path/to/local/file")) {
+    byte[] buffer = new byte[8 * 1024];
+    int bytesRead;
+    while ((bytesRead = in.read(buffer)) != -1) {
+        out.write(buffer, 0, bytesRead);
+    }
 }
 ```
 
@@ -197,40 +187,37 @@ The example below shows how to download with progress monitoring and cancellatio
 ```java
 public class DownloadTask extends AsyncTask<Void, Long, Throwable> {
 
-    private Scope mScope;
-    private ObjectInfo mFile;
+    private Access mAccess;
+    private String mBucket;
+    private ObjectInfo mInfo;
     private File mLocalFile;
 
     private int mNotificationId;
     private long mDownloadedBytes;
     private long mLastNotifiedTime;
 
-    private ObjectInputStream mInputStream;
-
-    DownloadTask(Scope scope, ObjectInfo file, File localFile) {
-        mScope scope;
-        mFile = file;
+    DownloadTask(Access access, String bucket, ObjectInfo info, File localFile) {
+        mAccess = access;
+        mBucket = bucket;
+        mInfo = info;
         mLocalFile = localFile;
     }
 
     @Override
     protected Exception doInBackground(Void... params) {
-        try (Uplink uplink = new Uplink();
-             Project project = uplink.openProject(mScope);
-             Bucket bucket = project.openBucket(mFile.getBucket(), mScope);
-             ObjectInputStream in = new ObjectInputStream(bucket, mFile.getPath());
+        try (Project project = new Uplink().openProject(mAccess);
+             ObjectInputStream in = project.downloadObject(mBucket, mInfo.getKey());
              OutputStream out = new FileOutputStream(mLocalFile)) {
-            mInputStream = in;
             byte[] buffer = new byte[128 * 1024];
             int len;
             while ((len = in.read(buffer)) != -1) {
                 if (isCancelled()) {
-                    in.cancel();
+                    // exiting the try-with-resource block aborts the download process
                     return null;
                 }
                 out.write(buffer, 0, len);
                 if (isCancelled()) {
-                    in.cancel();
+                    // exiting the try-with-resource block aborts the download process
                     return null;
                 }
                 publishProgress((long) len);
@@ -238,8 +225,6 @@ public class DownloadTask extends AsyncTask<Void, Long, Throwable> {
         } catch (StorjException | IOException e) {
             return e;
         }
-
-        return null;
     }
 
     @Override
@@ -250,7 +235,8 @@ public class DownloadTask extends AsyncTask<Void, Long, Throwable> {
         long now = System.currentTimeMillis();
 
         // Calculate the progress in percents.
-        int progress = (int) ((mDownloadedBytes * 100) / mFile.getSize());
+        long size = mFile.getSystemMetadata().getContentLength();
+        int progress = (size == 0) ? 100 : (int) ((mDownloadedBytes * 100) / size);
 
         // Check if 1 second elapsed since last notification or progress is at 100%.
         if (progress == 100 || mLastNotifiedTime == 0 || now > mLastNotifiedTime + 1150) {
@@ -282,25 +268,28 @@ public class DownloadTask extends AsyncTask<Void, Long, Throwable> {
      */
     void cancel() {
         this.cancel(false);
-        mInputStream.cancel();
     }
 }
 ```
 
 #### Uploading new object
 
-Below is the easiest way for uploading new object. `bucket.uploadObject` is a blocking operation. It will return when the upload is complete.
+Below is the easiest way for uploading new object.
 
 Note the importance of specifying the location of the temp directory using the `UplinkOption.tempDir()` option. This is where the file being uploaded will be first encrypted before actually uploaded into pieces to the Storj network. For Android, it is recommended to set the temp directory to the application's cache directory.
 
 ```java
-Scope scope = ...;
-String tempDir = mActivity.getCacheDir().getPath();
-try (Uplink uplink = new Uplink(UplinkOption.tempDir(tempDir));
-     Project project = uplink.openProject(scope);
-     Bucket bucket = project.openBucket("my-bucket", scope);
-     InputStream in = new FileInputStream("path/to/local/file")) {
-    bucket.uploadObject("path/to/my/object", in);
+Access access = ...;
+String tempDir = ...;
+Uplink uplink = new Uplink(UplinkOption.tempDir(tempDir));
+try (Project project = uplink.openProject(access);
+        OutputStream out = project.uploadObject("my-bucket", "key/to/my/object");
+        InputStream in = new FileInputStream("path/to/local/file")) {
+    byte[] buffer = new byte[8 * 1024];
+    int bytesRead;
+    while ((bytesRead = in.read(buffer)) != -1) {
+        out.write(buffer, 0, bytesRead);
+    }
 }
 ```
 
@@ -317,9 +306,9 @@ Note the importance of specifying the location of the temp directory using the `
 ```java
 public class UploadTask extends AsyncTask<Void, Long, Throwable> {
 
-    private Scope mScope;
+    private Access mAccess;
     private String mBucket;
-    private String objectPath;
+    private String mObjectKey;
     private File mFile;
     private String mTempDir;
 
@@ -327,12 +316,10 @@ public class UploadTask extends AsyncTask<Void, Long, Throwable> {
     private long mUploadedBytes;
     private long mLastNotifiedTime;
 
-    private ObjectOutputStream mOutputStream;
-
-    UploadTask(Scope scope, String bucket, String objectPath, File file, String tempDir) {
-        mScope = scope;
+    UploadTask(Access access, String bucket, String objectKey, File file, String tempDir) {
+        mAccess = scope;
         mBucket = bucket;
-        mObjectPath = objectPath;
+        mObjectKey = objectKey;
         mFile = file;
         mTempDir = tempDir;
         mFileSize = mFile.length();
@@ -340,27 +327,27 @@ public class UploadTask extends AsyncTask<Void, Long, Throwable> {
 
     @Override
     protected Exception doInBackground(Void... params) {
-        try (Uplink uplink = new Uplink(UplinkOption.tempDir(mTempDir));
-             Project project = uplink.openProject(mScope);
-             Bucket bucket = project.openBucket(mBucket, mScope);
-             InputStream in = new FileInputStream(mFile.getPath());
-             ObjectOutputStream out = new ObjectOutputStream(bucket, mObjectPath)) {
-            mOutputStream = out;
+        Uplink uplink = new Uplink(UplinkOption.tempDir(mTempDir));
+        try (Project project = uplink.openProject(mAccess);
+             InputStream in = new FileInputStream(mFilePath);
+             ObjectOutputStream out = project.uploadObject(mBucket, mObjectKey)) {
             byte[] buffer = new byte[128 * 1024];
             int len;
             while ((len = in.read(buffer)) != -1) {
                 if (isCancelled()) {
-                    out.cancel();
+                    // exiting the try-with-resource block without commit aborts the upload process
                     return null;
                 }
                 out.write(buffer, 0, len);
                 if (isCancelled()) {
-                    out.cancel();
+                    // exiting the try-with-resource block without commit aborts the upload process
                     return null;
                 }
                 publishProgress((long) len);
             }
+            out.commit();
         } catch (StorjException | IOException e) {
+            // exiting the try-with-resource block without commit aborts the upload process
             return e;
         }
 
@@ -375,9 +362,9 @@ public class UploadTask extends AsyncTask<Void, Long, Throwable> {
         long now = System.currentTimeMillis();
 
         // Calculate the progress in percents.
-        int progress = (int) ((mUploadedBytes * 100) / mFileSize);
+        int progress = (mFileSize == 0) ? 100 : (int) ((mUploadedBytes * 100) / mFileSize);
 
-        // Check if 1 second elapsed since last notification or progress is at 100%.
+        // check if 1 second elapsed since last notification or progress is at 100%
         if (progress == 100 || mLastNotifiedTime == 0 || now > mLastNotifiedTime + 1150) {
             // Place your code here to update the GUI with the new progress.
             mLastNotifiedTime = now;
@@ -407,7 +394,6 @@ public class UploadTask extends AsyncTask<Void, Long, Throwable> {
      */
     void cancel() {
         this.cancel(false);
-        mOutputStream.cancel();
     }
 }
 ```
@@ -417,10 +403,9 @@ public class UploadTask extends AsyncTask<Void, Long, Throwable> {
 Listing the content of a bucket, non-recursive:
 
 ```java
-Scope scope = ...;
-try (Uplink uplink = new Uplink();
-     Project project = uplink.openProject(scope);
-     Bucket bucket = project.openBucket("my-bucket", scope)) {
+Access access = ...;
+Uplink uplink = new Uplink();
+try (Project project = uplink.openProject(access)) {
     Iterable<ObjectInfo> objects = bucket.listObjects();
     for (ObjectInfo object : objects) {
         // Do something for each object.
@@ -431,12 +416,11 @@ try (Uplink uplink = new Uplink();
 Listing all content under specific prefix, recursive:
 
 ```java
-Scope scope = ...;
-try (Uplink uplink = new Uplink();
-     Project project = uplink.openProject(scope);
-     Bucket bucket = project.openBucket("my-bucket", scope)) {
-    Iterable<ObjectInfo> objects = bucket.listObjects(
-        ObjectListOption.prefix("some/path/prefix"), ObjectListOption.recursive(true));
+Access access = ...;
+Uplink uplink = new Uplink();
+try (Project project = uplink.openProject(access);
+        ObjectIterator objects = project.listObjects("my-bucket",
+                ObjectListOption.prefix("some/key/prefix"), ObjectListOption.recursive())) {
     for (ObjectInfo object : objects) {
         // Do something for each object.
     }
@@ -446,11 +430,10 @@ try (Uplink uplink = new Uplink();
 #### Deleting an object
 
 ```java
-Scope scope = ...;
-try (Uplink uplink = new Uplink();
-     Project project = uplink.openProject(scope);
-     Bucket bucket = project.openBucket("my-bucket", scope)) {
-    bucket.deleteObject("path/to/my/object"));
+Access access = ...;
+Uplink uplink = new Uplink();
+try (Project project = uplink.openProject(access)) {
+    project.deleteObject("my-bucket", "key/to/my/object"));
 }
 ```
 
@@ -458,45 +441,52 @@ try (Uplink uplink = new Uplink();
 
 Sharing content on the Storj network is achieved by sharing the following pieces of information to the receiving party:
 
-1. A serialized restricted `Scope` to access the shared content.
+1. A serialized shared `Access` Grant to access the shared content.
 1. The bucket name containing the shared content.
-1. The object path or prefix to the share content.
+1. The object key or prefix to the share content.
 
-Below is an example for uploading a file and preparing the restricted `Scope`:
+Below is an example for uploading a file and preparing the restricted `Access` Grant:
 
 ```java
-Scope scope = ...;
-String tempDir = mActivity.getCacheDir().getPath();
-try (Uplink uplink = new Uplink(UplinkOption.tempDir(tempDir));
-     Project project = uplink.openProject(scope);
-     Bucket bucket = project.openBucket("my-bucket", scope);
-     InputStream in = new FileInputStream("path/to/local/file")) {
-    bucket.uploadObject("path/to/my/object", in);
+Access access = ...;
+String tempDir = ...;
+Uplink uplink = new Uplink(UplinkOption.tempDir(tempDir));
+try (Project project = uplink.openProject(access);
+        OutputStream out = project.uploadObject("my-bucket", "key/to/my/object");
+        InputStream in = new FileInputStream("path/to/local/file")) {
+    byte[] buffer = new byte[8 * 1024];
+    int bytesRead;
+    while ((bytesRead = in.read(buffer)) != -1) {
+        out.write(buffer, 0, bytesRead);
+    }
 }
 
-// Share a read-only scope to "my-bucket/path/to/my" folder.
-// It is possible to restrict the scope only to "my-bucket/path/to/my/file" object too.
-Scope sharedScope = scope.restrict(
-        new Caveat.Builder().disallowDeletes(true).disallowWrites(true).build(),
-        new EncryptionRestriction("my-bucket", "path/to/my"));
+// Share a read-only access grant to "my-bucket/key/to/my" prefix.
+// It is possible to share the access grant only to "my-bucket/key/to/my/file" object too.
+Scope sharedAccess = access.share(
+        new Permission.Builder().allowDownload().allowList().build(),
+        new SharePrefix("my-bucket", "key/to/my"));
 
-// Serialize the scope to, so it can be easily sent to the receiving party.
-String serializedShare = sharedScope.serialize();
+// Serialize the access grant to, so it can be easily sent to the receiving party.
+String serializedShare = sharedAccess.serialize();
 ```
 
 The receiving party can download the shared file using the following example:
 
 ```java
 // Info received by the other party
-String serializedScope = "13GRuHAW...";
+String serializedAccess = "13GRuHAW...";
 String bucketName = "my-bucket";
-String objectPath = "path/to/my/object";
+String objectKey = "key/to/my/object";
 
-Scope scope = Scope.parse(serializedScope);
-try (Uplink uplink = new Uplink();
-     Project project = uplink.openProject(scope);
-     Bucket bucket = project.openBucket(bucketName, scope);
-     OutputStream out = new FileOutputStream("path/to/local/file")) {
-    bucket.downloadObject(objectPath, out);
+Access access = Access.parse(serializedAccess);
+try (Project project = uplink.openProject(access);
+        InputStream in = project.downloadObject(bucketName, objectKey);
+        OutputStream out = new FileOutputStream("path/to/local/file")) {
+    byte[] buffer = new byte[8 * 1024];
+    int bytesRead;
+    while ((bytesRead = in.read(buffer)) != -1) {
+        out.write(buffer, 0, bytesRead);
+    }
 }
 ```
