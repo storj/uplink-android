@@ -2,7 +2,7 @@ pipeline {
     agent {
         docker {
             label 'main'
-            image docker.build("storj-ci", "--pull git://github.com/storj/ci.git#:android").id
+            image docker.build("storj-ci", "--pull https://github.com/storj/ci.git#main:android").id
             args '-u root:root --cap-add SYS_PTRACE -v "/tmp/gomod":/go/pkg/mod'
         }
     }

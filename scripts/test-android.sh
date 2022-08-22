@@ -16,7 +16,8 @@ go install \
 	storj.io/storj/cmd/satellite \
 	storj.io/storj/cmd/storagenode \
 	storj.io/storj/cmd/versioncontrol \
-	storj.io/storj/cmd/storj-sim
+	storj.io/storj/cmd/storj-sim \
+	storj.io/storj/cmd/multinode
 
 go install storj.io/gateway
 
