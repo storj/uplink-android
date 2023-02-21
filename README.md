@@ -1,6 +1,5 @@
 # android-libuplink
 
-[![Storj.io](https://storj.io/img/storj-badge.svg)](https://storj.io)
 [![Javadocs](https://img.shields.io/badge/javadoc-1.0.0--rc.1-blue.svg)](https://storj.github.io/uplink-android/javadoc/1.0.0-rc.1/)
 
 Android bindings to Storj V3 libuplink.
@@ -53,7 +52,7 @@ The `Access Grant` contains all information required to access resources on the 
 New `Access Grant` can be requested from satellite with Satellite Address, API Key and passphrase.
 
 ```java
-String satelliteAddress = "us-central-1.tardigrade.io:7777";
+String satelliteAddress = "12EayRS2V1kEsWESU9QMRseFhdxYxKicsiFmxrsLZHeLUtdps3S@us1.storj.io:7777";
 String serializedApiKey = "13Yqft7v...";
 String passphrase = "super secret passphrase";
 
