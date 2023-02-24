@@ -10,7 +10,7 @@ fi
 
 SCRIPTDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 
-go install \
+go install -tags noquic \
 	storj.io/storj/cmd/certificates \
 	storj.io/storj/cmd/identity \
 	storj.io/storj/cmd/satellite \
@@ -19,7 +19,7 @@ go install \
 	storj.io/storj/cmd/storj-sim \
 	storj.io/storj/cmd/multinode
 
-go install storj.io/gateway
+go install -tags noquic storj.io/gateway
 
 $SCRIPTDIR/../uplink-android/scripts/build-android.sh
 
